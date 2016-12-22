@@ -10,13 +10,14 @@ from __future__ import print_function
 import wx
 import math
 
-board
+board, pawnMoved
 
 """Basic UI and movement functions"""
 #Setup the peices on the board
 def intializeBoard():
-    global board
+    global board, pawnMoved
     board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
+    pawnMoved = [False for i in range(16)]
 
 #Move the piece in the given coordinates to the target coordinates  
 def movePiece(startX, startY, endX, endY):
@@ -37,7 +38,7 @@ def displayBoard():
 
 """Define the rules for movements in chess"""
 def isValidMove(startX, startY, endX, endY):
-    global board
+    global board, pawnMoved
     valid = True
     
     #Get current and target piece type
@@ -207,10 +208,82 @@ def isValidMove(startX, startY, endX, endY):
             valid = False
     
     #Move pawns
-    """elif piece=='p'or piece=='P':
-        if peice=='p':
-            if
-        else piece=='P':"""
+    elif piece=='p'or piece=='P':
+        #Black Pieces
+        if piece=='p':
+            #Capturing
+            if abs(startX-endX)==1:
+                #Moving forward one spot
+                if (endY-startY)==1:
+                    #if the spot is occupied by opponent
+                    if board[endY][endx]!='' and board[endY][endx].isupper():
+                        return valid
+                    #Empty or friendly in the spot
+                    else:
+                        valid = False
+                        return valid
+                #Invalid move (ie 2 forward or backwards)
+                else:
+                    valid = False
+                    return valid
+                    
+            #Moving straight forward
+            elif startX==endX:
+                #Moving forward 2 spots
+                if (endY-startY)==2:
+                    #Make sure it hasn't moved yet
+                    if pawnMoved[(board[startY][startX])[1]-1]==True:
+                        return valid
+                    else:
+                        valid = False
+                        return valid
+                #Forward 1 spot
+                elif (endY-startY)==1:
+                    #The spot is empty in front
+                    if board[startY][startX]=='':
+                        return valid
+                    #Spot is occupied
+                    else:
+                        valid=False
+                        return valid
+            else:
+                valid=False
+                return valid
+                
+        #White Pieces
+        else:
+            #Capturing
+            if abs(startX-endX)==1:
+                #Moving forward one spot
+                if (endY-startY)==-1:
+                    #if the spot is occupied by opponent
+                    if board[endY][endx]!='' and board[endY][endx].islower():
+                        return valid
+                    #Empty or friendly in the spot
+                    else:
+                        valid = False
+                        return valid
+                #Invalid move (ie 2 forward or backwards)
+                else:
+                    valid = False
+                    return valid
+                    
+            #Moving straight forward       
+            elif startX==endX:
+                #Moving forward 2 spots
+                if (endY-startY)==-2:
+                    #Make sure it hasn't moved yet
+                    if pawnMoved[(board[startY][startX])[1]+7]==True:
+                        return valid
+                    else:
+                        valid = False
+                        return valid
+                elif (endY-startY)==-1:
+                    
+                    
+                
+    else:
+        valid=False
     
     return valid
     
