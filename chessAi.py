@@ -320,6 +320,7 @@ def isValidMove(startX, startY, endX, endY):
                     elif board[endY][endX]=='' and board[endX][startY].isupper() and len(board[endX][startY])>=2:
                         if movedTwo[(board[endX][startY])[1]+7]==True:
                             pawnMoved[(board[startY][startX])[1]-1]=True
+                            board[endX][startY] == ''
                             return valid
                         else:
                             valid=False
@@ -373,6 +374,7 @@ def isValidMove(startX, startY, endX, endY):
                     elif board[endY][endX]=='' and board[endX][startY].isupper() and len(board[endX][startY])>=2:
                         if movedTwo[(board[endX][startY])[1]-1]==True:
                             pawnMoved[(board[startY][startX])[1]+7]=True
+                            board[endX][startY] == ''
                             return valid
                         else:
                             valid=False
