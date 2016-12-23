@@ -320,10 +320,10 @@ def isValidMove(startX, startY, endX, endY):
                         pawnMoved[int((board[startY][startX])[1])-1]=True
                         return valid
                     #En Passant capture
-                    elif board[endY][endX]=='' and board[endX][startY].isupper() and len(board[endX][startY])>=2:
-                        if movedTwo[int((board[endX][startY])[1])+7]==True:
+                    elif board[endY][endX]=='' and board[startY][endX].isupper() and len(board[startY][endX])>=2:
+                        if movedTwo[int((board[startY][endX])[1])+7]==True:
                             pawnMoved[int((board[startY][startX])[1])-1]=True
-                            board[endX][startY] == ''
+                            board[startY][endX] == ''
                             return valid
                         else:
                             valid=False
@@ -374,10 +374,10 @@ def isValidMove(startX, startY, endX, endY):
                         pawnMoved[int((board[startY][startX])[1])+7]=True
                         return valid
                     #En Passant capture
-                    elif board[endY][endX]=='' and board[endX][startY].isupper() and len(board[endX][startY])>=2:
-                        if movedTwo[int((board[endX][startY])[1])-1]==True:
+                    elif board[endY][endX]=='' and board[startY][endX].isupper() and len(board[startY][endX])>=2:
+                        if movedTwo[int((board[startY][endX])[1])-1]==True:
                             pawnMoved[int((board[startY][startX])[1])+7]=True
-                            board[endX][startY] == ''
+                            board[startY][endX] == ''
                             return valid
                         else:
                             valid=False
