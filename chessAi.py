@@ -10,6 +10,13 @@ from __future__ import print_function
 import wx
 import math
 
+"""Booleans for kings and rooks, used for castling"""
+whiteLeft = False
+whiteRight = False
+blackLeft = False
+blackRight = False
+whiteKing = False
+blackKing = False
 
 """Basic UI and movement functions"""
 #Setup the peices on the board
@@ -17,6 +24,7 @@ def intializeBoard():
     global board
     global pawnMoved
     global movedTwo
+    
     board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
     pawnMoved = [False for i in range(16)]
     movedTwo = [False for i in range(16)]
@@ -39,8 +47,11 @@ def displayBoard():
         print("")
 
 """Define the rules for movements in chess"""
+"""Need castling"""
 def isValidMove(startX, startY, endX, endY):
-    global board, pawnMoved
+    global board, pawnMoved, whiteKing, blackKing
+    global blackLeft, blackRight, whiteLeft, whiteRight
+    
     valid = True
     
     #Get current and target piece type
@@ -64,8 +75,12 @@ def isValidMove(startX, startY, endX, endY):
     
     #Move the king
     elif piece=='k'or piece=='K':
-        if abs(endX-startX)<=1 or abs(endY-startY)<=1:
-            if (board[startY][startX]==''):
+        if abs(endX-startX)<=1 and abs(endY-startY)<=1:
+            if (board[endY][endX]==''):
+                if piece=='k':
+                    blackKing=True
+                else:
+                    whiteKing=True
                 return valid
             else:
                 valid = False
@@ -209,7 +224,6 @@ def isValidMove(startX, startY, endX, endY):
         else:
             valid = False
     
-    #Still need en passant and castling
     #Move pawns
     elif piece=='p'or piece=='P':
         #Black Pieces
