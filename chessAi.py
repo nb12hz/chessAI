@@ -104,7 +104,7 @@ def isValidMove(startX, startY, endX, endY):
             elif startX>endX and blackQS==False and board[0][0]=='r':
                 #Check if empty between them
                 for i in range(1,4):
-                    if board[startY][i]!='':
+                    if board[startY][i]!='' or isAttacked(False,i,startY)==True:
                         valid = False
                         return valid
                 
@@ -117,7 +117,7 @@ def isValidMove(startX, startY, endX, endY):
             elif endX>startX and blackKS==False and board[0][7]=='r':
                 #Check if empty between them
                 for i in range(5,7):
-                    if board[startY][i]!='':
+                    if board[startY][i]!='' or isAttacked(False,i,startY)==True:
                         valid = False 
                         return valid
                         
@@ -135,7 +135,7 @@ def isValidMove(startX, startY, endX, endY):
             elif startX>endX and whiteQS==False and board[7][0]=='R':
                 #Check if empty between them
                 for i in range(1,4):
-                    if board[startY][i]!='':
+                    if board[startY][i]!='' or isAttacked(True,i,startY)==True:
                         valid = False
                         return valid
                 
@@ -147,7 +147,7 @@ def isValidMove(startX, startY, endX, endY):
             elif endX>startX and whiteKS==False and board[7][7]=='R':
                 #Check if empty between them
                 for i in range(5,7):
-                    if board[startY][i]!='':
+                    if board[startY][i]!='' or isAttacked(True,i,startY)==True:
                         valid = False 
                         return valid
                         
@@ -472,15 +472,20 @@ def updateAttacked():
                             attackedByBlack[newY][newX]=True                
                 
 """Check if the current square is under attack"""
-def isAttacked(colour, currentX, currentY):
+def isAttacked(isWhite, currentX, currentY):
     global attackedByWhite, attackedByBlack
     #Test if white is attacking this square
-    if colour=='Black':
+    if isWhite==False:
         return attackedByWhite[currentY][currentX]
         
     #Test if black is attacking this square
-    elif colour=='White':
+    else:
         return attackedByBlack[currentY][currentX]
+    
+"""Check if the king is in check"""
+def isCheck(isWhite, currentX, currentY):
+    
+    return False
     
 """Check if there is a checkmate"""
 def isCheckmate():
