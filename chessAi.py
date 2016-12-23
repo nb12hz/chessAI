@@ -422,12 +422,25 @@ def isValidMove(startX, startY, endX, endY):
     
     return valid
     
+"""Check if the king is in check"""
+def isAttacked(colour, currentX, currentY):
+    if colour=='Black':
+        return False
+    elif colour=='White':
+        return False
+    
+"""Check if there is a checkmate"""
+def isCheckmate():
+    return False
+    
 """Our main function calls"""
 intializeBoard()
 files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 
-while(True):
+whiteMove=True
+
+while(isCheckmate()!=True):
     displayBoard()
     
     user_input = str(raw_input("Start Position File:"))
@@ -462,5 +475,13 @@ while(True):
             if choice>=0 and choice<8:
                 endY = choice
     
-    if isValidMove(startX,startY,endX,endY):        
-        movePiece(startX,startY,endX,endY)
+    #If the current peice is the correct one for the turn we are on
+    if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
+        if isValidMove(startX,startY,endX,endY):        
+            movePiece(startX,startY,endX,endY)
+            whiteMove=False
+    
+    elif whiteMove==False and board[startY][startX]!='' and board[startY][startX].islower():
+        if isValidMove(startX,startY,endX,endY):        
+            movePiece(startX,startY,endX,endY)
+            whiteMove=True
