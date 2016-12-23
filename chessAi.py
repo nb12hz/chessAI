@@ -425,39 +425,41 @@ def isValidMove(startX, startY, endX, endY):
     
 """Our main function calls"""
 intializeBoard()
+files = ['A','B','C','D','E','F','G','H']
+ranks = ['8','7','6','5','4','3','2','1']
 
 while(True):
     displayBoard()
     
-    user_input = str(input("Start Position X:"))
-    choice = -1
-    while choice==-1:
-        if user_input.isdigit():
-            choice = int(user_input)
+    user_input = str(raw_input("Start Position File:"))
+    choice = '~'
+    while choice=='~':
+        if user_input in files:
+            choice = files.index(user_input)
             if choice>=0 and choice<8:
                 startX = choice
                 
-    user_input = str(input("Start Position Y:"))
-    choice = -1
-    while choice==-1:
-        if user_input.isdigit():
-            choice = int(user_input)
+    user_input = str(input("Start Position Rank:"))
+    choice = '~'
+    while choice=='~':
+        if user_input in ranks:
+            choice = ranks.index(user_input)
             if choice>=0 and choice<8:
                 startY = choice
                 
-    user_input = str(input("End Position X:"))
-    choice = -1
-    while choice==-1:
-        if user_input.isdigit():
-            choice = int(user_input)
+    user_input = str(raw_input("End Position File:"))
+    choice = '~'
+    while choice=='~':
+        if user_input in files:
+            choice = files.index(user_input)
             if choice>=0 and choice<8:
                 endX = choice
     
-    user_input = str(input("End Position Y:"))
-    choice = -1
-    while choice==-1:
-        if user_input.isdigit():
-            choice = int(user_input)
+    user_input = str(input("End Position Rank:"))
+    choice = '~'
+    while choice=='~':
+        if user_input in ranks:
+            choice = ranks.index(user_input)
             if choice>=0 and choice<8:
                 endY = choice
     
