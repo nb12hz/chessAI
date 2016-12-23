@@ -24,11 +24,19 @@ def intializeBoard():
     global board
     global pawnMoved
     global movedTwo
+    global attackedByWhite
+    global attackedByBlack
     
     board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
+    #Black is 0-7, White is 8-15    
     pawnMoved = [False for i in range(16)]
+    #Black is 0-7, White is 8-15
     movedTwo = [False for i in range(16)]
-
+    #Intialize attacked by White array
+    attackedByWhite = [[False for i in range(8)] for j in range(8)]
+    #Intialize attacked by Black array
+    attackedByBlack = [[False for i in range(8)] for j in range(8)]
+    
 #Move the piece in the given coordinates to the target coordinates  
 def movePiece(startX, startY, endX, endY):
     global board    
@@ -49,7 +57,6 @@ def displayBoard():
         print("")
 
 """Define the rules for movements in chess"""
-"""Need castling"""
 def isValidMove(startX, startY, endX, endY):
     global board, pawnMoved, whiteKing, blackKing
     global blackKS, blackQS, whiteKS, whiteQS
@@ -148,6 +155,8 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[7][5]='R'
                     board[7][7]=''
+        else:
+            valid=False
             
     #Move the Rook
     elif piece=='r' or piece=='R':
@@ -422,13 +431,70 @@ def isValidMove(startX, startY, endX, endY):
         valid=False
     
     return valid
+
+"""Update the currently under attack arrays"""
+def updateAttacked():
+    global attackedByWhite, attackedByBlack
+    
+    #Clear attacked by White array
+    attackedByWhite = [[False for i in range(8)] for j in range(8)]
+    #Clear attacked by Black array
+    attackedByBlack = [[False for i in range(8)] for j in range(8)]
+    
+    for y in range(8):
+        for x in range(8):
+            #Update attacked by white
+            if board[y][x]!='' and board[y][x].isupper():
+                #Update squares for pawn attacks
+                if len(board[y][x])==2:
+                    if (x+1)<8 and (y-1)>=0:
+                        attackedByWhite[y-1][x+1]=True
+                    if (x-1)>=0 and (y-1)>=0:
+                        attackedByWhite[y-1][x-1]=True
+                        
+                for newX in range(8):
+                    for newY in range(8):
+                        if len(board[y][x])<=1 and isValidMove(x,y,newX,newY)==True:
+                            attackedByWhite[newY][newX]=True
+                            
+            #Update attacked by black
+            elif board[y][x]!='' and board[y][x].islower():
+                #Update squares for pawn attacks
+                if len(board[y][x])==2:
+                    if (x+1)<8 and (y+1)<8:
+                        attackedByBlack[y+1][x+1]=True
+                    if (x-1)>=0 and (y+1)<8:
+                        attackedByBlack[y+1][x-1]=True
+                        
+                for newX in range(8):
+                    for newY in range(8):
+                        if  len(board[y][x])<=1 and isValidMove(x,y,newX,newY)==True:
+                            attackedByBlack[newY][newX]=True                
+                
+"""Check if the current square is under attack"""
+def isAttacked(colour, currentX, currentY):
+    global attackedByWhite, attackedByBlack
+    #Test if white is attacking this square
+    if colour=='Black':
+        return attackedByWhite[currentY][currentX]
+        
+    #Test if black is attacking this square
+    elif colour=='White':
+        return attackedByBlack[currentY][currentX]
+    
+"""Check if there is a checkmate"""
+def isCheckmate():
+    return False
     
 """Our main function calls"""
 intializeBoard()
+updateAttacked()
 files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 
-while(True):
+whiteMove=True
+
+while(isCheckmate()!=True):
     displayBoard()
     
     user_input = str(raw_input("Start Position File:"))
@@ -463,5 +529,25 @@ while(True):
             if choice>=0 and choice<8:
                 endY = choice
     
-    if isValidMove(startX,startY,endX,endY):        
-        movePiece(startX,startY,endX,endY)
+    #If the current peice is the correct one for the turn we are on
+    if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
+        if isValidMove(startX,startY,endX,endY):        
+            movePiece(startX,startY,endX,endY)
+            #Now blacks turn
+            whiteMove=False
+            #Update squares which are attacked
+            updateAttacked()
+            #Reset Black for En Passant
+            for i in range(8):
+                movedTwo[i]=False
+                
+    elif whiteMove==False and board[startY][startX]!='' and board[startY][startX].islower():
+        if isValidMove(startX,startY,endX,endY):        
+            movePiece(startX,startY,endX,endY)
+            #Now whites turn
+            whiteMove=True
+            #Update squares which are attacked
+            updateAttacked()
+            #Reset White for En Passant
+            for i in range(8,16):
+                movedTwo[i]=False
