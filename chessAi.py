@@ -87,6 +87,7 @@ def isValidMove(startX, startY, endX, endY):
             else:
                 valid = False
                 return valid
+                
         elif abs(endX-startX)==2 and endY==startY and piece=='k':
             #King has been moved
             if blackKing==True:
@@ -316,12 +317,12 @@ def isValidMove(startX, startY, endX, endY):
                 if (endY-startY)==1:
                     #if the spot is occupied by opponent
                     if board[endY][endX]!='' and board[endY][endX].isupper():
-                        pawnMoved[(board[startY][startX])[1]-1]=True
+                        pawnMoved[int((board[startY][startX])[1])-1]=True
                         return valid
                     #En Passant capture
                     elif board[endY][endX]=='' and board[endX][startY].isupper() and len(board[endX][startY])>=2:
-                        if movedTwo[(board[endX][startY])[1]+7]==True:
-                            pawnMoved[(board[startY][startX])[1]-1]=True
+                        if movedTwo[int((board[endX][startY])[1])+7]==True:
+                            pawnMoved[int((board[startY][startX])[1])-1]=True
                             board[endX][startY] == ''
                             return valid
                         else:
@@ -341,9 +342,9 @@ def isValidMove(startX, startY, endX, endY):
                 #Moving forward 2 spots
                 if (endY-startY)==2:
                     #Make sure it hasn't moved yet and no pieces in front
-                    if pawnMoved[(board[startY][startX])[1]-1]!=True and board[startY+1][startX+1]=='' and board[endY][endX]=='':
-                        pawnMoved[(board[startY][startX])[1]-1]=True
-                        movedTwo[(board[startY][startX])[1]-1]=True                      
+                    if pawnMoved[int((board[startY][startX])[1])-1]!=True and board[startY+1][startX+1]=='' and board[endY][endX]=='':
+                        pawnMoved[int((board[startY][startX])[1])-1]=True
+                        movedTwo[int((board[startY][startX])[1])-1]=True                      
                         return valid
                     else:
                         valid = False
@@ -352,7 +353,7 @@ def isValidMove(startX, startY, endX, endY):
                 elif (endY-startY)==1:
                     #The spot is empty in front
                     if board[endY][endX]=='':
-                        pawnMoved[(board[startY][startX])[1]-1]=True
+                        pawnMoved[int((board[startY][startX])[1])-1]=True
                         return valid
                     #Spot is occupied
                     else:
@@ -370,12 +371,12 @@ def isValidMove(startX, startY, endX, endY):
                 if (endY-startY)==-1:
                     #if the spot is occupied by opponent
                     if board[endY][endX]!='' and board[endY][endX].islower():
-                        pawnMoved[(board[startY][startX])[1]+7]=True
+                        pawnMoved[int((board[startY][startX])[1])+7]=True
                         return valid
                     #En Passant capture
                     elif board[endY][endX]=='' and board[endX][startY].isupper() and len(board[endX][startY])>=2:
-                        if movedTwo[(board[endX][startY])[1]-1]==True:
-                            pawnMoved[(board[startY][startX])[1]+7]=True
+                        if movedTwo[int((board[endX][startY])[1])-1]==True:
+                            pawnMoved[int((board[startY][startX])[1])+7]=True
                             board[endX][startY] == ''
                             return valid
                         else:
@@ -393,20 +394,20 @@ def isValidMove(startX, startY, endX, endY):
             #Moving straight forward       
             elif startX==endX:
                 #Moving forward 2 spots
-                if (endY-startY)==-2:
+                if (startY-endY)==2:
                     #Make sure it hasn't moved yet and no pieces in front
-                    if pawnMoved[(board[startY][startX])[1]+7]!=True and board[startY-1][startX-1]=='' and board[endY][endX]=='':
-                        pawnMoved[(board[startY][startX])[1]+7]=True
-                        movedTwo[(board[startY][startX])[1]+7]=True
+                    if pawnMoved[int((board[startY][startX])[1])+7]!=True and board[startY-1][startX-1]=='' and board[endY][endX]=='':
+                        pawnMoved[int((board[startY][startX])[1])+7]=True
+                        movedTwo[int((board[startY][startX])[1])+7]=True
                         return valid
                     else:
                         valid = False
                         return valid
                 #Forward 1 spot
-                elif (endY-startY)==-1:
+                elif (startY-endY)==1:
                     #The spot is empty in front
-                    if board[startY][startX]=='':
-                        pawnMoved[(board[startY][startX])[1]+7]=True
+                    if board[endY][endX]=='':
+                        pawnMoved[int((board[startY][startX])[1])+7]=True
                         return valid
                     #Spot is occupied
                     else:
