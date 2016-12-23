@@ -49,7 +49,6 @@ def displayBoard():
         print("")
 
 """Define the rules for movements in chess"""
-"""Need castling"""
 def isValidMove(startX, startY, endX, endY):
     global board, pawnMoved, whiteKing, blackKing
     global blackKS, blackQS, whiteKS, whiteQS
