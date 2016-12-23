@@ -86,12 +86,65 @@ def isValidMove(startX, startY, endX, endY):
                 valid = False
                 return valid
         elif abs(endX-startX)==2 and endY==startY and piece=='k':
+            #King has been moved
             if blackKing==True:
                 valid=False
+                return valid
+            #Moving Queen Side and neither has been moved
+            elif startX>endX and blackQS==False and board[0][0]=='r':
+                #Check if empty between them
+                for i in range(1,4):
+                    if board[startY][i]!='':
+                        valid = False
+                        return valid
                 
+                #Move rook
+                if valid==True:
+                    board[0][3]='r'
+                    board[0][0]=''
+                    
+            #Moving King Side and neither has been moved    
+            elif endX>startX and blackKS==False and board[0][7]=='r':
+                #Check if empty between them
+                for i in range(5,7):
+                    if board[startY][i]!='':
+                        valid = False 
+                        return valid
+                        
+                #Move rook
+                if valid==True:
+                    board[0][5]='r'
+                    board[0][7]=''
+                    
         elif abs(endX-startX)==2 and endY==startY and piece=='K':
+            #King has been moved
             if whiteKing==True:
                 valid=False
+                return valid
+            #Moving Queen Side and neither has been moved
+            elif startX>endX and whiteQS==False and board[7][0]=='R':
+                #Check if empty between them
+                for i in range(1,4):
+                    if board[startY][i]!='':
+                        valid = False
+                        return valid
+                
+                #Move rook
+                if valid==True:
+                    board[7][3]='R'
+                    board[7][0]=''
+            #Moving King Side and neither has been moved    
+            elif endX>startX and whiteKS==False and board[7][7]=='R':
+                #Check if empty between them
+                for i in range(5,7):
+                    if board[startY][i]!='':
+                        valid = False 
+                        return valid
+                        
+                #Move rook
+                if valid==True:
+                    board[7][5]='R'
+                    board[7][7]=''
             
     #Move the Rook
     elif piece=='r' or piece=='R':
