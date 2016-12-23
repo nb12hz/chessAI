@@ -38,7 +38,9 @@ def movePiece(startX, startY, endX, endY):
 
 #Method to print out the board     
 def displayBoard():
+    print(' ','A','B','C','D','E','F','G','H')
     for i in range(8):
+        print(8-i, end = " ")
         for j in range(8):
             if board[i][j] == '':
                 print('-',end = " ")
