@@ -11,10 +11,10 @@ import wx
 import math
 
 """Booleans for kings and rooks, used for castling"""
-whiteLeft = False
-whiteRight = False
-blackLeft = False
-blackRight = False
+whiteKS = False
+whiteQS = False
+blackKS = False
+blackQS = False
 whiteKing = False
 blackKing = False
 
@@ -50,7 +50,7 @@ def displayBoard():
 """Need castling"""
 def isValidMove(startX, startY, endX, endY):
     global board, pawnMoved, whiteKing, blackKing
-    global blackLeft, blackRight, whiteLeft, whiteRight
+    global blackKS, blackQS, whiteKS, whiteQS
     
     valid = True
     
@@ -93,13 +93,22 @@ def isValidMove(startX, startY, endX, endY):
             if endY>startY:
                 for i in range(startY+1,endY):
                     if board[i][startX]!='':
-                        valid = False
-                return valid
+                        valid = False                
             else:
                 for i in range(startY-1,endY,-1):
                     if board[i][startX]!='':
                         valid = False
-                return valid
+            
+            #Set that the Rook was moved for castling
+            if valid == True and startY==0 and startX==0:
+                blackQS=True
+            elif valid==True and startY==0 and startX==7:
+                blackQS=True
+            elif valid==True and startY==7 and startX==0:
+                whiteQS=True
+            elif valid==True and startY==7 and startX==7:
+                whiteKS=True
+                
         #make sure it moves in a line
         elif (startY==endY and startX!=endX):
             if endX>startX:
@@ -112,6 +121,17 @@ def isValidMove(startX, startY, endX, endY):
                     if board[startY][i]!='':
                         valid = False
                 return valid
+            
+            #Set that the Rook was moved for castling
+            if valid == True and startY==0 and startX==0:
+                blackQS=True
+            elif valid==True and startY==0 and startX==7:
+                blackQS=True
+            elif valid==True and startY==7 and startX==0:
+                whiteQS=True
+            elif valid==True and startY==7 and startX==7:
+                whiteKS=True
+                
         else:
             valid=False
     
