@@ -85,7 +85,14 @@ def isValidMove(startX, startY, endX, endY):
             else:
                 valid = False
                 return valid
-    
+        elif abs(endX-startX)==2 and endY==startY and piece=='k':
+            if blackKing==True:
+                valid=False
+                
+        elif abs(endX-startX)==2 and endY==startY and piece=='K':
+            if whiteKing==True:
+                valid=False
+            
     #Move the Rook
     elif piece=='r' or piece=='R':
         #make sure it moves in a line
