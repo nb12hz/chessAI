@@ -79,6 +79,11 @@ def isValidMove(startX, startY, endX, endY):
         print('No Piece Selected')
         valid = False
         return valid
+    
+    #Moving piece to current location
+    if [startY,startX]==[endY,endX]:
+        valid = False
+        return valid
        
     #If the piece is friendly
     elif targetPiece!='' and piece.isupper() and targetPiece.isupper():
@@ -93,24 +98,21 @@ def isValidMove(startX, startY, endX, endY):
     #Move the king
     elif piece=='k'or piece=='K':
         if abs(endX-startX)<=1 and abs(endY-startY)<=1:
-            if board[endY][endX]=='':
-                if piece=='k':
-                    if isAttacked(False,endX,endY)==False:
-                        blackKing=True
-                    else:
-                        valid=False
-                        return valid
+            if piece=='k':
+                if isAttacked(False,endX,endY)==False:
+                    blackKing=True
+                    return valid
                 else:
-                    if isAttacked(True,endX,endY)==False:
-                        whiteKing=True
-                    else:
-                        valid=False
-                        return valid
-                return valid
+                    valid=False
+                    return valid
             else:
-                
-                valid = False
-                return valid
+                if isAttacked(True,endX,endY)==False:
+                    whiteKing=True
+                    return valid
+                else:
+                    valid=False
+                    return valid
+            return valid
                 
         elif abs(endX-startX)==2 and endY==startY and piece=='k':
             #King has been moved
@@ -566,12 +568,14 @@ def makeMove(isWhite, startX, startY, endX, endY):
             whiteQS=WqueenSide
             blackKing=BkingMoved
             blackKS=BkingSide
-            blackQS=BqueenSide        
+            blackQS=BqueenSide
+            print("You will be in check")
             return False
         else:
             return True
     
     else:
+        print("Not a valid move")
         return False
     
     
@@ -594,6 +598,10 @@ whiteMove=True
 
 while(isCheckmate()!=True):
     displayBoard()
+    if(whiteMove):
+        print("White's move")
+    else: 
+        print("Black's move")
     
     if isCheck(whiteMove)==True:
         print("You are in check")
@@ -636,10 +644,7 @@ while(isCheckmate()!=True):
         if board[endY][endX].isupper():
             print("Cannot target friendly piece")
         #Make the move and check if makes check or not
-        if makeMove(whiteMove,startX,startY,endX,endY)==False:
-            #Invalid move, do nothing
-            print("You will be in check")
-        else:
+        if makeMove(whiteMove,startX,startY,endX,endY)==True:
             #Now blacks turn
             whiteMove=False
             #Update squares which are attacked
@@ -654,10 +659,7 @@ while(isCheckmate()!=True):
         if board[endY][endX].islower():
             print("Cannot target friendly piece")
         #Make the move and check if makes check or not
-        if makeMove(whiteMove,startX,startY,endX,endY)==False:
-            #Invalid move, do nothing
-            print("You will be in check")
-        else:
+        if makeMove(whiteMove,startX,startY,endX,endY)==True:
             #Now whites turn
             whiteMove=True
             #Update squares which are attacked
