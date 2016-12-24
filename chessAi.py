@@ -9,11 +9,7 @@ Created on Thu Dec 22 13:37:05 2016
 from __future__ import print_function
 import wx
 import math
-<<<<<<< HEAD
 import minimax
-=======
-import minimax.py
->>>>>>> origin/master
 import copy
 
 """Booleans for kings and rooks, used for castling"""
