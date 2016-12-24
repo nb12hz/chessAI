@@ -623,10 +623,7 @@ def isCheckmate(isWhite):
                             BkingSide = blackKS
                             BqueenSide = blackQS
                             
-                            print("Tried ",sX, " ", sY, " ", eX, " ", eY)
                             if isValidMove(sX,sY,eX,eY):
-                                print("Succeeded ",sX, " ", sY, " ", eX, " ", eY)
-                                movePiece(sX,sY,eX,eY)
                                 updateAttacked()
                                 
                                 if isCheck(isWhite)==True:
@@ -661,10 +658,7 @@ def isCheckmate(isWhite):
                             BkingSide = blackKS
                             BqueenSide = blackQS
                             
-                            print("Tried ",sX, " ", sY, " ", eX, " ", eY)
                             if isValidMove(sX,sY,eX,eY):
-                                print("Succeeded ",sX, " ", sY, " ", eX, " ", eY)
-                                movePiece(sX,sY,eX,eY)
                                 updateAttacked()
                                 
                                 if isCheck(isWhite)==True:
@@ -762,3 +756,9 @@ while(isCheckmate(whiteMove)!=True):
             #Reset White for En Passant
             for i in range(8,16):
                 movedTwo[i]=False
+
+displayBoard()
+if(whiteMove):
+    print("Black Wins!")
+else:
+    print("White Wins!")
