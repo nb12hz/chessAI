@@ -589,6 +589,10 @@ whiteMove=True
 
 while(isCheckmate()!=True):
     displayBoard()
+    if(whiteMove):
+        print("White's move")
+    else: 
+        print("Black's move")
     
     if isCheck(whiteMove)==True:
         print("You are in check")
