@@ -29,11 +29,24 @@ class minimax:
     All moves are made using a sepereate set of variables"""
     #The main decision function
     def minimax(self):
-        if self.isLegalMotion():
-            newGameState = copy.deepcopy(self.gameState)
-            if self.isValid() and self.isCheck()==False:
-                self.minPlay(self, newGameState)
-        return 0
+        bestMove=[]
+        bestScore = -sys.maxint-1
+        
+        for x in range(8):
+            for y in range(8):
+                #spot is currently occupied by AI's piece
+                if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower():
+                    for newX in range(8):
+                        for newY in range(8):
+                            if self.isLegalMotion(self, self.gameState,x,y,newX,newY):
+                                newGameState = copy.deepcopy(self.gameState)
+                                if self.isValidMove(self,newGameState,x,y,newX,newY) and self.isCheck(newGameState,False)==False:
+                                    score = self.minPlay(self, newGameState)
+                                    if score>bestScore:
+                                        bestScore = score
+                                        bestMove = [x,y,newX,newY]
+                                        
+        return bestMove
     
     #The evaluation function for the AI's turn
     def maxPlay(self, depth, gameState):
@@ -71,9 +84,355 @@ class minimax:
             (gameState[0])[endY][endX]=(gameState[0])[startY][startX]
             (gameState[0])[startY][startX] = ''
             
-    def isLegalMotion(gameState,startX, startY, endX, endY):
-        return True
-    
+    """Define the motion of all the pieces, without modifying the game state in any way"""
+    def isLegalMotion(self, gameState, startX, startY, endX, endY):
+        valid = True
+        
+        #Get current and target piece type
+        piece = ((gameState[0])[startY][startX])[0]
+        if (gameState[0])[endY][endX] != '':
+            targetPiece = ((gameState[0])[endY][endX])[0]
+        else:
+            targetPiece = ''
+        
+        #No piece to move
+        if piece=='':
+            valid = False
+            return valid
+           
+        #If the piece is friendly
+        elif targetPiece!='' and piece.isupper() and targetPiece.isupper():
+            valid=False
+            return valid
+            
+        #If the piece is friendly   
+        elif targetPiece!='' and piece.islower() and targetPiece.islower():
+            valid=False
+            return valid
+
+        elif (startX==endX) and (startY==endY):
+            valid=False
+            return valid
+            
+        #Move the king
+        elif piece=='k'or piece=='K':
+            if abs(endX-startX)<=1 and abs(endY-startY)<=1:
+                if piece=='k':
+                    if self.isAttacked(gameState,False,endX,endY)==False:
+                        return valid
+                    else:
+                        valid=False
+                        return valid
+                else:
+                    if self.isAttacked(gameState,True,endX,endY)==False:
+                        return valid
+                    else:
+                        valid=False
+                        return valid
+                return valid
+                    
+            elif abs(endX-startX)==2 and endY==startY and piece=='k':
+                #King has been moved
+                if gameState[8]==True:
+                    valid=False
+                    return valid
+                #Moving Queen Side and neither has been moved
+                elif startX>endX and gameState[6]==False and (gameState[0])[0][0]=='r':
+                    #Check if empty between them and not attacked
+                    for i in range(1,4):
+                        if (gameState[0])[startY][i]!='' or self.isAttacked(gameState,False,i,startY)==True:
+                            valid = False
+                            return valid
+                        
+                #Moving King Side and neither has been moved    
+                elif endX>startX and gameState[5]==False and (gameState[0])[0][7]=='r':
+                    #Check if empty between them and not attacked
+                    for i in range(5,7):
+                        if (gameState[0])[startY][i]!='' or self.isAttacked(gameState, False,i,startY)==True:
+                            valid = False 
+                            return valid
+                        
+            elif abs(endX-startX)==2 and endY==startY and piece=='K':
+                #King has been moved
+                if gameState[7]==True:
+                    valid=False
+                    return valid
+                #Moving Queen Side and neither has been moved
+                elif startX>endX and gameState[4]==False and (gameState[0])[7][0]=='R':
+                    #Check if empty between them and not attacked
+                    for i in range(1,4):
+                        if (gameState[0])[startY][i]!='' or self.isAttacked(gameState, True,i,startY)==True:
+                            valid = False
+                            return valid
+                    
+                #Moving King Side and neither has been moved    
+                elif endX>startX and (gameState[3])==False and (gameState[0])[7][7]=='R':
+                    #Check if empty between them and not attacked
+                    for i in range(5,7):
+                        if (gameState[0])[startY][i]!='' or self.isAttacked(gameState,True,i,startY)==True:
+                            valid = False 
+                            return valid
+
+            else:
+                valid=False
+                return valid
+
+        #Move the Rook
+        elif piece=='r' or piece=='R':
+            #make sure it moves in a line
+            if (startX==endX and startY!=endY):
+                if endY>startY:
+                    for i in range(startY+1,endY):
+                        if (gameState[0])[i][startX]!='':
+                            valid = False 
+                            return valid
+                else:
+                    for i in range(startY-1,endY,-1):
+                        if (gameState[0])[i][startX]!='':
+                            valid = False
+                            return valid
+                    
+            #make sure it moves in a line
+            elif (startY==endY and startX!=endX):
+                if endX>startX:
+                    for i in range(startX+1,endX):
+                        if (gameState[0])[startY][i]!='':
+                            valid = False
+                            return valid
+                    return valid
+                else:
+                    for i in range(startX-1,endX,-1):
+                        if (gameState[0])[startY][i]!='':
+                            valid = False
+                            return valid
+                    return valid
+                    
+            else:
+                valid=False
+                return valid
+        
+        #Move the knight
+        elif piece=='n'or piece=='N':
+            if (abs(startX-endX)==2 and abs(startY-endY)==1) or (abs(startY-endY)==2 and abs(startX-endX)==1):
+                return valid
+            else:
+                valid = False
+                return valid
+
+        #Move the bishop
+        elif piece=='b'or piece=='B':
+            #Check that the move is diagonal
+            if (abs(startX-endX)==abs(startY-endY) and startX!=endX and startY!=endY):
+                difference = abs(startX-endX)-1
+                
+                #Left and up
+                if startX>endX and startY>endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY-1-i][startX-1-i]!='':
+                            valid=False
+                            return valid
+                            
+                #Left and down
+                elif startX>endX and startY<endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY+1+i][startX-1-i]!='':
+                            valid=False
+                            return valid
+                            
+                #Right and Up
+                elif startX<endX and startY>endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY-1-i][startX+1+i]!='':
+                            valid=False
+                            return valid
+                            
+                #Right and Down
+                elif startX<endX and startY<endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY+1+i][startX+1+i]!='':
+                            valid=False
+                            return valid
+                            
+                return valid
+            else:
+                valid = False
+                return valid
+        
+        #Move the Queen    
+        elif piece=='q'or piece=='Q':
+            #moving like a Bishop
+            if (abs(startX-endX)==abs(startY-endY) and startX!=endX and startY!=endY):
+                difference = abs(startX-endX)-1
+                
+                #Left and up
+                if startX>endX and startY>endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY-1-i][startX-1-i]!='':
+                            valid=False
+                            return valid
+                            
+                #Left and down
+                elif startX>endX and startY<endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY+1+i][startX-1-i]!='':
+                            valid=False
+                            return valid
+                            
+                #Right and Up
+                elif startX<endX and startY>endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY-1-i][startX+1+i]!='':
+                            valid=False
+                            return valid
+                            
+                #Right and Down
+                elif startX<endX and startY<endY:
+                    for i in range(difference):
+                        if (gameState[0])[startY+1+i][startX+1+i]!='':
+                            valid=False
+                            return valid
+                            
+                return valid
+            #Moving like a Rook
+            elif (startX==endX and startY!=endY) or (startY==endY and startX!=endX):
+                #make sure it moves in a line
+                if (startX==endX and startY!=endY):
+                    if endY>startY:
+                        for i in range(startY+1,endY):
+                            if (gameState[0])[i][startX]!='':
+                                valid = False
+                                return valid
+                        return valid
+                    else:
+                        for i in range(startY-1,endY,-1):
+                            if (gameState[0])[i][startX]!='':
+                                valid = False
+                                return valid
+                        return valid
+                #make sure it moves in a line
+                elif (startY==endY and startX!=endX):
+                    if endX>startX:
+                        for i in range(startX+1,endX):
+                            if (gameState[0])[startY][i]!='':
+                                valid = False
+                                return valid
+                        return valid
+                    else:
+                        for i in range(startX-1,endX,-1):
+                            if (gameState[0])[startY][i]!='':
+                                valid = False
+                                return valid
+                        return valid
+            else:
+                valid = False
+                return valid  
+
+        #Move pawns
+        elif piece=='p'or piece=='P':
+            #Black Pieces
+            if piece=='p':
+                #Capturing
+                if abs(startX-endX)==1:
+                    #Moving forward one spot
+                    if (endY-startY)==1:
+                        #if the spot is occupied by opponent
+                        if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].isupper():
+                            return valid
+                        #En Passant capture
+                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].isupper() and len((gameState[0])[startY][endX])>=2:
+                            if (gameState[2])[int(((gameState[0])[startY][endX])[1])+7]==True:
+                                return valid
+                            else:
+                                valid=False
+                                return valid
+                        #Empty or friendly in the spot
+                        else:
+                            valid = False
+                            return valid
+                    #Invalid move (ie 2 forward or backwards)
+                    else:
+                        valid = False
+                        return valid
+                        
+                #Moving straight forward
+                elif startX==endX:
+                    #Moving forward 2 spots
+                    if (endY-startY)==2:
+                        #Make sure it hasn't moved yet and no pieces in front
+                        if (gameState[1])[int(((gameState[0])[startY][startX])[1])-1]!=True and (gameState[0])[startY+1][startX]=='' and (gameState[0])[endY][endX]=='':                    
+                            return valid
+                        else:
+                            valid = False
+                            return valid
+                    #Forward 1 spot
+                    elif (endY-startY)==1:
+                        #The spot is empty in front
+                        if (gameState[0])[endY][endX]=='':
+                            return valid
+                        #Spot is occupied
+                        else:
+                            valid=False
+                            return valid
+                else:
+                    valid=False
+                    return valid
+                    
+            #White Pieces
+            else:
+                #Capturing
+                if abs(startX-endX)==1:
+                    #Moving forward one spot
+                    if (endY-startY)==-1:
+                        #if the spot is occupied by opponent
+                        if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
+                            return valid
+                        #En Passant capture
+                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].isupper() and len((gameState[0])[startY][endX])>=2:
+                            if (gameState[2])[int(((gameState[0])[startY][endX])[1])-1]==True:
+                                return valid
+                            else:
+                                valid=False
+                                return valid
+                        #Empty or friendly in the spot
+                        else:
+                            valid = False
+                            return valid
+                    #Invalid move (ie 2 forward or backwards)
+                    else:
+                        valid = False
+                        return valid
+                        
+                #Moving straight forward       
+                elif startX==endX:
+                    #Moving forward 2 spots
+                    if (startY-endY)==2:
+                        #Make sure it hasn't moved yet and no pieces in front
+                        if (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]!=True and (gameState[0])[startY-1][startX]=='' and (gameState[0])[endY][endX]=='':
+                            return valid
+                        else:
+                            valid = False
+                            return valid
+                    #Forward 1 spot
+                    elif (startY-endY)==1:
+                        #The spot is empty in front
+                        if (gameState[0])[endY][endX]=='':
+                            return valid
+                        #Spot is occupied
+                        else:
+                            valid=False
+                            return valid
+                else:
+                    valid=False
+                    return valid
+        
+        #Not caught by any case, invalid move
+        else:
+            valid=False
+            return valid
+        
+        return valid
+        
+        
     """Define the rules for movements in chess"""
     def isValidMove(self, gameState, startX, startY, endX, endY):
         
@@ -101,6 +460,10 @@ class minimax:
             valid=False
             return valid
         
+        elif (startX==endX) and (startY==endY):
+            valid=False
+            return valid
+            
         #Move the king
         elif piece=='k'or piece=='K':
             if abs(endX-startX)<=1 and abs(endY-startY)<=1:
