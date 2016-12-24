@@ -627,7 +627,9 @@ while(isCheckmate()!=True):
     
     #If the current peice is the correct one for the turn we are on
     if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
-<<<<<<< HEAD
+        #Make sure the target square is not occupied by an ally
+        if board[endY][endX].isupper():
+            print("Cannot target friendly piece")
         #Make the move and check if makes check or not
         if makeMove(whiteMove,startX,startY,endX,endY)==False:
             #Invalid move, do nothing
@@ -643,6 +645,9 @@ while(isCheckmate()!=True):
         
                 
     elif whiteMove==False and board[startY][startX]!='' and board[startY][startX].islower():
+        #Make sure the target square is not occupied by an ally
+        if board[endY][endX].islower():
+            print("Cannot target friendly piece")
         #Make the move and check if makes check or not
         if makeMove(whiteMove,startX,startY,endX,endY)==False:
             #Invalid move, do nothing
@@ -655,72 +660,3 @@ while(isCheckmate()!=True):
             #Reset White for En Passant
             for i in range(8,16):
                 movedTwo[i]=False
-          
-=======
-        #Make sure the target square is not occupied by an ally
-        if board[endY][endX].isupper():
-            print("Cannot target friendly piece")
-        #make sure they get out of check
-        elif isCheck(True)==True:
-            #Make the move and check if makes check or not
-            if makeMove(whiteMove,startX,startY,endX,endY)==False:
-                #Invalid move, do nothing
-                print("You are still in check")
-            else:
-                #Now blacks turn
-                whiteMove=False
-                #Update squares which are attacked
-                updateAttacked()
-                #Reset Black for En Passant
-                for i in range(8):
-                    movedTwo[i]=False
-        #Else make any valid move
-        elif isCheck(True)==False:
-            #Make the move and check if makes check or not
-            if makeMove(whiteMove,startX,startY,endX,endY)==False:
-                #Invalid move, do nothing
-                print("You cannot put yourself in check")
-            else:
-                #Now blacks turn
-                whiteMove=False
-                #Update squares which are attacked
-                updateAttacked()
-                #Reset Black for En Passant
-                for i in range(8):
-                    movedTwo[i]=False
-        
-                
-    elif whiteMove==False and board[startY][startX]!='' and board[startY][startX].islower():
-        #Make sure the target square is not occupied by an ally
-        if board[endY][endX].islower():
-            print("Cannot target friendly piece")
-        #make sure they get out of check
-        elif isCheck(False)==True:  
-            #Make the move and check if makes check or not
-            if makeMove(whiteMove,startX,startY,endX,endY)==False:
-                #Invalid move, do nothing
-                print("You are still in check")
-            else:
-                #Now whites turn
-                whiteMove=True
-                #Update squares which are attacked
-                updateAttacked()
-                #Reset White for En Passant
-                for i in range(8,16):
-                    movedTwo[i]=False
-          
-        #Else make any valid move
-        elif isCheck(False)==False:        
-            #Make the move and check if makes check or not
-            if makeMove(whiteMove,startX,startY,endX,endY)==False:
-                #Invalid move, do nothing
-                print("You cannot put yourself in check")
-            else:
-                #Now whites turn
-                whiteMove=True
-                #Update squares which are attacked
-                updateAttacked()
-                #Reset White for En Passant
-                for i in range(8,16):
-                    movedTwo[i]=False
->>>>>>> refs/remotes/origin/master
