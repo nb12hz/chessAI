@@ -9,9 +9,8 @@ Created on Thu Dec 22 13:37:05 2016
 from __future__ import print_function
 import wx
 import math
-import impAI.py
+import minimax.py
 import copy
-import Integer
 
 """Booleans for kings and rooks, used for castling"""
 whiteKS = False
@@ -186,7 +185,7 @@ def isValidMove(startX, startY, endX, endY):
             if valid == True and startY==0 and startX==0:
                 blackQS=True
             elif valid==True and startY==0 and startX==7:
-                blackQS=True
+                blackKS=True
             elif valid==True and startY==7 and startX==0:
                 whiteQS=True
             elif valid==True and startY==7 and startX==7:
@@ -209,7 +208,7 @@ def isValidMove(startX, startY, endX, endY):
             if valid == True and startY==0 and startX==0:
                 blackQS=True
             elif valid==True and startY==0 and startX==7:
-                blackQS=True
+                blackKS=True
             elif valid==True and startY==7 and startX==0:
                 whiteQS=True
             elif valid==True and startY==7 and startX==7:
