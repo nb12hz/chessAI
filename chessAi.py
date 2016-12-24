@@ -82,14 +82,13 @@ def isValidMove(startX, startY, endX, endY):
        
     #If the piece is friendly
     elif targetPiece!='' and piece.isupper() and targetPiece.isupper():
-        print('Error: Target is ally')
         valid=False
         return valid
         
     #If the piece is friendly   
     elif targetPiece!='' and piece.islower() and targetPiece.islower():
-        print('Error: Target is ally')
         valid=False
+        return valid
     
     #Move the king
     elif piece=='k'or piece=='K':
@@ -99,14 +98,12 @@ def isValidMove(startX, startY, endX, endY):
                     if isAttacked(False,endX,endY)==False:
                         blackKing=True
                     else:
-                        print('Cannot move into check')
                         valid=False
                         return valid
                 else:
                     if isAttacked(True,endX,endY)==False:
                         whiteKing=True
                     else:
-                        print('Cannot move into check')
                         valid=False
                         return valid
                 return valid
@@ -177,6 +174,7 @@ def isValidMove(startX, startY, endX, endY):
                     board[7][7]=''
         else:
             valid=False
+            return valid
             
     #Move the Rook
     elif piece=='r' or piece=='R':
@@ -185,11 +183,13 @@ def isValidMove(startX, startY, endX, endY):
             if endY>startY:
                 for i in range(startY+1,endY):
                     if board[i][startX]!='':
-                        valid = False                
+                        valid = False  
+                        return valid
             else:
                 for i in range(startY-1,endY,-1):
                     if board[i][startX]!='':
                         valid = False
+                        return valid
             
             #Set that the Rook was moved for castling
             if valid == True and startY==0 and startX==0:
@@ -207,11 +207,13 @@ def isValidMove(startX, startY, endX, endY):
                 for i in range(startX+1,endX):
                     if board[startY][i]!='':
                         valid = False
+                        return valid
                 return valid
             else:
                 for i in range(startX-1,endX,-1):
                     if board[startY][i]!='':
                         valid = False
+                        return valid
                 return valid
             
             #Set that the Rook was moved for castling
@@ -226,6 +228,7 @@ def isValidMove(startX, startY, endX, endY):
                 
         else:
             valid=False
+            return valid
     
     #Move the knight
     elif piece=='n'or piece=='N':
@@ -233,6 +236,7 @@ def isValidMove(startX, startY, endX, endY):
             return valid
         else:
             valid = False
+            return valid
     
     #Move the bishop
     elif piece=='b'or piece=='B':
@@ -271,6 +275,7 @@ def isValidMove(startX, startY, endX, endY):
             return valid
         else:
             valid = False
+            return valid
     
     #Move the Queen    
     elif piece=='q'or piece=='Q':
@@ -315,11 +320,13 @@ def isValidMove(startX, startY, endX, endY):
                     for i in range(startY+1,endY):
                         if board[i][startX]!='':
                             valid = False
+                            return valid
                     return valid
                 else:
                     for i in range(startY-1,endY,-1):
                         if board[i][startX]!='':
                             valid = False
+                            return valid
                     return valid
             #make sure it moves in a line
             elif (startY==endY and startX!=endX):
@@ -327,14 +334,17 @@ def isValidMove(startX, startY, endX, endY):
                     for i in range(startX+1,endX):
                         if board[startY][i]!='':
                             valid = False
+                            return valid
                     return valid
                 else:
                     for i in range(startX-1,endX,-1):
                         if board[startY][i]!='':
                             valid = False
+                            return valid
                     return valid
         else:
             valid = False
+            return valid
     
     #Move pawns
     elif piece=='p'or piece=='P':
@@ -617,6 +627,7 @@ while(isCheckmate()!=True):
     
     #If the current peice is the correct one for the turn we are on
     if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
+<<<<<<< HEAD
         #Make the move and check if makes check or not
         if makeMove(whiteMove,startX,startY,endX,endY)==False:
             #Invalid move, do nothing
@@ -645,3 +656,71 @@ while(isCheckmate()!=True):
             for i in range(8,16):
                 movedTwo[i]=False
           
+=======
+        #Make sure the target square is not occupied by an ally
+        if board[endY][endX].isupper():
+            print("Cannot target friendly piece")
+        #make sure they get out of check
+        elif isCheck(True)==True:
+            #Make the move and check if makes check or not
+            if makeMove(whiteMove,startX,startY,endX,endY)==False:
+                #Invalid move, do nothing
+                print("You are still in check")
+            else:
+                #Now blacks turn
+                whiteMove=False
+                #Update squares which are attacked
+                updateAttacked()
+                #Reset Black for En Passant
+                for i in range(8):
+                    movedTwo[i]=False
+        #Else make any valid move
+        elif isCheck(True)==False:
+            #Make the move and check if makes check or not
+            if makeMove(whiteMove,startX,startY,endX,endY)==False:
+                #Invalid move, do nothing
+                print("You cannot put yourself in check")
+            else:
+                #Now blacks turn
+                whiteMove=False
+                #Update squares which are attacked
+                updateAttacked()
+                #Reset Black for En Passant
+                for i in range(8):
+                    movedTwo[i]=False
+        
+                
+    elif whiteMove==False and board[startY][startX]!='' and board[startY][startX].islower():
+        #Make sure the target square is not occupied by an ally
+        if board[endY][endX].islower():
+            print("Cannot target friendly piece")
+        #make sure they get out of check
+        elif isCheck(False)==True:  
+            #Make the move and check if makes check or not
+            if makeMove(whiteMove,startX,startY,endX,endY)==False:
+                #Invalid move, do nothing
+                print("You are still in check")
+            else:
+                #Now whites turn
+                whiteMove=True
+                #Update squares which are attacked
+                updateAttacked()
+                #Reset White for En Passant
+                for i in range(8,16):
+                    movedTwo[i]=False
+          
+        #Else make any valid move
+        elif isCheck(False)==False:        
+            #Make the move and check if makes check or not
+            if makeMove(whiteMove,startX,startY,endX,endY)==False:
+                #Invalid move, do nothing
+                print("You cannot put yourself in check")
+            else:
+                #Now whites turn
+                whiteMove=True
+                #Update squares which are attacked
+                updateAttacked()
+                #Reset White for En Passant
+                for i in range(8,16):
+                    movedTwo[i]=False
+>>>>>>> refs/remotes/origin/master
