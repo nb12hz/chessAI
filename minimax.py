@@ -29,10 +29,10 @@ class minimax:
     All moves are made using a sepereate set of variables"""
     #The main decision function
     def minimax(self):
-        if isLegalMotion():
-            newGameState = copy.deepcopy(gameState)
-            if isValid() and isCheck()==False:
-                minPlay(self, newGameState)
+        if self.isLegalMotion():
+            newGameState = copy.deepcopy(self.gameState)
+            if self.isValid() and self.isCheck()==False:
+                self.minPlay(self, newGameState)
         return 0
     
     #The evaluation function for the AI's turn
@@ -285,6 +285,7 @@ class minimax:
                 return valid
             else:
                 valid = False
+                return valid
         
         #Move the Queen    
         elif piece=='q'or piece=='Q':
@@ -329,11 +330,13 @@ class minimax:
                         for i in range(startY+1,endY):
                             if (gameState[0])[i][startX]!='':
                                 valid = False
+                                return valid
                         return valid
                     else:
                         for i in range(startY-1,endY,-1):
                             if (gameState[0])[i][startX]!='':
                                 valid = False
+                                return valid
                         return valid
                 #make sure it moves in a line
                 elif (startY==endY and startX!=endX):
@@ -341,14 +344,17 @@ class minimax:
                         for i in range(startX+1,endX):
                             if (gameState[0])[startY][i]!='':
                                 valid = False
+                                return valid
                         return valid
                     else:
                         for i in range(startX-1,endX,-1):
                             if (gameState[0])[startY][i]!='':
                                 valid = False
+                                return valid
                         return valid
             else:
                 valid = False
+                return valid
         
         #Move pawns
         elif piece=='p'or piece=='P':
@@ -463,6 +469,7 @@ class minimax:
         #Not caught by any case, invalid move
         else:
             valid=False
+            return valid
         
         return valid
     
