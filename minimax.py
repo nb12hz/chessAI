@@ -466,7 +466,7 @@ class minimax:
                             
                     for newX in range(8):
                         for newY in range(8):
-                            if len(board[y][x])<=1 and isValidMove(x,y,newX,newY)==True:
+                            if len(board[y][x])<=1 and self.isValidMove(x,y,newX,newY)==True:
                                 attackedByWhite[newY][newX]=True
                                 
                 #Update attacked by black
