@@ -195,7 +195,7 @@ def isValidMove(startX, startY, endX, endY):
             if valid == True and startY==0 and startX==0:
                 blackQS=True
             elif valid==True and startY==0 and startX==7:
-                blackQS=True
+                blackKS=True
             elif valid==True and startY==7 and startX==0:
                 whiteQS=True
             elif valid==True and startY==7 and startX==7:
@@ -218,7 +218,7 @@ def isValidMove(startX, startY, endX, endY):
             if valid == True and startY==0 and startX==0:
                 blackQS=True
             elif valid==True and startY==0 and startX==7:
-                blackQS=True
+                blackKS=True
             elif valid==True and startY==7 and startX==0:
                 whiteQS=True
             elif valid==True and startY==7 and startX==7:
