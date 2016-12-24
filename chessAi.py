@@ -9,7 +9,9 @@ Created on Thu Dec 22 13:37:05 2016
 from __future__ import print_function
 import wx
 import math
+import impAI.py
 import copy
+import Integer
 
 """Booleans for kings and rooks, used for castling"""
 whiteKS = False
@@ -19,6 +21,8 @@ blackQS = False
 whiteKing = False
 blackKing = False
 
+"""These functions are for the defintion of the chess board
+This allows for playing chess without an AI"""
 """Basic UI and movement functions"""
 #Setup the peices on the board
 def intializeBoard():
@@ -551,7 +555,11 @@ def makeMove(isWhite, startX, startY, endX, endY):
 def isCheckmate():
     
     return False
+
+
     
+    
+
 """Our main function calls"""
 intializeBoard()
 updateAttacked()
