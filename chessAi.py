@@ -527,7 +527,7 @@ def isCheck(isWhite):
                     currentX=x
                     
         return attackedByWhite[currentY][currentX]
-    #White Queen, check if space is attacked by Black
+    #White King, check if space is attacked by Black
     else:
         for x in range(8):
             for y in range(8):
@@ -580,13 +580,108 @@ def makeMove(isWhite, startX, startY, endX, endY):
     
     
 """Check if there is a checkmate"""
-def isCheckmate():
+def isCheckmate(isWhite):
+    global board, pawnMoved, movedTwo, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
+    #Find Black King
+    if isWhite==False:
+        for x in range(8):
+            for y in range(8):
+                if board[y][x]=='k':
+                    currentY=y
+                    currentX=x
+    #Find White King
+    else:
+        for x in range(8):
+            for y in range(8):
+                if board[y][x]=='K':
+                    currentY=y
+                    currentX=x
+    #Check through all 8 possible moves for the King
+    i = currentY - 1
+    j = currentX - 1
+    for i in range(currentY+1):
+        for j in range(currentX+1):
+            if isValidMove(currentX,currentY,j,i):
+                return False
+                
+    #Check every possible move for White
+    if(isWhite):
+        for sY in range(8):
+            for sX in range(8):
+                if board[sY][sX].isupper():
+                    for eY in range(8):
+                        for eX in range(8):
+                            tempBoard = copy.deepcopy(board)
+                            tempPawns = copy.deepcopy(pawnMoved)
+                            tempTwo = copy.deepcopy(movedTwo)
+                            
+                            WkingMoved = whiteKing
+                            WkingSide = whiteKS
+                            WqueenSide = whiteQS
+                            BkingMoved = blackKing
+                            BkingSide = blackKS
+                            BqueenSide = blackQS
+                            
+                            print("Tried ",sX, " ", sY, " ", eX, " ", eY)
+                            if isValidMove(sX,sY,eX,eY):
+                                print("Succeeded ",sX, " ", sY, " ", eX, " ", eY)
+                                movePiece(sX,sY,eX,eY)
+                                updateAttacked()
+                                
+                                if isCheck(isWhite)==True:
+                                    board=copy.deepcopy(tempBoard)
+                                    pawnMoved=copy.deepcopy(tempPawns)
+                                    movedTwo=copy.deepcopy(tempTwo)
+                                    updateAttacked()
+                                    whiteKing=WkingMoved
+                                    whiteKS=WkingSide
+                                    whiteQS=WqueenSide
+                                    blackKing=BkingMoved
+                                    blackKS=BkingSide
+                                    blackQS=BqueenSide
+                                    return True
+                                else:
+                                    return False
+    #Check every possible move for Black
+    else:
+        for sY in range(8):
+            for sX in range(8):
+                if board[sY][sX].islower():
+                    for eY in range(8):
+                        for eX in range(8):
+                            tempBoard = copy.deepcopy(board)
+                            tempPawns = copy.deepcopy(pawnMoved)
+                            tempTwo = copy.deepcopy(movedTwo)
+                            
+                            WkingMoved = whiteKing
+                            WkingSide = whiteKS
+                            WqueenSide = whiteQS
+                            BkingMoved = blackKing
+                            BkingSide = blackKS
+                            BqueenSide = blackQS
+                            
+                            print("Tried ",sX, " ", sY, " ", eX, " ", eY)
+                            if isValidMove(sX,sY,eX,eY):
+                                print("Succeeded ",sX, " ", sY, " ", eX, " ", eY)
+                                movePiece(sX,sY,eX,eY)
+                                updateAttacked()
+                                
+                                if isCheck(isWhite)==True:
+                                    board=copy.deepcopy(tempBoard)
+                                    pawnMoved=copy.deepcopy(tempPawns)
+                                    movedTwo=copy.deepcopy(tempTwo)
+                                    updateAttacked()
+                                    whiteKing=WkingMoved
+                                    whiteKS=WkingSide
+                                    whiteQS=WqueenSide
+                                    blackKing=BkingMoved
+                                    blackKS=BkingSide
+                                    blackQS=BqueenSide
+                                    return True
+                                else:
+                                    return False
     return False
-
-
-    
-    
 
 """Our main function calls"""
 intializeBoard()
@@ -596,7 +691,7 @@ ranks = ['8','7','6','5','4','3','2','1']
 
 whiteMove=True
 
-while(isCheckmate()!=True):
+while(isCheckmate(whiteMove)!=True):
     displayBoard()
     if(whiteMove):
         print("White's move")
