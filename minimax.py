@@ -9,7 +9,8 @@ import copy
 import sys
     
 class minimax:
-    def __init__(self, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
+    def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
+        self.Max_Depth = Max_Depth        
         self.gameState[0] = board
         self.gameState[1] = pawnMoved
         self.gameState[2] = movedTwo
@@ -28,12 +29,15 @@ class minimax:
     All moves are made using a sepereate set of variables"""
     #The main decision function
     def minimax(self):
-        
+        if isLegalMotion():
+            newGameState = copy.deepcopy(gameState)
+            if isValid() and isCheck()==False:
+                minPlay(self, newGameState)
         return 0
     
     #The evaluation function for the AI's turn
-    def maxPlay(self):
-            #Check if game is over
+    def maxPlay(self, depth, gameState):
+        #Check if game is over
         if self.isCheckmate():
             return self.evaluateGame()
             
@@ -42,7 +46,8 @@ class minimax:
         return maxScore
         
     #The evaluation function for the Opponents turn
-    def minPlay(self):
+    def minPlay(self, depth, gameState):
+        
         #Check if game is over
         if self.isCheckmate():
             return self.evaluateGame()
@@ -66,6 +71,9 @@ class minimax:
             (gameState[0])[endY][endX]=(gameState[0])[startY][startX]
             (gameState[0])[startY][startX] = ''
             
+    def isLegalMotion(gameState,startX, startY, endX, endY):
+        return True
+    
     """Define the rules for movements in chess"""
     def isValidMove(self, gameState, startX, startY, endX, endY):
         
@@ -81,14 +89,17 @@ class minimax:
         #No piece to move
         if piece=='':
             valid = False
+            return valid
            
         #If the piece is friendly
         elif targetPiece!='' and piece.isupper() and targetPiece.isupper():
             valid=False
+            return valid
             
         #If the piece is friendly   
         elif targetPiece!='' and piece.islower() and targetPiece.islower():
             valid=False
+            return valid
         
         #Move the king
         elif piece=='k'or piece=='K':
@@ -99,11 +110,13 @@ class minimax:
                             gameState[8]=True
                         else:
                             valid=False
+                            return valid
                     else:
                         if self.isAttacked(gameState,True,endX,endY)==False:
                             gameState[7]=True
                         else:
                             valid=False
+                            return valid
                     return valid
                 else:
                     valid = False
@@ -171,6 +184,7 @@ class minimax:
                         (gameState[0])[7][7]=''
             else:
                 valid=False
+                return valid
                 
         #Move the Rook
         elif piece=='r' or piece=='R':
@@ -179,11 +193,13 @@ class minimax:
                 if endY>startY:
                     for i in range(startY+1,endY):
                         if (gameState[0])[i][startX]!='':
-                            valid = False                
+                            valid = False 
+                            return valid
                 else:
                     for i in range(startY-1,endY,-1):
                         if (gameState[0])[i][startX]!='':
                             valid = False
+                            return valid
                 
                 #Set that the Rook was moved for castling
                 if valid == True and startY==0 and startX==0:
@@ -201,11 +217,13 @@ class minimax:
                     for i in range(startX+1,endX):
                         if (gameState[0])[startY][i]!='':
                             valid = False
+                            return valid
                     return valid
                 else:
                     for i in range(startX-1,endX,-1):
                         if (gameState[0])[startY][i]!='':
                             valid = False
+                            return valid
                     return valid
                 
                 #Set that the Rook was moved for castling
@@ -220,6 +238,7 @@ class minimax:
                     
             else:
                 valid=False
+                return valid
         
         #Move the knight
         elif piece=='n'or piece=='N':
@@ -227,6 +246,7 @@ class minimax:
                 return valid
             else:
                 valid = False
+                return valid
         
         #Move the bishop
         elif piece=='b'or piece=='B':
