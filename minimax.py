@@ -385,7 +385,7 @@ class minimax:
                     #Moving forward 2 spots
                     if (endY-startY)==2:
                         #Make sure it hasn't moved yet and no pieces in front
-                        if (gameState[1])[int(((gameState[0])[startY][startX])[1])-1]!=True and (gameState[0])[startY+1][startX+1]=='' and (gameState[0])[endY][endX]=='':
+                        if (gameState[1])[int(((gameState[0])[startY][startX])[1])-1]!=True and (gameState[0])[startY+1][startX]=='' and (gameState[0])[endY][endX]=='':
                             (gameState[1])[int(((gameState[0])[startY][startX])[1])-1]=True
                             (gameState[2])[int(((gameState[0])[startY][startX])[1])-1]=True                      
                             return valid
@@ -439,7 +439,7 @@ class minimax:
                     #Moving forward 2 spots
                     if (startY-endY)==2:
                         #Make sure it hasn't moved yet and no pieces in front
-                        if (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]!=True and (gameState[0])[startY-1][startX-1]=='' and (gameState[0])[endY][endX]=='':
+                        if (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]!=True and (gameState[0])[startY-1][startX]=='' and (gameState[0])[endY][endX]=='':
                             (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
                             (gameState[2])[int(((gameState[0])[startY][startX])[1])+7]=True
                             return valid

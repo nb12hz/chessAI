@@ -381,7 +381,7 @@ def isValidMove(startX, startY, endX, endY):
                 #Moving forward 2 spots
                 if (endY-startY)==2:
                     #Make sure it hasn't moved yet and no pieces in front
-                    if pawnMoved[int((board[startY][startX])[1])-1]!=True and board[startY+1][startX+1]=='' and board[endY][endX]=='':
+                    if pawnMoved[int((board[startY][startX])[1])-1]!=True and board[startY+1][startX]=='' and board[endY][endX]=='':
                         pawnMoved[int((board[startY][startX])[1])-1]=True
                         movedTwo[int((board[startY][startX])[1])-1]=True                      
                         return valid
@@ -435,7 +435,7 @@ def isValidMove(startX, startY, endX, endY):
                 #Moving forward 2 spots
                 if (startY-endY)==2:
                     #Make sure it hasn't moved yet and no pieces in front
-                    if pawnMoved[int((board[startY][startX])[1])+7]!=True and board[startY-1][startX-1]=='' and board[endY][endX]=='':
+                    if pawnMoved[int((board[startY][startX])[1])+7]!=True and board[startY-1][startX]=='' and board[endY][endX]=='':
                         pawnMoved[int((board[startY][startX])[1])+7]=True
                         movedTwo[int((board[startY][startX])[1])+7]=True
                         return valid
@@ -550,25 +550,30 @@ def makeMove(isWhite, startX, startY, endX, endY):
     BkingSide = blackKS
     BqueenSide = blackQS
     
+    print("Tried ",startX, " ", startY, " ", endX, " ", endY)
     if isValidMove(startX,startY,endX,endY):
+        print("Succeeded ",startX, " ", startY, " ", endX, " ", endY)
         movePiece(startX, startY, endX, endY)
-    
-    updateAttacked()
-    
-    if isCheck(isWhite)==True:
-        board=copy.deepcopy(tempBoard)
-        pawnMoved=copy.deepcopy(tempPawns)
-        movedTwo=copy.deepcopy(tempTwo)
         updateAttacked()
-        whiteKing=WkingMoved
-        whiteKS=WkingSide
-        whiteQS=WqueenSide
-        blackKing=BkingMoved
-        blackKS=BkingSide
-        blackQS=BqueenSide        
+    
+        if isCheck(isWhite)==True:
+            board=copy.deepcopy(tempBoard)
+            pawnMoved=copy.deepcopy(tempPawns)
+            movedTwo=copy.deepcopy(tempTwo)
+            updateAttacked()
+            whiteKing=WkingMoved
+            whiteKS=WkingSide
+            whiteQS=WqueenSide
+            blackKing=BkingMoved
+            blackKS=BkingSide
+            blackQS=BqueenSide        
+            return False
+        else:
+            return True
+    
+    else:
         return False
-        
-    return True
+    
     
 """Check if there is a checkmate"""
 def isCheckmate():
