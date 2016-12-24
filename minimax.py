@@ -6,7 +6,7 @@ Created on Sat Dec 24 10:41:13 2016
 """
 
 import copy
-import Integer
+import sys
     
 class minimax:
     def __init__(self, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
@@ -35,7 +35,7 @@ class minimax:
         if self.isCheckmate():
             return self.evaluateGame()
             
-        maxScore = Integer.MIN_VALUE
+        maxScore = -sys.maxint -1
         
         return maxScore
         
@@ -45,7 +45,7 @@ class minimax:
         if self.isCheckmate():
             return self.evaluateGame()
             
-        minScore = Integer.MAX_VALUE
+        minScore = sys.maxint
         
         
         return minScore
