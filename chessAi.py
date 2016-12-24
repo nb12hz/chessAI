@@ -3,13 +3,13 @@
 Created on Thu Dec 22 13:37:05 2016
 
 @author: Nick Blais and Mitchell Blais
-@student number: 5245741 and 
+@student number: 5245741 and 5686779
 """
 
 from __future__ import print_function
 import wx
 import math
-import minimax.py
+import minimax
 import copy
 
 """Booleans for kings and rooks, used for castling"""
@@ -76,14 +76,19 @@ def isValidMove(startX, startY, endX, endY):
     
     #No piece to move
     if piece=='':
+        print('No Piece Selected')
         valid = False
+        return valid
        
     #If the piece is friendly
     elif targetPiece!='' and piece.isupper() and targetPiece.isupper():
+        print('Error: Target is ally')
         valid=False
+        return valid
         
     #If the piece is friendly   
     elif targetPiece!='' and piece.islower() and targetPiece.islower():
+        print('Error: Target is ally')
         valid=False
     
     #Move the king
@@ -94,14 +99,19 @@ def isValidMove(startX, startY, endX, endY):
                     if isAttacked(False,endX,endY)==False:
                         blackKing=True
                     else:
+                        print('Cannot move into check')
                         valid=False
+                        return valid
                 else:
                     if isAttacked(True,endX,endY)==False:
                         whiteKing=True
                     else:
+                        print('Cannot move into check')
                         valid=False
+                        return valid
                 return valid
             else:
+                
                 valid = False
                 return valid
                 
