@@ -9,7 +9,7 @@ Created on Thu Dec 22 13:37:05 2016
 from __future__ import print_function
 import wx
 import math
-import minimax
+from minimax import minimax
 import copy
 
 """Booleans for kings and rooks, used for castling"""
@@ -400,6 +400,9 @@ def isValidMove(startX, startY, endX, endY):
                     else:
                         valid=False
                         return valid
+                else:
+                    valid=False
+                    return False
             else:
                 valid=False
                 return valid
@@ -454,6 +457,9 @@ def isValidMove(startX, startY, endX, endY):
                     else:
                         valid=False
                         return valid
+                else:
+                    valid=False
+                    return valid
             else:
                 valid=False
                 return valid
@@ -680,6 +686,7 @@ def isCheckmate(isWhite):
 """Our main function calls"""
 intializeBoard()
 updateAttacked()
+AI = minimax(2,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
 files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 
@@ -689,43 +696,62 @@ while(isCheckmate(whiteMove)!=True):
     displayBoard()
     if(whiteMove):
         print("White's move")
+        
+        user_input = str(raw_input("Start Position File:"))
+        choice = '~'
+        while choice=='~':
+            if user_input in files:
+                choice = files.index(user_input)
+                if choice>=0 and choice<8:
+                    startX = choice
+                    
+        user_input = str(input("Start Position Rank:"))
+        choice = '~'
+        while choice=='~':
+            if user_input in ranks:
+                choice = ranks.index(user_input)
+                if choice>=0 and choice<8:
+                    startY = choice
+                    
+        user_input = str(raw_input("End Position File:"))
+        choice = '~'
+        while choice=='~':
+            if user_input in files:
+                choice = files.index(user_input)
+                if choice>=0 and choice<8:
+                    endX = choice
+        
+        user_input = str(input("End Position Rank:"))
+        choice = '~'
+        while choice=='~':
+            if user_input in ranks:
+                choice = ranks.index(user_input)
+                if choice>=0 and choice<8:
+                    endY = choice
+                
     else: 
         print("Black's move")
-    
-    if isCheck(whiteMove)==True:
-        print("You are in check")
         
-    user_input = str(raw_input("Start Position File:"))
-    choice = '~'
-    while choice=='~':
-        if user_input in files:
-            choice = files.index(user_input)
-            if choice>=0 and choice<8:
-                startX = choice
-                
-    user_input = str(input("Start Position Rank:"))
-    choice = '~'
-    while choice=='~':
-        if user_input in ranks:
-            choice = ranks.index(user_input)
-            if choice>=0 and choice<8:
-                startY = choice
-                
-    user_input = str(raw_input("End Position File:"))
-    choice = '~'
-    while choice=='~':
-        if user_input in files:
-            choice = files.index(user_input)
-            if choice>=0 and choice<8:
-                endX = choice
+        moveArray = AI.minimaxFunction()
+        
+        if len(moveArray)>0:
+            print("AI returned move")
+            startX = moveArray[0]
+            startY = moveArray[1]
+            endX = moveArray[2]
+            endY = moveArray[3]
     
-    user_input = str(input("End Position Rank:"))
-    choice = '~'
-    while choice=='~':
-        if user_input in ranks:
-            choice = ranks.index(user_input)
-            if choice>=0 and choice<8:
-                endY = choice
+            #Make the move and check if makes check or not
+            if makeMove(whiteMove,startX,startY,endX,endY)==True:
+                #Now whites turn
+                whiteMove=True
+                #Update squares which are attacked
+                updateAttacked()
+                #Reset White for En Passant
+                for i in range(8,16):
+                    movedTwo[i]=False
+            
+    
     
     #If the current peice is the correct one for the turn we are on
     if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
@@ -747,15 +773,11 @@ while(isCheckmate(whiteMove)!=True):
         #Make sure the target square is not occupied by an ally
         if board[endY][endX].islower():
             print("Cannot target friendly piece")
-        #Make the move and check if makes check or not
-        if makeMove(whiteMove,startX,startY,endX,endY)==True:
-            #Now whites turn
-            whiteMove=True
-            #Update squares which are attacked
-            updateAttacked()
-            #Reset White for En Passant
-            for i in range(8,16):
-                movedTwo[i]=False
+            
+            
+    if isCheck(whiteMove)==True:
+        print("You are in check")
+
 
 displayBoard()
 if(whiteMove):
