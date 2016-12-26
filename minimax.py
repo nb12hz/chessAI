@@ -64,6 +64,7 @@ class minimax:
                     for newX in range(8):
                         for newY in range(8):
                             if maxScore>currentMin:
+                                print("pruned")
                                 return maxScore
                             elif self.isLegalMotion(gameState,x,y,newX,newY):
                                 newGameState = copy.deepcopy(gameState)
@@ -89,6 +90,7 @@ class minimax:
                     for newX in range(8):
                         for newY in range(8):
                             if minScore<currentMax:
+                                print("pruned")
                                 return minScore
                             elif self.isLegalMotion(gameState,x,y,newX,newY):
                                 newGameState = copy.deepcopy(gameState)
@@ -102,37 +104,49 @@ class minimax:
         
     def evaluateGame(self, gameState, isWhite):
         materialScore = 0
-        if isWhite==False:
-            for x in range(8):
-                for y in range(8):
-                    if (gameState[0])[y][x]!='':
-                        #catch empty spot
-                        if (gameState[0])[y][x]=='k':
-                            materialScore+=200
-                        elif (gameState[0])[y][x]=='K':
-                            materialScore-=200
-                        elif (gameState[0])[y][x]=='q':
-                            materialScore+=9
-                        elif (gameState[0])[y][x]=='Q':
-                            materialScore-=9
-                        elif (gameState[0])[y][x]=='r':
-                            materialScore+=5
-                        elif (gameState[0])[y][x]=='R':
-                            materialScore-=5
-                        elif (gameState[0])[y][x]=='b':
-                            materialScore+=3
-                        elif (gameState[0])[y][x]=='B':
-                            materialScore-=3
-                        elif (gameState[0])[y][x]=='n':
-                            materialScore+=3
-                        elif (gameState[0])[y][x]=='N':
-                            materialScore-=3
-                        elif ((gameState[0])[y][x])[0]=='p':
-                            materialScore+=1
-                        elif ((gameState[0])[y][x])[0]=='P':
-                            materialScore-=1
-                     
-        return materialScore
+        centerControl = 0
+        for x in range(8):
+            for y in range(8):
+                if (gameState[0])[y][x]!='':
+                    #catch empty spot
+                    if (gameState[0])[y][x]=='k':
+                        materialScore+=200
+                    elif (gameState[0])[y][x]=='K':
+                        materialScore-=200
+                    elif (gameState[0])[y][x]=='q':
+                        materialScore+=9
+                    elif (gameState[0])[y][x]=='Q':
+                        materialScore-=9
+                    elif (gameState[0])[y][x]=='r':
+                        materialScore+=5
+                    elif (gameState[0])[y][x]=='R':
+                        materialScore-=5
+                    elif (gameState[0])[y][x]=='b':
+                        materialScore+=3
+                        if (x>=2 or x<=5):
+                            centerControl+=0.5
+                    elif (gameState[0])[y][x]=='B':
+                        materialScore-=3
+                        if (x>=2 or x<=5):
+                            centerControl-=0.5
+                    elif (gameState[0])[y][x]=='n':
+                        materialScore+=3
+                        if (x>=2 or x<=5) and y>0:
+                            centerControl+=1
+                    elif (gameState[0])[y][x]=='N':
+                        materialScore-=3
+                        if (x>=2 or x<=5) and y<7:
+                            centerControl-=1
+                    elif ((gameState[0])[y][x])[0]=='p':
+                        materialScore+=1
+                        if (x>=2 or x<=5) and y>0:
+                            centerControl+=0.5
+                    elif ((gameState[0])[y][x])[0]=='P':
+                        materialScore-=1
+                        if (x>=2 or x<=5) and y<7:
+                            centerControl-=0.5
+                 
+        return materialScore+centerControl
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
