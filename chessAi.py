@@ -587,7 +587,7 @@ def makeMove(isWhite, startX, startY, endX, endY):
     
 """Check if there is a checkmate"""
 def isCheckmate(isWhite):
-    global board, pawnMoved, movedTwo, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
+    global board, pawnMoved, movedTwo, attackedByWhite, attackedByBlack, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
     #Find Black King
     if isWhite==False:
@@ -604,12 +604,16 @@ def isCheckmate(isWhite):
                     currentY=y
                     currentX=x
     #Check through all 8 possible moves for the King
-    i = currentY - 1
-    j = currentX - 1
-    for i in range(currentY+1):
-        for j in range(currentX+1):
-            if isValidMove(currentX,currentY,j,i):
-                return False
+    for i in range(currentY - 1, currentY+2):
+        for j in range(currentX - 1, currentX+2):
+            if i>=0 and i<=7:
+                if j>=0 and j<=7:
+                    if isWhite==False:
+                        if attackedByWhite[i][j]==False:
+                            return False
+                    else:
+                        if attackedByBlack[i][j]==False:
+                            return False
                 
     #Check every possible move for White
     if(isWhite):
