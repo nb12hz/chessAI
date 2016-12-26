@@ -734,14 +734,23 @@ while(isCheckmate(whiteMove)!=True):
         
         moveArray = AI.minimaxFunction()
         
-        currentX = moveArray[0]
-        currentY = moveArray[1]
-        endX = moveArray[2]
-        endY = moveArray[3]
+        if len(moveArray)>0:
+            print("AI returned move")
+            startX = moveArray[0]
+            startY = moveArray[1]
+            endX = moveArray[2]
+            endY = moveArray[3]
     
-        
-    if isCheck(whiteMove)==True:
-        print("You are in check")
+            #Make the move and check if makes check or not
+            if makeMove(whiteMove,startX,startY,endX,endY)==True:
+                #Now whites turn
+                whiteMove=True
+                #Update squares which are attacked
+                updateAttacked()
+                #Reset White for En Passant
+                for i in range(8,16):
+                    movedTwo[i]=False
+            
     
     
     #If the current peice is the correct one for the turn we are on
@@ -764,15 +773,11 @@ while(isCheckmate(whiteMove)!=True):
         #Make sure the target square is not occupied by an ally
         if board[endY][endX].islower():
             print("Cannot target friendly piece")
-        #Make the move and check if makes check or not
-        if makeMove(whiteMove,startX,startY,endX,endY)==True:
-            #Now whites turn
-            whiteMove=True
-            #Update squares which are attacked
-            updateAttacked()
-            #Reset White for En Passant
-            for i in range(8,16):
-                movedTwo[i]=False
+            
+            
+    if isCheck(whiteMove)==True:
+        print("You are in check")
+
 
 displayBoard()
 if(whiteMove):
