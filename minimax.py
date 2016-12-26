@@ -10,6 +10,7 @@ import sys
     
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
+        self.gameState = [0 for i in range(11)]        
         self.Max_Depth = Max_Depth        
         self.gameState[0] = board
         self.gameState[1] = pawnMoved
@@ -28,7 +29,7 @@ class minimax:
     """This is the defintion of out AI functions
     All moves are made using a sepereate set of variables"""
     #The main decision function
-    def minimax(self):
+    def minimaxFunction(self):
         bestMove=[]
         bestScore = -sys.maxint-1
         
@@ -38,10 +39,10 @@ class minimax:
                 if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower():
                     for newX in range(8):
                         for newY in range(8):
-                            if self.isLegalMotion(self, self.gameState,x,y,newX,newY):
+                            if self.isLegalMotion(self.gameState,x,y,newX,newY):
                                 newGameState = copy.deepcopy(self.gameState)
-                                if self.isValidMove(self,newGameState,x,y,newX,newY) and self.isCheck(newGameState,False)==False:
-                                    score = self.minPlay(self, newGameState)
+                                if self.isValidMove(newGameState,x,y,newX,newY) and self.isCheck(newGameState,False)==False:
+                                    score = self.minPlay(0,newGameState,False)
                                     if score>bestScore:
                                         bestScore = score
                                         bestMove = [x,y,newX,newY]
@@ -49,34 +50,85 @@ class minimax:
         return bestMove
     
     #The evaluation function for the AI's turn
-    def maxPlay(self, depth, gameState):
-        #Check if game is over
-        if self.isCheckmate():
-            return self.evaluateGame()
+    def maxPlay(self, depth, gameState, isWhite):
+        #Check if game is over or it's reached max depth
+        if depth==self.Max_Depth or self.isCheckmate():
+            return self.evaluateGame(gameState, isWhite)
             
         maxScore = -sys.maxint -1
         
+        for x in range(8):
+            for y in range(8):
+                #spot is currently occupied by AI's piece
+                if (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower():
+                    for newX in range(8):
+                        for newY in range(8):
+                            if self.isLegalMotion(gameState,x,y,newX,newY):
+                                newGameState = copy.deepcopy(gameState)
+                                if self.isValidMove(newGameState,x,y,newX,newY) and self.isCheck(newGameState,False)==False:
+                                    score = self.minPlay(depth+1,newGameState,isWhite)
+                                    if score>maxScore:
+                                        maxScore = score
+                                        
         return maxScore
         
     #The evaluation function for the Opponents turn
-    def minPlay(self, depth, gameState):
-        
-        #Check if game is over
-        if self.isCheckmate():
-            return self.evaluateGame()
+    def minPlay(self, depth, gameState, isWhite):
+        #Check if game is over or it's reached max depth
+        if depth==self.Max_Depth or self.isCheckmate():
+            return self.evaluateGame(gameState, isWhite)
             
         minScore = sys.maxint
         
+        for x in range(8):
+            for y in range(8):
+                #spot is currently occupied by Opponents piece
+                if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper():
+                    for newX in range(8):
+                        for newY in range(8):
+                            if self.isLegalMotion(gameState,x,y,newX,newY):
+                                newGameState = copy.deepcopy(gameState)
+                                if self.isValidMove(newGameState,x,y,newX,newY) and self.isCheck(newGameState,True)==False:
+                                    score = self.maxPlay(depth+1,newGameState,isWhite)
+                                    if score<minScore:
+                                        minScore = score
         
         return minScore
         
-    def getAvailableMoves(self):
         
-        return 0
-        
-    def evaluateGame(self):
-        
-        return 0
+    def evaluateGame(self, gameState, isWhite):
+        materialScore = 0
+        if isWhite==False:
+            for x in range(8):
+                for y in range(8):
+                    if (gameState[0])[y][x]!='':
+                        #catch empty spot
+                        if (gameState[0])[y][x]=='k':
+                            materialScore+=200
+                        elif (gameState[0])[y][x]=='K':
+                            materialScore-=200
+                        elif (gameState[0])[y][x]=='q':
+                            materialScore+=9
+                        elif (gameState[0])[y][x]=='Q':
+                            materialScore-=9
+                        elif (gameState[0])[y][x]=='r':
+                            materialScore+=5
+                        elif (gameState[0])[y][x]=='R':
+                            materialScore-=5
+                        elif (gameState[0])[y][x]=='b':
+                            materialScore+=3
+                        elif (gameState[0])[y][x]=='B':
+                            materialScore-=3
+                        elif (gameState[0])[y][x]=='n':
+                            materialScore+=3
+                        elif (gameState[0])[y][x]=='N':
+                            materialScore-=3
+                        elif ((gameState[0])[y][x])[0]=='p':
+                            materialScore+=1
+                        elif ((gameState[0])[y][x])[0]=='P':
+                            materialScore-=1
+                        
+        return materialScore
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
@@ -856,7 +908,7 @@ class minimax:
                             
                     for newX in range(8):
                         for newY in range(8):
-                            if len((gameState[0])[y][x])<=1 and self.isValidMove(self,gameState,x,y,newX,newY)==True:
+                            if len((gameState[0])[y][x])<=1 and self.isValidMove(gameState,x,y,newX,newY)==True:
                                 (gameState[9])[newY][newX]=True
                                 
                 #Update attacked by black
@@ -870,11 +922,11 @@ class minimax:
                             
                     for newX in range(8):
                         for newY in range(8):
-                            if  len((gameState[0])[y][x])<=1 and self.isValidMove(self,gameState,x,y,newX,newY)==True:
+                            if  len((gameState[0])[y][x])<=1 and self.isValidMove(gameState,x,y,newX,newY)==True:
                                 (gameState[10])[newY][newX]=True                
                     
     """Check if the current square is under attack"""
-    def isAttacked(gameState, isWhite, currentX, currentY):
+    def isAttacked(self, gameState, isWhite, currentX, currentY):
         #Test if white is attacking this square
         if isWhite==False:
             return (gameState[9])[currentY][currentX]
@@ -884,7 +936,7 @@ class minimax:
             return (gameState[10])[currentY][currentX]
         
     """Check if the king is in check"""
-    def isCheck(gameState, isWhite):  
+    def isCheck(self, gameState, isWhite):  
         #Black King, check if space is attacked by white
         if isWhite==False:
             for x in range(8):
@@ -904,3 +956,6 @@ class minimax:
                         currentX=x
                         
             return (gameState[10])[currentY][currentX]
+    
+    def isCheckmate(self):
+        return False
