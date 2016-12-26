@@ -1101,7 +1101,7 @@ def isCheckmate(isWhite):
 """Our main function calls"""
 intializeBoard()
 updateAttacked()
-AI = minimax(2,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
+AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
 files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 
