@@ -702,6 +702,7 @@ while(isCheckmate(whiteMove)!=True):
         print("White's move")
         
         user_input = str(raw_input("Start Position File:"))
+        user_input = user_input.upper()
         choice = '~'
         while choice=='~':
             if user_input in files:
@@ -710,6 +711,7 @@ while(isCheckmate(whiteMove)!=True):
                     startX = choice
                     
         user_input = str(input("Start Position Rank:"))
+        user_input = user_input.upper()
         choice = '~'
         while choice=='~':
             if user_input in ranks:
@@ -718,6 +720,7 @@ while(isCheckmate(whiteMove)!=True):
                     startY = choice
                     
         user_input = str(raw_input("End Position File:"))
+        user_input = user_input.upper()
         choice = '~'
         while choice=='~':
             if user_input in files:
@@ -726,6 +729,7 @@ while(isCheckmate(whiteMove)!=True):
                     endX = choice
         
         user_input = str(input("End Position Rank:"))
+        user_input = user_input.upper()
         choice = '~'
         while choice=='~':
             if user_input in ranks:
