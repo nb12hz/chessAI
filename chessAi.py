@@ -694,44 +694,51 @@ whiteMove=True
 
 while(isCheckmate(whiteMove)!=True):
     displayBoard()
+    validInput = False
     if(whiteMove):
         print("White's move")
         
-        user_input = str(raw_input("Start Position File:"))
-        user_input = user_input.upper()
-        choice = '~'
-        while choice=='~':
+        while (validInput != True):
+            
+            user_input = str(raw_input("Start Position File:")).upper()
             if user_input in files:
+                validInput = True
                 choice = files.index(user_input)
                 if choice>=0 and choice<8:
                     startX = choice
-                    
-        user_input = str(input("Start Position Rank:"))
-        user_input = user_input.upper()
-        choice = '~'
-        while choice=='~':
-            if user_input in ranks:
-                choice = ranks.index(user_input)
-                if choice>=0 and choice<8:
-                    startY = choice
-                    
-        user_input = str(raw_input("End Position File:"))
-        user_input = user_input.upper()
-        choice = '~'
-        while choice=='~':
-            if user_input in files:
-                choice = files.index(user_input)
-                if choice>=0 and choice<8:
-                    endX = choice
-        
-        user_input = str(input("End Position Rank:"))
-        user_input = user_input.upper()
-        choice = '~'
-        while choice=='~':
-            if user_input in ranks:
-                choice = ranks.index(user_input)
-                if choice>=0 and choice<8:
-                    endY = choice
+            else:
+                validInput = False
+                
+            if (validInput):
+                user_input = str(raw_input("Start Position Rank:"))
+                if user_input in ranks:
+                    validInput = True
+                    choice = ranks.index(user_input)
+                    if choice>=0 and choice<8:
+                        startY = choice
+                else:
+                    validInput = False
+                
+            if (validInput):
+                user_input = str(raw_input("End Position File:")).upper()
+                if user_input in files:
+                    validInput = True
+                    choice = files.index(user_input)
+                    if choice>=0 and choice<8:
+                        endX = choice
+                else:
+                    validInput = False
+                
+            if (validInput):
+                user_input = str(raw_input("End Position Rank:"))
+                if user_input in ranks:
+                    validInput = True
+                    choice = ranks.index(user_input)
+                    if choice>=0 and choice<8:
+                        endY = choice
+                else:
+                    validInput = False
+                
                 
     else: 
         print("Black's move")
