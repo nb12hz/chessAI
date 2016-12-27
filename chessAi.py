@@ -968,10 +968,11 @@ def makeMove(isWhite, startX, startY, endX, endY):
                         validChoice = True
                         break
             elif board[7][i]=='p':
-                newPiece = str(raw_input("Coose a new piece:")).lower()
-                while (validChoice != True):
-                    if newPiece in pieces:
-                        board[7][i] = newPiece
+                #newPiece = str(raw_input("Coose a new piece:")).lower()
+                #while (validChoice != True):
+                    #if newPiece in pieces:
+                        #board[7][i] = newPiece
+                        board[7][i] = 'q'
                         validChoice = True
                         break
         
