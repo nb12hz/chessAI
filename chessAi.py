@@ -1003,7 +1003,7 @@ def makeMove(isWhite, startX, startY, endX, endY):
 def isCheckmate(isWhite):
     global board, pawnMoved, movedTwo, attackedByWhite, attackedByBlack, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
-    #Is a king actually in chack?
+    #Is a king actually in check?
     if isCheck(isWhite)==False:
         return False
     elif isCheck(False)==False:
