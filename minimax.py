@@ -70,7 +70,7 @@ class minimax:
     #The evaluation function for the AI's turn
     def maxPlay(self, depth, gameState, isWhite, currentMin):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate():
+        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
             return self.evaluateGame(gameState, isWhite)
             
         maxScore = -sys.maxint -1
@@ -113,7 +113,7 @@ class minimax:
     #The evaluation function for the Opponents turn
     def minPlay(self, depth, gameState, isWhite, currentMax):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate():
+        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
             return self.evaluateGame(gameState, isWhite)
             
         minScore = sys.maxint
@@ -1040,7 +1040,38 @@ class minimax:
         return True
             
     
-    def isCheckmate(self):
-        
+    def isCheckmate(self, gameState, isWhite):
+
+        #Is a king actually in chack?
+        if self.isCheck(gameState, isWhite)==False:
+            return False
+        elif self.isCheck(gameState, False)==False:
+            return False
+                
+        #Find Black King
+        if isWhite==False:
+            for x in range(8):
+                for y in range(8):
+                    if gameState[0][y][x]=='k':
+                        currentY=y
+                        currentX=x
+        #Find White King
+        else:
+            for x in range(8):
+                for y in range(8):
+                    if gameState[0][y][x]=='K':
+                        currentY=y
+                        currentX=x
+        #Check through all 8 possible moves for the King
+        for i in range(currentY - 1, currentY+2):
+            for j in range(currentX - 1, currentX+2):
+                if i>=0 and i<=7:
+                    if j>=0 and j<=7:
+                        if isWhite==False:
+                            if (gameState[9][i][j]==False) and (board[i][j] in ['r','n','b','q','p'])==False:
+                                return False
+                        else:
+                            if (gameState[10][i][j]==False) and (board[i][j] in ['R','N','B','Q','P'])==False:
+                                return False
         
         return False
