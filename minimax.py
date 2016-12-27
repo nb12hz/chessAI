@@ -40,15 +40,30 @@ class minimax:
                     for newX in range(8):
                         for newY in range(8):
                             if self.isLegalMotion(self.gameState,x,y,newX,newY):
-                                newGameState = copy.deepcopy(self.gameState)
-                                if self.isValidMove(newGameState,x,y,newX,newY):
-                                    #makemove
-                                    self.movePiece(newGameState,x,y,newX,newY)
-                                    if self.isCheck(newGameState,False)==False:
-                                        score = self.minPlay(1,newGameState,False,bestScore)
-                                        if score>bestScore:
-                                            bestScore = score
-                                            bestMove = [x,y,newX,newY]
+                                #Make the move on the current board, less copying, improve speed
+                                if (self.gameState[0])[y][x]=='b' or (self.gameState[0])[y][x]=='q' or (self.gameState[0])[y][x]=='n':
+                                    if self.isValidMove(self.gameState,x,y,newX,newY):
+                                        pieceCaptured = (self.gameState[0])[newY][newX]
+                                        #makemove
+                                        self.movePiece(self.gameState,x,y,newX,newY)
+                                        if self.isCheck(self.gameState,False)==False:
+                                            score = self.minPlay(1,self.gameState,False,bestScore)
+                                            if score>bestScore:
+                                                bestScore = score
+                                                bestMove = [x,y,newX,newY]
+                                    #Undo the move
+                                    self.movePiece(self.gameState,newX,newY,x,y)
+                                    (self.gameState[0])[newY][newX]=pieceCaptured
+                                else:
+                                    newGameState = copy.deepcopy(self.gameState)
+                                    if self.isValidMove(newGameState,x,y,newX,newY):
+                                        #makemove
+                                        self.movePiece(newGameState,x,y,newX,newY)
+                                        if self.isCheck(newGameState,False)==False:
+                                            score = self.minPlay(1,newGameState,False,bestScore)
+                                            if score>bestScore:
+                                                bestScore = score
+                                                bestMove = [x,y,newX,newY]
                                         
         return bestMove
     
@@ -69,14 +84,29 @@ class minimax:
                             if maxScore>currentMin:
                                 return maxScore
                             if self.isLegalMotion(gameState,x,y,newX,newY):
-                                newGameState = copy.deepcopy(gameState)
-                                if self.isValidMove(newGameState,x,y,newX,newY):
-                                    #makemove
-                                    self.movePiece(newGameState,x,y,newX,newY)
-                                    if self.isCheck(newGameState,True)==False:
-                                        score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
-                                        if score>maxScore:
-                                            maxScore = score
+                                #print(depth, "didn't deep copy")
+                                #Make the move on the current board, less copying, improve speed
+                                if (gameState[0])[y][x]=='b' or (gameState[0])[y][x]=='q' or (gameState[0])[y][x]=='n':
+                                    pieceCaptured = (gameState[0])[newY][newX]                                  
+                                    if self.isValidMove(gameState,x,y,newX,newY):
+                                        #makemove
+                                        self.movePiece(gameState,x,y,newX,newY)
+                                        if self.isCheck(gameState,False)==False:
+                                            score = self.minPlay(depth+1,gameState,False,maxScore)
+                                            if score>maxScore:
+                                                maxScore = score
+                                    #Undo the move
+                                    self.movePiece(gameState,newX,newY,x,y)
+                                    (gameState[0])[newY][newX]=pieceCaptured
+                                else:
+                                    newGameState = copy.deepcopy(gameState)
+                                    if self.isValidMove(newGameState,x,y,newX,newY):
+                                        #makemove
+                                        self.movePiece(newGameState,x,y,newX,newY)
+                                        if self.isCheck(newGameState,False)==False:
+                                            score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
+                                            if score>maxScore:
+                                                maxScore = score
                                         
         return maxScore
         
@@ -97,14 +127,28 @@ class minimax:
                             if minScore<currentMax:
                                 return minScore
                             if self.isLegalMotion(gameState,x,y,newX,newY):
-                                newGameState = copy.deepcopy(gameState)
-                                if self.isValidMove(newGameState,x,y,newX,newY):
-                                    #makemove
-                                    self.movePiece(newGameState,x,y,newX,newY)
-                                    if self.isCheck(newGameState,False)==False:
-                                        score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
-                                        if score<minScore:
-                                            minScore = score
+                                #Make the move on the current board, less copying, improve speed
+                                if (gameState[0])[y][x]=='B' or (gameState[0])[y][x]=='Q' or (gameState[0])[y][x]=='N':
+                                    pieceCaptured = (gameState[0])[newY][newX]                                     
+                                    if self.isValidMove(gameState,x,y,newX,newY):
+                                        #makemove
+                                        self.movePiece(gameState,x,y,newX,newY)
+                                        if self.isCheck(gameState,True)==False:
+                                            score = self.maxPlay(depth+1,gameState,isWhite,minScore)
+                                            if score<minScore:
+                                                minScore = score
+                                    #Undo the move
+                                    self.movePiece(gameState,newX,newY,x,y)
+                                    (gameState[0])[newY][newX]=pieceCaptured
+                                else:                                
+                                    newGameState = copy.deepcopy(gameState)
+                                    if self.isValidMove(newGameState,x,y,newX,newY):
+                                        #makemove
+                                        self.movePiece(newGameState,x,y,newX,newY)
+                                        if self.isCheck(newGameState,True)==False:
+                                            score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
+                                            if score<minScore:
+                                                minScore = score
         
         return minScore
         
@@ -142,11 +186,11 @@ class minimax:
                             centerControl+=1
                     elif (gameState[0])[y][x]=='N':
                         materialScore-=3
-                        if (x>=2 or x<=5) and y<7:
+                        if (x>=2 or x<=5) and y<6:
                             centerControl-=1
                     elif ((gameState[0])[y][x])[0]=='p':
                         materialScore+=1
-                        if (x>=2 or x<=5) and y>0:
+                        if (x>=2 or x<=5) and y>1:
                             centerControl+=0.5
                     elif ((gameState[0])[y][x])[0]=='P':
                         materialScore-=1
