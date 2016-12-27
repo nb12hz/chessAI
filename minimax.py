@@ -1041,4 +1041,6 @@ class minimax:
             
     
     def isCheckmate(self):
+        
+        
         return False
