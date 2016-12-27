@@ -957,7 +957,6 @@ def makeMove(isWhite, startX, startY, endX, endY):
     if isValidMove(startX,startY,endX,endY):
         print("Succeeded ",startX, " ", startY, " ", endX, " ", endY)
         movePiece(startX, startY, endX, endY)
-        updateAttacked()
         
         #Pawn promotion
         for i in range(8):
@@ -976,6 +975,8 @@ def makeMove(isWhite, startX, startY, endX, endY):
                         validChoice = True
                         break
         
+        updateAttacked()
+                    
         if isCheck(isWhite)==True:
             board=copy.deepcopy(tempBoard)
             pawnMoved=copy.deepcopy(tempPawns)
@@ -1001,6 +1002,12 @@ def makeMove(isWhite, startX, startY, endX, endY):
 def isCheckmate(isWhite):
     global board, pawnMoved, movedTwo, attackedByWhite, attackedByBlack, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
+    #Is a king actually in chack?
+    if isCheck(isWhite)==False:
+        return False
+    elif isCheck(False)==False:
+        return False
+        
     #Find Black King
     if isWhite==False:
         for x in range(8):
@@ -1021,10 +1028,10 @@ def isCheckmate(isWhite):
             if i>=0 and i<=7:
                 if j>=0 and j<=7:
                     if isWhite==False:
-                        if attackedByWhite[i][j]==False:
+                        if (attackedByWhite[i][j]==False) and (board[i][j] in ['r','n','b','q','p'])==False:
                             return False
                     else:
-                        if attackedByBlack[i][j]==False:
+                        if (attackedByBlack[i][j]==False) and (board[i][j] in ['R','N','B','Q','P'])==False:
                             return False
                 
     #Check every possible move for White
