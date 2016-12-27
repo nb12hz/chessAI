@@ -68,7 +68,11 @@ def isValidMove(startX, startY, endX, endY):
     valid = True
     
     #Get current and target piece type
-    piece = (board[startY][startX])[0]
+    if (board[startY][startX]!=''):
+        piece = (board[startY][startX])[0]
+    else:
+        piece = ''
+    
     if board[endY][endX] != '':
         targetPiece = (board[endY][endX])[0]
     else:
@@ -131,6 +135,7 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[0][3]='r'
                     board[0][0]=''
+                    return valid
                     
             #Moving King Side and neither has been moved    
             elif endX>startX and blackKS==False and board[0][7]=='r':
@@ -144,14 +149,21 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[0][5]='r'
                     board[0][7]=''
-                    
+                    return valid
+                   
+            else:
+                valid=False
+                return valid
+                
         elif abs(endX-startX)==2 and endY==startY and piece=='K':
             #King has been moved
             if whiteKing==True:
                 valid=False
                 return valid
+                
             #Moving Queen Side and neither has been moved
             elif startX>endX and whiteQS==False and board[7][0]=='R':
+                print("trying this", piece)
                 #Check if empty between them and not attacked
                 for i in range(1,4):
                     if board[startY][i]!='' or isAttacked(True,i,startY)==True:
@@ -162,6 +174,8 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[7][3]='R'
                     board[7][0]=''
+                    return valid
+                    
             #Moving King Side and neither has been moved    
             elif endX>startX and whiteKS==False and board[7][7]=='R':
                 #Check if empty between them and not attacked
@@ -174,6 +188,11 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[7][5]='R'
                     board[7][7]=''
+                    return valid
+                    
+            else:
+                valid=False
+                return valid
         else:
             valid=False
             return valid
@@ -470,6 +489,378 @@ def isValidMove(startX, startY, endX, endY):
     
     return valid
 
+"""Check if the requested move is legal without updating the game state"""
+def isLegalMove(startX, startY, endX, endY):
+    global board, pawnMoved, whiteKing, blackKing
+    global blackKS, blackQS, whiteKS, whiteQS
+    
+    valid = True
+    
+    #Get current and target piece type
+    if (board[startY][startX]!=''):
+        piece = (board[startY][startX])[0]
+    else:
+        piece = ''
+    
+    if board[endY][endX] != '':
+        targetPiece = (board[endY][endX])[0]
+    else:
+        targetPiece = ''
+    
+    #No piece to move
+    if piece=='':
+        print('No Piece Selected')
+        valid = False
+        return valid
+    
+    #Moving piece to current location
+    if [startY,startX]==[endY,endX]:
+        valid = False
+        return valid
+       
+    #If the piece is friendly
+    elif targetPiece!='' and piece.isupper() and targetPiece.isupper():
+        valid=False
+        return valid
+        
+    #If the piece is friendly   
+    elif targetPiece!='' and piece.islower() and targetPiece.islower():
+        valid=False
+        return valid
+    
+    #Move the king
+    elif piece=='k'or piece=='K':
+        if abs(endX-startX)<=1 and abs(endY-startY)<=1:
+            if piece=='k':
+                if isAttacked(False,endX,endY)==False:
+                    return valid
+                else:
+                    valid=False
+                    return valid
+            else:
+                if isAttacked(True,endX,endY)==False:
+                    return valid
+                else:
+                    valid=False
+                    return valid
+            return valid
+                
+        elif abs(endX-startX)==2 and endY==startY and piece=='k':
+            #King has been moved
+            if blackKing==True:
+                valid=False
+                return valid
+            #Moving Queen Side and neither has been moved
+            elif startX>endX and blackQS==False and board[0][0]=='r':
+                #Check if empty between them and not attacked
+                for i in range(1,4):
+                    if board[startY][i]!='' or isAttacked(False,i,startY)==True:
+                        valid = False
+                        return valid
+                    
+            #Moving King Side and neither has been moved    
+            elif endX>startX and blackKS==False and board[0][7]=='r':
+                #Check if empty between them and not attacked
+                for i in range(5,7):
+                    if board[startY][i]!='' or isAttacked(False,i,startY)==True:
+                        valid = False 
+                        return valid
+                   
+            else:
+                valid=False
+                return valid
+                
+        elif abs(endX-startX)==2 and endY==startY and piece=='K':
+            #King has been moved
+            if whiteKing==True:
+                valid=False
+                return valid
+                
+            #Moving Queen Side and neither has been moved
+            elif startX>endX and whiteQS==False and board[7][0]=='R':
+                print("trying this", piece)
+                #Check if empty between them and not attacked
+                for i in range(1,4):
+                    if board[startY][i]!='' or isAttacked(True,i,startY)==True:
+                        valid = False
+                        return valid
+                    
+            #Moving King Side and neither has been moved    
+            elif endX>startX and whiteKS==False and board[7][7]=='R':
+                #Check if empty between them and not attacked
+                for i in range(5,7):
+                    if board[startY][i]!='' or isAttacked(True,i,startY)==True:
+                        valid = False 
+                        return valid
+                    
+            else:
+                valid=False
+                return valid
+        else:
+            valid=False
+            return valid
+            
+    #Move the Rook
+    elif piece=='r' or piece=='R':
+        #make sure it moves in a line
+        if (startX==endX and startY!=endY):
+            if endY>startY:
+                for i in range(startY+1,endY):
+                    if board[i][startX]!='':
+                        valid = False  
+                        return valid
+            else:
+                for i in range(startY-1,endY,-1):
+                    if board[i][startX]!='':
+                        valid = False
+                        return valid
+                
+        #make sure it moves in a line
+        elif (startY==endY and startX!=endX):
+            if endX>startX:
+                for i in range(startX+1,endX):
+                    if board[startY][i]!='':
+                        valid = False
+                        return valid
+                return valid
+            else:
+                for i in range(startX-1,endX,-1):
+                    if board[startY][i]!='':
+                        valid = False
+                        return valid
+                return valid
+                
+        else:
+            valid=False
+            return valid
+    
+    #Move the knight
+    elif piece=='n'or piece=='N':
+        if (abs(startX-endX)==2 and abs(startY-endY)==1) or (abs(startY-endY)==2 and abs(startX-endX)==1):
+            return valid
+        else:
+            valid = False
+            return valid
+    
+    #Move the bishop
+    elif piece=='b'or piece=='B':
+        #Check that the move is diagonal
+        if (abs(startX-endX)==abs(startY-endY) and startX!=endX and startY!=endY):
+            difference = abs(startX-endX)-1
+            
+            #Left and up
+            if startX>endX and startY>endY:
+                for i in range(difference):
+                    if board[startY-1-i][startX-1-i]!='':
+                        valid=False
+                        return valid
+                        
+            #Left and down
+            elif startX>endX and startY<endY:
+                for i in range(difference):
+                    if board[startY+1+i][startX-1-i]!='':
+                        valid=False
+                        return valid
+                        
+            #Right and Up
+            elif startX<endX and startY>endY:
+                for i in range(difference):
+                    if board[startY-1-i][startX+1+i]!='':
+                        valid=False
+                        return valid
+                        
+            #Right and Down
+            elif startX<endX and startY<endY:
+                for i in range(difference):
+                    if board[startY+1+i][startX+1+i]!='':
+                        valid=False
+                        return valid
+                        
+            return valid
+        else:
+            valid = False
+            return valid
+    
+    #Move the Queen    
+    elif piece=='q'or piece=='Q':
+        #moving like a Bishop
+        if (abs(startX-endX)==abs(startY-endY) and startX!=endX and startY!=endY):
+            difference = abs(startX-endX)-1
+            
+            #Left and up
+            if startX>endX and startY>endY:
+                for i in range(difference):
+                    if board[startY-1-i][startX-1-i]!='':
+                        valid=False
+                        return valid
+                        
+            #Left and down
+            elif startX>endX and startY<endY:
+                for i in range(difference):
+                    if board[startY+1+i][startX-1-i]!='':
+                        valid=False
+                        return valid
+                        
+            #Right and Up
+            elif startX<endX and startY>endY:
+                for i in range(difference):
+                    if board[startY-1-i][startX+1+i]!='':
+                        valid=False
+                        return valid
+                        
+            #Right and Down
+            elif startX<endX and startY<endY:
+                for i in range(difference):
+                    if board[startY+1+i][startX+1+i]!='':
+                        valid=False
+                        return valid
+                        
+            return valid
+        #Moving like a Rook
+        elif (startX==endX and startY!=endY) or (startY==endY and startX!=endX):
+            #make sure it moves in a line
+            if (startX==endX and startY!=endY):
+                if endY>startY:
+                    for i in range(startY+1,endY):
+                        if board[i][startX]!='':
+                            valid = False
+                            return valid
+                    return valid
+                else:
+                    for i in range(startY-1,endY,-1):
+                        if board[i][startX]!='':
+                            valid = False
+                            return valid
+                    return valid
+            #make sure it moves in a line
+            elif (startY==endY and startX!=endX):
+                if endX>startX:
+                    for i in range(startX+1,endX):
+                        if board[startY][i]!='':
+                            valid = False
+                            return valid
+                    return valid
+                else:
+                    for i in range(startX-1,endX,-1):
+                        if board[startY][i]!='':
+                            valid = False
+                            return valid
+                    return valid
+        else:
+            valid = False
+            return valid
+    
+    #Move pawns
+    elif piece=='p'or piece=='P':
+        #Black Pieces
+        if piece=='p':
+            #Capturing
+            if abs(startX-endX)==1:
+                #Moving forward one spot
+                if (endY-startY)==1:
+                    #if the spot is occupied by opponent
+                    if board[endY][endX]!='' and board[endY][endX].isupper():
+                        return valid
+                    #En Passant capture
+                    elif board[endY][endX]=='' and board[startY][endX].isupper() and len(board[startY][endX])>=2:
+                        if movedTwo[int((board[startY][endX])[1])+7]==True:
+                            return valid
+                        else:
+                            valid=False
+                            return valid
+                    #Empty or friendly in the spot
+                    else:
+                        valid = False
+                        return valid
+                #Invalid move (ie 2 forward or backwards)
+                else:
+                    valid = False
+                    return valid
+                    
+            #Moving straight forward
+            elif startX==endX:
+                #Moving forward 2 spots
+                if (endY-startY)==2:
+                    #Make sure it hasn't moved yet and no pieces in front
+                    if pawnMoved[int((board[startY][startX])[1])-1]!=True and board[startY+1][startX]=='' and board[endY][endX]=='':                     
+                        return valid
+                    else:
+                        valid = False
+                        return valid
+                #Forward 1 spot
+                elif (endY-startY)==1:
+                    #The spot is empty in front
+                    if board[endY][endX]=='':
+                        return valid
+                    #Spot is occupied
+                    else:
+                        valid=False
+                        return valid
+                else:
+                    valid=False
+                    return False
+            else:
+                valid=False
+                return valid
+                
+        #White Pieces
+        else:
+            #Capturing
+            if abs(startX-endX)==1:
+                #Moving forward one spot
+                if (endY-startY)==-1:
+                    #if the spot is occupied by opponent
+                    if board[endY][endX]!='' and board[endY][endX].islower():
+                        return valid
+                    #En Passant capture
+                    elif board[endY][endX]=='' and board[startY][endX].isupper() and len(board[startY][endX])>=2:
+                        if movedTwo[int((board[startY][endX])[1])-1]==True:
+                            return valid
+                        else:
+                            valid=False
+                            return valid
+                    #Empty or friendly in the spot
+                    else:
+                        valid = False
+                        return valid
+                #Invalid move (ie 2 forward or backwards)
+                else:
+                    valid = False
+                    return valid
+                    
+            #Moving straight forward       
+            elif startX==endX:
+                #Moving forward 2 spots
+                if (startY-endY)==2:
+                    #Make sure it hasn't moved yet and no pieces in front
+                    if pawnMoved[int((board[startY][startX])[1])+7]!=True and board[startY-1][startX]=='' and board[endY][endX]=='':
+                        return valid
+                    else:
+                        valid = False
+                        return valid
+                #Forward 1 spot
+                elif (startY-endY)==1:
+                    #The spot is empty in front
+                    if board[endY][endX]=='':
+                        return valid
+                    #Spot is occupied
+                    else:
+                        valid=False
+                        return valid
+                else:
+                    valid=False
+                    return valid
+            else:
+                valid=False
+                return valid
+    
+    #Not caught by any case, invalid move
+    else:
+        valid=False
+    
+    return valid
+    
+    
 """Update the currently under attack arrays"""
 def updateAttacked():
     global attackedByWhite, attackedByBlack
@@ -492,7 +883,7 @@ def updateAttacked():
                         
                 for newX in range(8):
                     for newY in range(8):
-                        if len(board[y][x])<=1 and isValidMove(x,y,newX,newY)==True:
+                        if len(board[y][x])<=1 and isLegalMove(x,y,newX,newY)==True:
                             attackedByWhite[newY][newX]=True
                             
             #Update attacked by black
@@ -506,7 +897,7 @@ def updateAttacked():
                         
                 for newX in range(8):
                     for newY in range(8):
-                        if  len(board[y][x])<=1 and isValidMove(x,y,newX,newY)==True:
+                        if  len(board[y][x])<=1 and isLegalMove(x,y,newX,newY)==True:
                             attackedByBlack[newY][newX]=True                
                 
 """Check if the current square is under attack"""
@@ -649,6 +1040,16 @@ def isCheckmate(isWhite):
                                     blackQS=BqueenSide
                                     return True
                                 else:
+                                    board=copy.deepcopy(tempBoard)
+                                    pawnMoved=copy.deepcopy(tempPawns)
+                                    movedTwo=copy.deepcopy(tempTwo)
+                                    updateAttacked()
+                                    whiteKing=WkingMoved
+                                    whiteKS=WkingSide
+                                    whiteQS=WqueenSide
+                                    blackKing=BkingMoved
+                                    blackKS=BkingSide
+                                    blackQS=BqueenSide
                                     return False
     #Check every possible move for Black
     else:
@@ -684,13 +1085,23 @@ def isCheckmate(isWhite):
                                     blackQS=BqueenSide
                                     return True
                                 else:
+                                    board=copy.deepcopy(tempBoard)
+                                    pawnMoved=copy.deepcopy(tempPawns)
+                                    movedTwo=copy.deepcopy(tempTwo)
+                                    updateAttacked()
+                                    whiteKing=WkingMoved
+                                    whiteKS=WkingSide
+                                    whiteQS=WqueenSide
+                                    blackKing=BkingMoved
+                                    blackKS=BkingSide
+                                    blackQS=BqueenSide
                                     return False
     return False
 
 """Our main function calls"""
 intializeBoard()
 updateAttacked()
-AI = minimax(2,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
+AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
 files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 

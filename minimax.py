@@ -41,11 +41,14 @@ class minimax:
                         for newY in range(8):
                             if self.isLegalMotion(self.gameState,x,y,newX,newY):
                                 newGameState = copy.deepcopy(self.gameState)
-                                if self.isValidMove(newGameState,x,y,newX,newY) and self.isCheck(newGameState,False)==False:
-                                    score = self.minPlay(0,newGameState,False,bestScore)
-                                    if score>bestScore:
-                                        bestScore = score
-                                        bestMove = [x,y,newX,newY]
+                                if self.isValidMove(newGameState,x,y,newX,newY):
+                                    #makemove
+                                    self.movePiece(newGameState,x,y,newX,newY)
+                                    if self.isCheck(newGameState,False)==False:
+                                        score = self.minPlay(1,newGameState,False,bestScore)
+                                        if score>bestScore:
+                                            bestScore = score
+                                            bestMove = [x,y,newX,newY]
                                         
         return bestMove
     
@@ -64,14 +67,16 @@ class minimax:
                     for newX in range(8):
                         for newY in range(8):
                             if maxScore>currentMin:
-                                print("pruned")
                                 return maxScore
-                            elif self.isLegalMotion(gameState,x,y,newX,newY):
+                            if self.isLegalMotion(gameState,x,y,newX,newY):
                                 newGameState = copy.deepcopy(gameState)
-                                if self.isValidMove(newGameState,x,y,newX,newY) and self.isCheck(newGameState,False)==False:
-                                    score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
-                                    if score>maxScore:
-                                        maxScore = score
+                                if self.isValidMove(newGameState,x,y,newX,newY):
+                                    #makemove
+                                    self.movePiece(newGameState,x,y,newX,newY)
+                                    if self.isCheck(newGameState,False)==False:
+                                        score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
+                                        if score>maxScore:
+                                            maxScore = score
                                         
         return maxScore
         
@@ -90,14 +95,16 @@ class minimax:
                     for newX in range(8):
                         for newY in range(8):
                             if minScore<currentMax:
-                                print("pruned")
                                 return minScore
-                            elif self.isLegalMotion(gameState,x,y,newX,newY):
+                            if self.isLegalMotion(gameState,x,y,newX,newY):
                                 newGameState = copy.deepcopy(gameState)
-                                if self.isValidMove(newGameState,x,y,newX,newY) and self.isCheck(newGameState,True)==False:
-                                    score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
-                                    if score<minScore:
-                                        minScore = score
+                                if self.isValidMove(newGameState,x,y,newX,newY):
+                                    #makemove
+                                    self.movePiece(newGameState,x,y,newX,newY)
+                                    if self.isCheck(newGameState,False)==False:
+                                        score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
+                                        if score<minScore:
+                                            minScore = score
         
         return minScore
         
@@ -127,7 +134,7 @@ class minimax:
                             centerControl+=0.5
                     elif (gameState[0])[y][x]=='B':
                         materialScore-=3
-                        if (x>=2 or x<=5):
+                        if (x>=2 or x<=5) and y<7:
                             centerControl-=0.5
                     elif (gameState[0])[y][x]=='n':
                         materialScore+=3
@@ -145,8 +152,8 @@ class minimax:
                         materialScore-=1
                         if (x>=2 or x<=5) and y<7:
                             centerControl-=0.5
-                 
-        return materialScore+centerControl
+                            
+        return (materialScore+centerControl)
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
@@ -443,6 +450,9 @@ class minimax:
                         else:
                             valid=False
                             return valid
+                    else:
+                        valid=False
+                        return valid
                 else:
                     valid=False
                     return valid
@@ -491,6 +501,9 @@ class minimax:
                         else:
                             valid=False
                             return valid
+                    else:
+                        valid=False
+                        return valid
                 else:
                     valid=False
                     return valid
@@ -841,6 +854,9 @@ class minimax:
                         else:
                             valid=False
                             return valid
+                    else:
+                        valid=False
+                        return valid
                 else:
                     valid=False
                     return valid
@@ -895,6 +911,9 @@ class minimax:
                         else:
                             valid=False
                             return valid
+                    else:
+                        valid=False
+                        return valid
                 else:
                     valid=False
                     return valid
@@ -926,7 +945,7 @@ class minimax:
                             
                     for newX in range(8):
                         for newY in range(8):
-                            if len((gameState[0])[y][x])<=1 and self.isValidMove(gameState,x,y,newX,newY)==True:
+                            if len((gameState[0])[y][x])<=1 and self.isLegalMotion(gameState,x,y,newX,newY)==True:
                                 (gameState[9])[newY][newX]=True
                                 
                 #Update attacked by black
@@ -940,7 +959,7 @@ class minimax:
                             
                     for newX in range(8):
                         for newY in range(8):
-                            if  len((gameState[0])[y][x])<=1 and self.isValidMove(gameState,x,y,newX,newY)==True:
+                            if  len((gameState[0])[y][x])<=1 and self.isLegalMotion(gameState,x,y,newX,newY)==True:
                                 (gameState[10])[newY][newX]=True                
                     
     """Check if the current square is under attack"""
@@ -962,8 +981,8 @@ class minimax:
                     if (gameState[0])[y][x]=='k':
                         currentY=y
                         currentX=x
-                        
-            return (gameState[9])[currentY][currentX]
+                        return (gameState[9])[currentY][currentX]
+            
             
         #White Queen, check if space is attacked by Black
         else:
@@ -972,8 +991,10 @@ class minimax:
                     if (gameState[0])[y][x]=='K':
                         currentY=y
                         currentX=x
-                        
-            return (gameState[10])[currentY][currentX]
+                        return (gameState[10])[currentY][currentX]
+        
+        return True
+            
     
     def isCheckmate(self):
         return False
