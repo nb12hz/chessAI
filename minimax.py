@@ -60,7 +60,7 @@ class minimax:
     #The evaluation function for the AI's turn
     def maxPlay(self, depth, gameState, isWhite, currentMin):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate():
+        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
             return self.evaluateGame(gameState, isWhite)
             
         maxScore = -sys.maxint -1
@@ -94,7 +94,7 @@ class minimax:
     #The evaluation function for the Opponents turn
     def minPlay(self, depth, gameState, isWhite, currentMax):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate():
+        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
             return self.evaluateGame(gameState, isWhite)
             
         minScore = sys.maxint
@@ -1025,6 +1025,7 @@ class minimax:
         return True
             
     
+<<<<<<< HEAD
     def isCheckmate(self):
         return False
         
@@ -1043,3 +1044,131 @@ class minimax:
         temp[10] = [row[:] for row in (gameState[10])]
         return temp
         
+=======
+    def isCheckmate(self, gameState, isWhite):
+
+        #Is a king actually in check?
+        if self.isCheck(gameState, isWhite)==False:
+            return False
+        elif self.isCheck(gameState, False)==False:
+            return False
+                
+        #Find Black King
+        if isWhite==False:
+            for x in range(8):
+                for y in range(8):
+                    if gameState[0][y][x]=='k':
+                        currentY=y
+                        currentX=x
+        #Find White King
+        else:
+            for x in range(8):
+                for y in range(8):
+                    if gameState[0][y][x]=='K':
+                        currentY=y
+                        currentX=x
+        #Check through all 8 possible moves for the King
+        for i in range(currentY - 1, currentY+2):
+            for j in range(currentX - 1, currentX+2):
+                if i>=0 and i<=7:
+                    if j>=0 and j<=7:
+                        if isWhite==False:
+                            if (gameState[9][i][j]==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
+                                return False
+                        else:
+                            if (gameState[10][i][j]==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
+                                return False
+        
+        #Check every possible move for White
+        if(isWhite):
+            for sY in range(8):
+                for sX in range(8):
+                    if gameState[0][sY][sX].isupper():
+                        for eY in range(8):
+                            for eX in range(8):
+                                tempBoard = copy.deepcopy(gameState[0])
+                                tempPawns = copy.deepcopy(gameState[1])
+                                tempTwo = copy.deepcopy(gameState[2])
+                                
+                                WkingMoved = gameState[7]
+                                WkingSide = gameState[3]
+                                WqueenSide = gameState[4]
+                                BkingMoved = gameState[8]
+                                BkingSide = gameState[5]
+                                BqueenSide = gameState[6]
+                                
+                                if self.isValidMove(sX,sY,eX,eY):
+                                    self.updateAttacked()
+                                    
+                                    if self.isCheck(isWhite)==True:
+                                        gameState[0]=copy.deepcopy(tempBoard)
+                                        gameState[1]=copy.deepcopy(tempPawns)
+                                        gameState[2]=copy.deepcopy(tempTwo)
+                                        self.updateAttacked()
+                                        gameState[7]=WkingMoved
+                                        gameState[3]=WkingSide
+                                        gameState[4]=WqueenSide
+                                        gameState[8]=BkingMoved
+                                        gameState[5]=BkingSide
+                                        gameState[6]=BqueenSide
+                                        return True
+                                    else:
+                                        gameState[0]=copy.deepcopy(tempBoard)
+                                        gameState[1]=copy.deepcopy(tempPawns)
+                                        gameState[2]=copy.deepcopy(tempTwo)
+                                        self.updateAttacked()
+                                        gameState[7]=WkingMoved
+                                        gameState[3]=WkingSide
+                                        gameState[4]=WqueenSide
+                                        gameState[8]=BkingMoved
+                                        gameState[5]=BkingSide
+                                        gameState[6]=BqueenSide
+                                        return False
+        #Check every possible move for Black
+        else:
+            for sY in range(8):
+                for sX in range(8):
+                    if gameState[0][sY][sX].islower():
+                        for eY in range(8):
+                            for eX in range(8):
+                                tempBoard = copy.deepcopy(gameState[0])
+                                tempPawns = copy.deepcopy(gameState[1])
+                                tempTwo = copy.deepcopy(gameState[2])
+                                
+                                WkingMoved = gameState[7]
+                                WkingSide = gameState[3]
+                                WqueenSide = gameState[4]
+                                BkingMoved = gameState[8]
+                                BkingSide = gameState[5]
+                                BqueenSide = gameState[6]
+                                
+                                if self.isValidMove(sX,sY,eX,eY):
+                                    self.updateAttacked()
+                                    
+                                    if self.isCheck(isWhite)==True:
+                                        gameState[0]=copy.deepcopy(tempBoard)
+                                        gameState[1]=copy.deepcopy(tempPawns)
+                                        gameState[2]=copy.deepcopy(tempTwo)
+                                        self.updateAttacked()
+                                        gameState[7]=WkingMoved
+                                        gameState[3]=WkingSide
+                                        gameState[4]=WqueenSide
+                                        gameState[8]=BkingMoved
+                                        gameState[5]=BkingSide
+                                        gameState[6]=BqueenSide
+                                        return True
+                                    else:
+                                        gameState[0]=copy.deepcopy(tempBoard)
+                                        gameState[1]=copy.deepcopy(tempPawns)
+                                        gameState[2]=copy.deepcopy(tempTwo)
+                                        self.updateAttacked()
+                                        gameState[7]=WkingMoved
+                                        gameState[3]=WkingSide
+                                        gameState[4]=WqueenSide
+                                        gameState[8]=BkingMoved
+                                        gameState[5]=BkingSide
+                                        gameState[6]=BqueenSide
+                                        return False
+        
+        return False
+>>>>>>> refs/remotes/origin/master

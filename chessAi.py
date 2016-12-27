@@ -9,6 +9,7 @@ Created on Thu Dec 22 13:37:05 2016
 from __future__ import print_function
 import wx
 import math
+import time
 from minimax import minimax
 import copy
 
@@ -938,6 +939,9 @@ def isCheck(isWhite):
 def makeMove(isWhite, startX, startY, endX, endY):
     global board, pawnMoved, movedTwo, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
+    pieces = ['R','r','N','n','B','b','Q','q']
+    validChoice = False
+    
     tempBoard = copy.deepcopy(board)
     tempPawns = copy.deepcopy(pawnMoved)
     tempTwo = copy.deepcopy(movedTwo)
@@ -953,8 +957,27 @@ def makeMove(isWhite, startX, startY, endX, endY):
     if isValidMove(startX,startY,endX,endY):
         print("Succeeded ",startX, " ", startY, " ", endX, " ", endY)
         movePiece(startX, startY, endX, endY)
+        
+        #Pawn promotion
+        for i in range(8):
+            if board[0][i]=='P':
+                newPiece = str(raw_input("Coose a new piece:")).upper()
+                while (validChoice != True):
+                    if newPiece in pieces:
+                        board[0][i] = newPiece
+                        validChoice = True
+                        break
+            elif board[7][i]=='p':
+                #newPiece = str(raw_input("Coose a new piece:")).lower()
+                #while (validChoice != True):
+                    #if newPiece in pieces:
+                        #board[7][i] = newPiece
+                        board[7][i] = 'q'
+                        validChoice = True
+                        break
+        
         updateAttacked()
-    
+                    
         if isCheck(isWhite)==True:
             board=copy.deepcopy(tempBoard)
             pawnMoved=copy.deepcopy(tempPawns)
@@ -980,6 +1003,12 @@ def makeMove(isWhite, startX, startY, endX, endY):
 def isCheckmate(isWhite):
     global board, pawnMoved, movedTwo, attackedByWhite, attackedByBlack, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
+    #Is a king actually in check?
+    if isCheck(isWhite)==False:
+        return False
+    elif isCheck(False)==False:
+        return False
+        
     #Find Black King
     if isWhite==False:
         for x in range(8):
@@ -1000,10 +1029,10 @@ def isCheckmate(isWhite):
             if i>=0 and i<=7:
                 if j>=0 and j<=7:
                     if isWhite==False:
-                        if attackedByWhite[i][j]==False:
+                        if (attackedByWhite[i][j]==False) and (board[i][j] in ['r','n','b','q','p'])==False:
                             return False
                     else:
-                        if attackedByBlack[i][j]==False:
+                        if (attackedByBlack[i][j]==False) and (board[i][j] in ['R','N','B','Q','P'])==False:
                             return False
                 
     #Check every possible move for White
@@ -1105,6 +1134,7 @@ files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 
 whiteMove=True
+resigned = False
 
 while(isCheckmate(whiteMove)!=True):
     AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
@@ -1121,6 +1151,9 @@ while(isCheckmate(whiteMove)!=True):
                 choice = files.index(user_input)
                 if choice>=0 and choice<8:
                     startX = choice
+            elif user_input == 'R':
+                resigned = True
+                break
             else:
                 validInput = False
                 
@@ -1131,8 +1164,11 @@ while(isCheckmate(whiteMove)!=True):
                     choice = ranks.index(user_input)
                     if choice>=0 and choice<8:
                         startY = choice
-                else:
-                    validInput = False
+            elif user_input == 'R':
+                resigned = True
+                break
+            else:
+                validInput = False
                 
             if (validInput):
                 user_input = str(raw_input("End Position File:")).upper()
@@ -1141,8 +1177,11 @@ while(isCheckmate(whiteMove)!=True):
                     choice = files.index(user_input)
                     if choice>=0 and choice<8:
                         endX = choice
-                else:
-                    validInput = False
+            elif user_input == 'R':
+                resigned = True
+                break
+            else:
+                validInput = False
                 
             if (validInput):
                 user_input = str(raw_input("End Position Rank:"))
@@ -1151,11 +1190,15 @@ while(isCheckmate(whiteMove)!=True):
                     choice = ranks.index(user_input)
                     if choice>=0 and choice<8:
                         endY = choice
-                else:
-                    validInput = False
+            elif user_input == 'R':
+                resigned = True
+                break
+            else:
+                validInput = False
                 
                 
-    else: 
+    else:
+        time1 = time.clock()
         print("Black's move")
         
         moveArray = AI.minimaxFunction()
@@ -1166,6 +1209,8 @@ while(isCheckmate(whiteMove)!=True):
             startY = moveArray[1]
             endX = moveArray[2]
             endY = moveArray[3]
+            time2 = time.clock()
+            print("Time elapsed(s): " + str(time2-time1))
     
             #Make the move and check if makes check or not
             if makeMove(whiteMove,startX,startY,endX,endY)==True:
@@ -1176,8 +1221,10 @@ while(isCheckmate(whiteMove)!=True):
                 #Reset White for En Passant
                 for i in range(8,16):
                     movedTwo[i]=False
-            
     
+    #Stop execution if player resigned        
+    if (resigned):
+        break
     
     #If the current peice is the correct one for the turn we are on
     if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
