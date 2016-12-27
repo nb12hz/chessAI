@@ -939,6 +939,9 @@ def isCheck(isWhite):
 def makeMove(isWhite, startX, startY, endX, endY):
     global board, pawnMoved, movedTwo, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
+    pieces = ['R','r','N','n','B','b','Q','q']
+    validChoice = False
+    
     tempBoard = copy.deepcopy(board)
     tempPawns = copy.deepcopy(pawnMoved)
     tempTwo = copy.deepcopy(movedTwo)
@@ -955,7 +958,24 @@ def makeMove(isWhite, startX, startY, endX, endY):
         print("Succeeded ",startX, " ", startY, " ", endX, " ", endY)
         movePiece(startX, startY, endX, endY)
         updateAttacked()
-    
+        
+        #Pawn promotion
+        for i in range(8):
+            if board[0][i]=='P':
+                newPiece = str(raw_input("Coose a new piece:")).upper()
+                while (validChoice != True):
+                    if newPiece in pieces:
+                        board[0][i] = newPiece
+                        validChoice = True
+                        break
+            elif board[7][i]=='p':
+                newPiece = str(raw_input("Coose a new piece:")).lower()
+                while (validChoice != True):
+                    if newPiece in pieces:
+                        board[7][i] = newPiece
+                        validChoice = True
+                        break
+        
         if isCheck(isWhite)==True:
             board=copy.deepcopy(tempBoard)
             pawnMoved=copy.deepcopy(tempPawns)
