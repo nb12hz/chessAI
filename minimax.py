@@ -6,7 +6,9 @@ Created on Sat Dec 24 10:41:13 2016
 """
 
 import sys
-    
+import copy
+
+
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
         self.gameState = [0 for i in range(11)]        
@@ -1025,26 +1027,6 @@ class minimax:
         return True
             
     
-<<<<<<< HEAD
-    def isCheckmate(self):
-        return False
-        
-    def quickerCopy(self,gameState):
-        temp = [0 for i in range(11)]
-        temp[0] = [row[:] for row in (gameState[0])]
-        temp[1] = (gameState[1])[:]
-        temp[2] = (gameState[2])[:]
-        temp[3] = (gameState[3])
-        temp[4] = (gameState[4])
-        temp[5] = (gameState[5])
-        temp[6] = (gameState[6])
-        temp[7] = (gameState[7])
-        temp[8] = (gameState[8])
-        temp[9] = [row[:] for row in (gameState[9])]
-        temp[10] = [row[:] for row in (gameState[10])]
-        return temp
-        
-=======
     def isCheckmate(self, gameState, isWhite):
 
         #Is a king actually in check?
@@ -1171,4 +1153,3 @@ class minimax:
                                         return False
         
         return False
->>>>>>> refs/remotes/origin/master
