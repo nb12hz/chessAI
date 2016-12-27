@@ -5,9 +5,8 @@ Created on Sat Dec 24 10:41:13 2016
 @author: Nick
 """
 
-import sys
 import copy
-
+import sys
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
