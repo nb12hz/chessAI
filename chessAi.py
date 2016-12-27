@@ -1101,13 +1101,13 @@ def isCheckmate(isWhite):
 """Our main function calls"""
 intializeBoard()
 updateAttacked()
-AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
 files = ['A','B','C','D','E','F','G','H']
 ranks = ['8','7','6','5','4','3','2','1']
 
 whiteMove=True
 
 while(isCheckmate(whiteMove)!=True):
+    AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
     displayBoard()
     validInput = False
     if(whiteMove):

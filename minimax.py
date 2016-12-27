@@ -73,7 +73,7 @@ class minimax:
                                 if self.isValidMove(newGameState,x,y,newX,newY):
                                     #makemove
                                     self.movePiece(newGameState,x,y,newX,newY)
-                                    if self.isCheck(newGameState,False)==False:
+                                    if self.isCheck(newGameState,True)==False:
                                         score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
                                         if score>maxScore:
                                             maxScore = score
@@ -121,9 +121,9 @@ class minimax:
                     elif (gameState[0])[y][x]=='K':
                         materialScore-=200
                     elif (gameState[0])[y][x]=='q':
-                        materialScore+=9
+                        materialScore+=50
                     elif (gameState[0])[y][x]=='Q':
-                        materialScore-=9
+                        materialScore-=50
                     elif (gameState[0])[y][x]=='r':
                         materialScore+=5
                     elif (gameState[0])[y][x]=='R':
