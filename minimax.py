@@ -1152,3 +1152,19 @@ class minimax:
                                         return False
         
         return False
+
+    def quickerCopy(self,gameState):
+        temp = [0 for i in range(11)]
+        temp[0] = [row[:] for row in (gameState[0])]
+        temp[1] = (gameState[1])[:]
+        temp[2] = (gameState[2])[:]
+        temp[3] = (gameState[3])
+        temp[4] = (gameState[4])
+        temp[5] = (gameState[5])
+        temp[6] = (gameState[6])
+        temp[7] = (gameState[7])
+        temp[8] = (gameState[8])
+        temp[9] = [row[:] for row in (gameState[9])]
+        temp[10] = [row[:] for row in (gameState[10])]
+        
+        return temp
