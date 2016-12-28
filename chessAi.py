@@ -578,7 +578,6 @@ def isLegalMove(startX, startY, endX, endY):
                 
             #Moving Queen Side and neither has been moved
             elif startX>endX and whiteQS==False and board[7][0]=='R':
-                print("trying this", piece)
                 #Check if empty between them and not attacked
                 for i in range(1,4):
                     if board[startY][i]!='' or isAttacked(True,i,startY)==True:

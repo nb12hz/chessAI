@@ -34,9 +34,13 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower()==True:
-                    for newX in range(8):
-                        for newY in range(8):
-                            if self.isLegalMotion(self.gameState,x,y,newX,newY):
+                    #for newX in range(8):
+                        #for newY in range(8):
+                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    for i in range(len(moves)):
+                        newX=(moves[i])[0]
+                        newY=(moves[i])[1]
+                        if self.isLegalMotion(self.gameState,x,y,newX,newY):
 
                                     newGameState = self.quickerCopy(self.gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
@@ -70,11 +74,13 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower()==True:
-                    for newX in range(8):
-                        for newY in range(8):
-                            if maxScore>currentMin:
-                                return maxScore
-                            if self.isLegalMotion(gameState,x,y,newX,newY):
+                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    for i in range(len(moves)):
+                        newX=(moves[i])[0]
+                        newY=(moves[i])[1]
+                        if maxScore>currentMin:
+                            return maxScore
+                        if self.isLegalMotion(gameState,x,y,newX,newY):
 
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
@@ -105,11 +111,13 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by Opponents piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper()==True:
-                    for newX in range(8):
-                        for newY in range(8):
-                            if minScore<currentMax:
+                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    for i in range(len(moves)):
+                        newX=(moves[i])[0]
+                        newY=(moves[i])[1]
+                        if minScore<currentMax:
                                 return minScore
-                            if self.isLegalMotion(gameState,x,y,newX,newY):
+                        if self.isLegalMotion(gameState,x,y,newX,newY):
                                 
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
@@ -1575,5 +1583,115 @@ class minimax:
         if piece=='':
             return moves
         elif piece=='R' or piece=='r':
-            
+            for i in range(x-1,-1,-1):
+                moves.append([i,y]) 
+            for i in range(x+1,8):
+                moves.append([i,y])
+            for i in range(y-1,-1,-1):
+                moves.append([x,i]) 
+            for i in range(x+1,8):
+                moves.append([x,i])
+            return moves
+        elif piece=='B' or piece=='b':
+            for i in range(1,8):
+                #Down and right
+                if y+i<8 and x+i<8:
+                    moves.append([x+i,y+i])
+            for i in range(1,8):
+                #Up and right
+                if y-i>=0 and x+i<8:
+                    moves.append([x+i,y-i])
+            for i in range(1,8):
+                #Down and left
+                if y+i<8 and x-i>=0:
+                    moves.append([x-i,y+i])
+            for i in range(1,8):
+                #Up and left
+                if y-i>=0 and x-i>=0:
+                    moves.append([x-i,y-i])
+            return moves
+        elif piece=='N' or piece=='n':
+            if x+1<8 and y+2<8:
+                moves.append([x+1,y+2])
+            if x-1>=0 and y+2<8:
+                moves.append([x-1,y+2])
+            if x+1<8 and y-2>=0:
+                moves.append([x+1,y-2])
+            if x-1>=0 and y-2>=0:
+                moves.append([x-1,y-2])
+            if x+2<8 and y+1<8:
+                moves.append([x+2,y+1])
+            if x+2<8 and y-1>=0:
+                moves.append([x+2,y-1])
+            if x-2>=0 and y+1<8:
+                moves.append([x-2,y+1])
+            if x-2>=0 and y-1>=0:
+                moves.append([x-2,y-1])
+            return moves
+        elif piece=='Q' or piece=='q':
+            #Horizontal/Vertical Moves
+            for i in range(x-1,-1,-1):
+                moves.append([i,y]) 
+            for i in range(x+1,8):
+                moves.append([i,y])
+            for i in range(y-1,-1,-1):
+                moves.append([x,i]) 
+            for i in range(x+1,8):
+                moves.append([x,i])
+                
+            #Diagonal moves
+            for i in range(1,8):
+                #Down and right
+                if y+i<8 and x+i<8:
+                    moves.append([x+i,y+i])
+            for i in range(1,8):
+                #Up and right
+                if y-i>=0 and x+i<8:
+                    moves.append([x+i,y-i])
+            for i in range(1,8):
+                #Down and left
+                if y+i<8 and x-i>=0:
+                    moves.append([x-i,y+i])
+            for i in range(1,8):
+                #Up and left
+                if y-i>=0 and x-i>=0:
+                    moves.append([x-i,y-i])
+                    
+            return moves
+        elif piece=='K' or piece=='k':
+            if y+1<8:
+                if x+1<8:
+                    moves.append([x+1,y+1])
+                if x-1>=0:
+                    moves.append([x-1,y+1])
+                moves.append([x,y+1])
+            if y-1>=0:
+                if x+1<8:
+                    moves.append([x+1,y-1])
+                if x-1>=0:
+                    moves.append([x-1,y-1])
+                moves.append([x,y-1])
+            if x+1<8:
+                moves.append([x+1,y])
+            if x-1>=0:
+                moves.append([x-1,y])
+        elif piece[0]=='P':
+            if y-1>=0:
+                if x+1<8:
+                    moves.append([x+1,y-1])
+                if x-1>=0:
+                    moves.append([x-1,y-1])
+                moves.append([x,y-1])
+            if y==6:
+                moves.append([x,y-2])
+            return moves
+        elif piece[0]=='p':
+            if y+1<8:
+                if x+1<8:
+                    moves.append([x+1,y+1])
+                if x-1>=0:
+                    moves.append([x-1,y+1])
+                moves.append([x,y+1])
+            if y==1:
+                moves.append([x,y+2])
         return moves
