@@ -994,7 +994,7 @@ class minimax:
 					else:
 						break
 		elif x==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[y][i]!='':
 					piece=(gameState[0])[y][i]
 					if piece=='r' or piece=='q':
@@ -1003,7 +1003,7 @@ class minimax:
 					else:
 						break
 		elif x==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[y][i]!='':
 					piece=(gameState[0])[y][i]
 					if piece=='r' or piece=='q':
@@ -1033,7 +1033,7 @@ class minimax:
 					else:
 						break
 		elif y==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[i][x]!='':
 					piece=(gameState[0])[i][x]
 					if piece=='r' or piece=='q':
@@ -1042,7 +1042,7 @@ class minimax:
 					else:
 						break
 		elif y==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[i][x]!='':
 					piece=(gameState[0])[i][x]
 					if piece=='r' or piece=='q':
@@ -1214,7 +1214,7 @@ class minimax:
 					else:
 						break
 		elif x==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[y][i]!='':
 					piece=(gameState[0])[y][i]
 					if piece=='R' or piece=='Q':
@@ -1223,7 +1223,7 @@ class minimax:
 					else:
 						break
 		elif x==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[y][i]!='':
 					piece=(gameState[0])[y][i]
 					if piece=='R' or piece=='Q':
@@ -1253,7 +1253,7 @@ class minimax:
 					else:
 						break
 		elif y==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[i][x]!='':
 					piece=(gameState[0])[i][x]
 					if piece=='R' or piece=='Q':
@@ -1262,7 +1262,7 @@ class minimax:
 					else:
 						break
 		elif y==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[i][x]!='':
 					piece=(gameState[0])[i][x]
 					if piece=='R' or piece=='Q':
@@ -1436,9 +1436,7 @@ class minimax:
     def isCheckmate(self, gameState, isWhite):
 
         #Is a king actually in check?
-        if self.isCheck(gameState, isWhite)==False:
-            return False
-        elif self.isCheck(gameState, True)==False:
+        if self.isCheck(gameState, False)==False and self.isCheck(gameState, True)==False:
             return False
                 
         #Find Black King
