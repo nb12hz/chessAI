@@ -1008,7 +1008,7 @@ def isCheckmate(isWhite):
         return False
     elif isCheck(False)==False:
         return False
-        
+    
     #Find Black King
     if isWhite==False:
         for x in range(8):
