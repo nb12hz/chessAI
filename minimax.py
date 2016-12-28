@@ -21,10 +21,6 @@ class minimax:
         self.gameState[6] = blackQS
         self.gameState[7] = whiteKing
         self.gameState[8] = blackKing
-        #attackedByWhite
-        #self.gameState[9] = [[False for i in range(8)] for j in range(8)]
-        #attackedByBlack
-        #self.gameState[10] = [[False for i in range(8)] for j in range(8)]
         
     """This is the defintion of out AI functions
     All moves are made using a sepereate set of variables"""
@@ -49,7 +45,6 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
                                             if score>bestScore:
@@ -84,7 +79,6 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
                                             if score>maxScore:
@@ -118,7 +112,6 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='P':
                                                ((newGameState[0])[newY][newX])='Q'
-                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,True)==False:
                                             score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
                                             if score<minScore:
@@ -952,55 +945,6 @@ class minimax:
         
         return valid
     
-    """Update the currently under attack arrays"""
-    def updateAttacked(self, gameState):      
-        #Clear attacked by White array
-        (gameState[9]) = [[False for i in range(8)] for j in range(8)]
-        #Clear attacked by Black array
-        (gameState[10]) = [[False for i in range(8)] for j in range(8)]
-        #board = (gameState[0])
-        for y in range(8):
-            for x in range(8):
-                #Update attacked by white
-                if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper():
-                    #Update squares for pawn attacks
-                    if len((gameState[0])[y][x])==2:
-                        if (x+1)<8 and (y-1)>=0:
-                            (gameState[9])[y-1][x+1]=True
-                        if (x-1)>=0 and (y-1)>=0:
-                            (gameState[9])[y-1][x-1]=True
-                    else: 
-                        for newX in range(8):
-                            for newY in range(8):
-                                if self.isLegalMotion(gameState,x,y,newX,newY)==True:
-                                    (gameState[9])[newY][newX]=True
-                                
-                #Update attacked by black
-                elif (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower():
-                    #Update squares for pawn attacks
-                    if len((gameState[0])[y][x])==2:
-                        if (x+1)<8 and (y+1)<8:
-                            (gameState[10])[y+1][x+1]=True
-                        if (x-1)>=0 and (y+1)<8:
-                            (gameState[10])[y+1][x-1]=True
-                    else:
-                        for newX in range(8):
-                            for newY in range(8):
-                                if self.isLegalMotion(gameState,x,y,newX,newY)==True:
-                                    (gameState[10])[newY][newX]=True 
-                                    
-        #(gameState[9]) = tempWhite
-        #(gameState[10]) = tempBlack
-                    
-    """Check if the current square is under attack"""
-    """def isAttacked(self, gameState, isWhite, currentX, currentY):
-        #Test if white is attacking this square
-        if isWhite==False:
-            return (gameState[9])[currentY][currentX]
-            
-        #Test if black is attacking this square
-        else:
-            return (gameState[10])[currentY][currentX]"""
             
     def isAttacked(self, gameState, isWhite,x,y):
 	attack = False
@@ -1628,7 +1572,5 @@ class minimax:
         temp[6] = (gameState[6])
         temp[7] = (gameState[7])
         temp[8] = (gameState[8])
-        #temp[9] = [row[:] for row in (gameState[9])]
-        #temp[10] = [row[:] for row in (gameState[10])]
         
         return temp
