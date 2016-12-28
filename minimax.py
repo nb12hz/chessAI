@@ -1201,6 +1201,40 @@ class minimax:
 				if (gameState[0])[y-1][x-1]=='p':
 					attack=True
 					return attack
+         
+         	#King attacks
+		if y+1<8:
+			if x+1<8:
+				if (gameState[0])[y+1][x+1]=='k':
+					attack=True
+					return attack
+			if x-1>=0:
+				if (gameState[0])[y+1][x-1]=='k':
+					attack=True
+					return attack
+			if (gameState[0])[y+1][x]=='k':
+					attack=True
+					return attack
+		if y-1>=0:
+			if x+1<8:
+				if (gameState[0])[y-1][x+1]=='k':
+					attack=True
+					return attack
+			if x-1>=0:
+				if (gameState[0])[y-1][x-1]=='k':
+					attack=True
+					return attack
+			if (gameState[0])[y-1][x]=='k':
+					attack=True
+					return attack
+		if x+1<8:
+			if (gameState[0])[y][x+1]=='k':
+				attack=True
+				return attack
+		if x-1>=0:
+			if (gameState[0])[y][x-1]=='k':
+				attack=True
+				return attack
 					
 	#Attacked by White
 	else:
@@ -1399,6 +1433,41 @@ class minimax:
 					attack=True
 					return attack
 					
+         
+		#King attacks
+		if y+1<8:
+			if x+1<8:
+				if (gameState[0])[y+1][x+1]=='K':
+					attack=True
+					return attack
+			if x-1>=0:
+				if (gameState[0])[y+1][x-1]=='K':
+					attack=True
+					return attack
+			if (gameState[0])[y+1][x]=='K':
+					attack=True
+					return attack
+		if y-1>=0:
+			if x+1<8:
+				if (gameState[0])[y-1][x+1]=='K':
+					attack=True
+					return attack
+			if x-1>=0:
+				if (gameState[0])[y-1][x-1]=='K':
+					attack=True
+					return attack
+			if (gameState[0])[y-1][x]=='K':
+					attack=True
+					return attack
+		if x+1<8:
+			if (gameState[0])[y][x+1]=='K':
+				attack=True
+				return attack
+		if x-1>=0:
+			if (gameState[0])[y][x-1]=='K':
+				attack=True
+				return attack
+		
 	return attack
         
     """Check if the king is in check"""
