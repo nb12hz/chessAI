@@ -56,8 +56,10 @@ class minimax:
     #The evaluation function for the AI's turn
     def maxPlay(self, depth, gameState, isWhite, currentMin):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
+        if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
+        elif self.isCheckmate(gameState, isWhite):
+            return -sys.maxint -1
             
         maxScore = -sys.maxint -1
         
@@ -89,8 +91,10 @@ class minimax:
     #The evaluation function for the Opponents turn
     def minPlay(self, depth, gameState, isWhite, currentMax):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
+        if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
+        elif self.isCheckmate(gameState, isWhite):
+            return sys.maxint
             
         minScore = sys.maxint
         
@@ -124,6 +128,9 @@ class minimax:
         materialScore = 0
         centerControl = 0
         rookPenalty = 0
+        queenProtected = 0
+        pawnPromoted = 0
+        
         for x in range(8):
             for y in range(8):
                 if (gameState[0])[y][x]!='':
@@ -134,8 +141,12 @@ class minimax:
                         materialScore-=200
                     elif (gameState[0])[y][x]=='q':
                         materialScore+=60
+                        if self.isAttacked(gameState,False,x,y):
+                            queenProtected+=10
                     elif (gameState[0])[y][x]=='Q':
                         materialScore-=50
+                        if self.isAttacked(gameState,True,x,y):
+                            queenProtected-=10
                     elif (gameState[0])[y][x]=='r':
                         materialScore+=5
                         if y==0 and x==0 and gameState[6]==False and gameState[8]==False:
@@ -168,12 +179,20 @@ class minimax:
                         materialScore+=1
                         if (x>=2 or x<=5) and y>1:
                             centerControl+=0.5
+                        if y==5:
+                            pawnPromoted+=1
+                        elif y==6:
+                            pawnPromoted+=2
                     elif ((gameState[0])[y][x])[0]=='P':
                         materialScore-=1
                         if (x>=2 or x<=5) and y<6:
                             centerControl-=0.5
+                        if y==5:
+                            pawnPromoted-=1
+                        elif y==6:
+                            pawnPromoted-=2
                             
-        return (materialScore+centerControl+rookPenalty)
+        return (materialScore+centerControl+rookPenalty+queenProtected+pawnPromoted)
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
@@ -1272,7 +1291,7 @@ class minimax:
 			#Down and right
 			if y+i<8 and x+i<8:
 				if (gameState[0])[y+i][x+i]!='':
-					if (gameState[0])[y+i][x+i].isupper():
+					if (gameState[0])[y+i][x+i].islower():
 						break
 					else:
 						piece=(gameState[0])[y+i][x+i]
@@ -1286,7 +1305,7 @@ class minimax:
 			#Up and right
 			if y-i>=0 and x+i<8:
 				if (gameState[0])[y-i][x+i]!='':
-					if (gameState[0])[y-i][x+i].isupper():
+					if (gameState[0])[y-i][x+i].islower():
 						break
 					else:
 						piece=(gameState[0])[y-i][x+i]
@@ -1300,7 +1319,7 @@ class minimax:
 			#Down and left
 			if y+i<8 and x-i>=0:
 				if (gameState[0])[y+i][x-i]!='':
-					if (gameState[0])[y+i][x-i].isupper():
+					if (gameState[0])[y+i][x-i].islower():
 						break
 					else:
 						piece=(gameState[0])[y+i][x-i]
@@ -1314,7 +1333,7 @@ class minimax:
 			#Up and left
 			if y-i>=0 and x-i>=0:
 				if (gameState[0])[y-i][x-i]!='':
-					if (gameState[0])[y-i][x-i].isupper():
+					if (gameState[0])[y-i][x-i].islower():
 						break
 					else:
 						piece=(gameState[0])[y-i][x-i]
@@ -1574,3 +1593,8 @@ class minimax:
         temp[8] = (gameState[8])
         
         return temp
+        
+    def possibleLegalMoves(self, piece, x, y):
+        moves = []
+        
+        return moves
