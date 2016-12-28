@@ -50,7 +50,9 @@ class minimax:
                                             if score>bestScore:
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
-                                        
+                      
+        print (self.gameState[0])[bestMove[1]][bestMove[0]]
+        print self.isAttacked(self.gameState,True,bestMove[2],bestMove[3])
         return bestMove
     
     #The evaluation function for the AI's turn
@@ -142,11 +144,11 @@ class minimax:
                     elif (gameState[0])[y][x]=='q':
                         materialScore+=60
                         if self.isAttacked(gameState,False,x,y):
-                            queenProtected+=10
+                            queenProtected+=5
                     elif (gameState[0])[y][x]=='Q':
                         materialScore-=50
                         if self.isAttacked(gameState,True,x,y):
-                            queenProtected-=10
+                            queenProtected-=5
                     elif (gameState[0])[y][x]=='r':
                         materialScore+=5
                         if y==0 and x==0 and gameState[6]==False and gameState[8]==False:
@@ -501,7 +503,7 @@ class minimax:
                 #Capturing
                 if abs(startX-endX)==1:
                     #Moving forward one spot
-                    if (endY-startY)==-1:
+                    if (startY-endY)==1:
                         #if the spot is occupied by opponent
                         if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
                             return valid
@@ -905,7 +907,7 @@ class minimax:
                 #Capturing
                 if abs(startX-endX)==1:
                     #Moving forward one spot
-                    if (endY-startY)==-1:
+                    if (startY-endY)==1:
                         #if the spot is occupied by opponent
                         if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
                             (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
@@ -975,98 +977,91 @@ class minimax:
 			#left
 			for i in range(x-1,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
+							
 			#right
 			for i in range(x+1,8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif x==0:
 			for i in range(8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif x==7:
 			for i in range(7,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		
 		if y>0 and y<7:
 			#up
 			for i in range(y-1,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
+							
 			#down
 			for i in range(y+1,8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif y==0:
 			for i in range(8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif y==7:
 			for i in range(7,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		
 		#Diagonals
 		for i in range(1,8):
 			#Down and right
 			if y+i<8 and x+i<8:
 				if (gameState[0])[y+i][x+i]!='':
-					if (gameState[0])[y+i][x+i].isupper():
-						break
+					piece=(gameState[0])[y+i][x+i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x+i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack
+						break
 			else:
 				break
 								
@@ -1074,13 +1069,12 @@ class minimax:
 			#Up and right
 			if y-i>=0 and x+i<8:
 				if (gameState[0])[y-i][x+i]!='':
-					if (gameState[0])[y-i][x+i].isupper():
-						break
+					piece=(gameState[0])[y-i][x+i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x+i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack	
+						break	
 			else:
 				break
 				
@@ -1088,13 +1082,12 @@ class minimax:
 			#Down and left
 			if y+i<8 and x-i>=0:
 				if (gameState[0])[y+i][x-i]!='':
-					if (gameState[0])[y+i][x-i].isupper():
-						break
+					piece=(gameState[0])[y+i][x-i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x-i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack	
+						break
 			else:
 				break
 				
@@ -1102,13 +1095,12 @@ class minimax:
 			#Up and left
 			if y-i>=0 and x-i>=0:
 				if (gameState[0])[y-i][x-i]!='':
-					if (gameState[0])[y-i][x-i].isupper():
-						break
+					piece=(gameState[0])[y-i][x-i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x-i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack
+						break
 			else:
 				break
 		
@@ -1157,15 +1149,15 @@ class minimax:
 		#Pawn Attacks
 		if y-1>=0:
 			if x+1<8:
-				if (gameState[0])[y-1][x+1]=='p':
+				if (gameState[0])[y-1][x+1] !='' and ((gameState[0])[y-1][x+1])[0]=='p':
 					attack=True
 					return attack
 			if x-1>=0:
-				if (gameState[0])[y-1][x-1]=='p':
+				if (gameState[0])[y-1][x-1] !='' and ((gameState[0])[y-1][x-1])[0]=='p':
 					attack=True
 					return attack
-         
-         	#King attacks
+					
+		#King attacks
 		if y+1<8:
 			if x+1<8:
 				if (gameState[0])[y+1][x+1]=='k':
@@ -1206,98 +1198,90 @@ class minimax:
 			#left
 			for i in range(x-1,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 			#right
 			for i in range(x+1,8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif x==0:
 			for i in range(8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif x==7:
 			for i in range(7,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		
 		if y>0 and y<7:
 			#up
 			for i in range(y-1,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
+							
 			#down
 			for i in range(y+1,8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif y==0:
 			for i in range(8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif y==7:
 			for i in range(7,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		
 		#Diagonals
 		for i in range(1,8):
 			#Down and right
 			if y+i<8 and x+i<8:
 				if (gameState[0])[y+i][x+i]!='':
-					if (gameState[0])[y+i][x+i].islower():
-						break
+					piece=(gameState[0])[y+i][x+i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x+i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack
+						break							
 			else:
 				break
 								
@@ -1305,13 +1289,12 @@ class minimax:
 			#Up and right
 			if y-i>=0 and x+i<8:
 				if (gameState[0])[y-i][x+i]!='':
-					if (gameState[0])[y-i][x+i].islower():
-						break
+					piece=(gameState[0])[y-i][x+i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x+i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack	
+						break	
 			else:
 				break
 				
@@ -1319,13 +1302,12 @@ class minimax:
 			#Down and left
 			if y+i<8 and x-i>=0:
 				if (gameState[0])[y+i][x-i]!='':
-					if (gameState[0])[y+i][x-i].islower():
-						break
+					piece=(gameState[0])[y+i][x-i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x-i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack	
+						break
 			else:
 				break
 				
@@ -1333,13 +1315,12 @@ class minimax:
 			#Up and left
 			if y-i>=0 and x-i>=0:
 				if (gameState[0])[y-i][x-i]!='':
-					if (gameState[0])[y-i][x-i].islower():
-						break
+					piece=(gameState[0])[y-i][x-i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x-i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack
+						break
 			else:
 				break
 		
@@ -1388,15 +1369,14 @@ class minimax:
 		#Pawn Attacks
 		if y+1<8:
 			if x+1<8:
-				if (gameState[0])[y+1][x+1]=='P':
+				if (gameState[0])[y+1][x+1]!='' and ((gameState[0])[y+1][x+1])[0]=='P':
 					attack=True
 					return attack
 			if x-1>=0:
-				if (gameState[0])[y+1][x-1]=='P':
+				if (gameState[0])[y+1][x-1]!='' and ((gameState[0])[y+1][x-1])[0]=='P':
 					attack=True
 					return attack
-					
-         
+     
 		#King attacks
 		if y+1<8:
 			if x+1<8:
