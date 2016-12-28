@@ -22,9 +22,9 @@ class minimax:
         self.gameState[7] = whiteKing
         self.gameState[8] = blackKing
         #attackedByWhite
-        self.gameState[9] = [[False for i in range(8)] for j in range(8)]
+        #self.gameState[9] = [[False for i in range(8)] for j in range(8)]
         #attackedByBlack
-        self.gameState[10] = [[False for i in range(8)] for j in range(8)]
+        #self.gameState[10] = [[False for i in range(8)] for j in range(8)]
         
     """This is the defintion of out AI functions
     All moves are made using a sepereate set of variables"""
@@ -49,7 +49,7 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        self.updateAttacked(newGameState)
+                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
                                             if score>bestScore:
@@ -84,7 +84,7 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        self.updateAttacked(newGameState)
+                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
                                             if score>maxScore:
@@ -118,7 +118,7 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='P':
                                                ((newGameState[0])[newY][newX])='Q'
-                                        self.updateAttacked(newGameState)
+                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,True)==False:
                                             score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
                                             if score<minScore:
@@ -993,35 +993,430 @@ class minimax:
         #(gameState[10]) = tempBlack
                     
     """Check if the current square is under attack"""
-    def isAttacked(self, gameState, isWhite, currentX, currentY):
+    """def isAttacked(self, gameState, isWhite, currentX, currentY):
         #Test if white is attacking this square
         if isWhite==False:
             return (gameState[9])[currentY][currentX]
             
         #Test if black is attacking this square
         else:
-            return (gameState[10])[currentY][currentX]
+            return (gameState[10])[currentY][currentX]"""
+            
+    def isAttacked(self, gameState, isWhite,x,y):
+	attack = False
+	
+	#Attacked by black
+	if isWhite==True:
+		#Straight lines
+		if x>0 and x<7:
+			#left
+			for i in range(x-1,-1,-1):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+			#right
+			for i in range(x+1,8):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+		elif x==0:
+			for i in range(8):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+		elif x==7:
+			for i in range(7,-1,-1):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+		
+		if y>0 and y<7:
+			#up
+			for i in range(y-1,-1,-1):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].isupper():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+			#down
+			for i in range(y+1,8):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].isupper():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+		elif y==0:
+			for i in range(8):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].isupper():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+		elif y==7:
+			for i in range(7,-1,-1):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].isupper():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='r' or piece=='q':
+							attack=True
+							return attack
+		
+		#Diagonals
+		for i in range(1,8):
+			#Down and right
+			if y+i<8 and x+i<8:
+				if (gameState[0])[y+i][x+i]!='':
+					if (gameState[0])[y+i][x+i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y+i][x+i]
+						if piece=='b' or piece=='q':
+							attack=True
+							return attack
+			else:
+				break
+								
+		for i in range(1,8):
+			#Up and right
+			if y-i>=0 and x+i<8:
+				if (gameState[0])[y-i][x+i]!='':
+					if (gameState[0])[y-i][x+i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y-i][x+i]
+						if piece=='b' or piece=='q':
+							attack=True
+							return attack	
+			else:
+				break
+				
+		for i in range(1,8):
+			#Down and left
+			if y+i<8 and x-i>=0:
+				if (gameState[0])[y+i][x-i]!='':
+					if (gameState[0])[y+i][x-i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y+i][x-i]
+						if piece=='b' or piece=='q':
+							attack=True
+							return attack	
+			else:
+				break
+				
+		for i in range(1,8):
+			#Up and left
+			if y-i>=0 and x-i>=0:
+				if (gameState[0])[y-i][x-i]!='':
+					if (gameState[0])[y-i][x-i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y-i][x-i]
+						if piece=='b' or piece=='q':
+							attack=True
+							return attack
+			else:
+				break
+		
+		#Like a Knight
+		#x+1, y+2
+		if x+1<8 and y+2<8:
+			if (gameState[0])[y+2][x+1]=='n':
+				attack=True
+				return attack
+		#x-1, y+2
+		if x-1>=0 and y+2<8:
+			if (gameState[0])[y+2][x-1]=='n':
+				attack=True
+				return attack
+		#x+1, y-2
+		if x+1<8 and y-2>=0:
+			if (gameState[0])[y-2][x+1]=='n':
+				attack=True
+				return attack
+		#x-1, y-2
+		if x-1>=0 and y-2>=0:
+			if (gameState[0])[y-2][x-1]=='n':
+				attack=True
+				return attack
+		#x+2, y+1
+		if x+2<8 and y+1<8:
+			if (gameState[0])[y+1][x+2]=='n':
+				attack=True
+				return attack
+		#x+2, y-1
+		if x+2<8 and y-1>=0:
+			if (gameState[0])[y-1][x+2]=='n':
+				attack=True
+				return attack
+		#x-2, y+1
+		if x-2>=0 and y+1<8:
+			if (gameState[0])[y+1][x-2]=='n':
+				attack=True
+				return attack
+		#x-2, y-1
+		if x-2>=0 and y-1>=0:
+			if (gameState[0])[y-1][x-2]=='n':
+				attack=True
+				return attack
+			
+		#Pawn Attacks
+		if y-1>=0:
+			if x+1<8:
+				if (gameState[0])[y-1][x+1]=='p':
+					attack=True
+					return attack
+			if x-1>=0:
+				if (gameState[0])[y-1][x-1]=='p':
+					attack=True
+					return attack
+					
+	#Attacked by White
+	else:
+		#Straight lines
+		if x>0 and x<7:
+			#left
+			for i in range(x-1,-1,-1):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].islower():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+			#right
+			for i in range(x+1,8):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].islower():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+		elif x==0:
+			for i in range(8):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].islower():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+		elif x==7:
+			for i in range(7,-1,-1):
+				if (gameState[0])[y][i]!='':
+					if (gameState[0])[y][i].islower():
+						break
+					else:
+						piece=(gameState[0])[y][i]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+		
+		if y>0 and y<7:
+			#up
+			for i in range(y-1,-1,-1):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].islower():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+			#down
+			for i in range(y+1,8):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].islower():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+		elif y==0:
+			for i in range(8):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].islower():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+		elif y==7:
+			for i in range(7,-1,-1):
+				if (gameState[0])[i][x]!='':
+					if (gameState[0])[i][x].islower():
+						break
+					else:
+						piece=(gameState[0])[i][x]
+						if piece=='R' or piece=='Q':
+							attack=True
+							return attack
+		
+		#Diagonals
+		for i in range(1,8):
+			#Down and right
+			if y+i<8 and x+i<8:
+				if (gameState[0])[y+i][x+i]!='':
+					if (gameState[0])[y+i][x+i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y+i][x+i]
+						if piece=='B' or piece=='Q':
+							attack=True
+							return attack
+			else:
+				break
+								
+		for i in range(1,8):
+			#Up and right
+			if y-i>=0 and x+i<8:
+				if (gameState[0])[y-i][x+i]!='':
+					if (gameState[0])[y-i][x+i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y-i][x+i]
+						if piece=='B' or piece=='Q':
+							attack=True
+							return attack	
+			else:
+				break
+				
+		for i in range(1,8):
+			#Down and left
+			if y+i<8 and x-i>=0:
+				if (gameState[0])[y+i][x-i]!='':
+					if (gameState[0])[y+i][x-i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y+i][x-i]
+						if piece=='B' or piece=='Q':
+							attack=True
+							return attack	
+			else:
+				break
+				
+		for i in range(1,8):
+			#Up and left
+			if y-i>=0 and x-i>=0:
+				if (gameState[0])[y-i][x-i]!='':
+					if (gameState[0])[y-i][x-i].isupper():
+						break
+					else:
+						piece=(gameState[0])[y-i][x-i]
+						if piece=='B' or piece=='Q':
+							attack=True
+							return attack
+			else:
+				break
+		
+		#Like a Knight
+		#x+1, y+2
+		if x+1<8 and y+2<8:
+			if (gameState[0])[y+2][x+1]=='N':
+				attack=True
+				return attack
+		#x-1, y+2
+		if x-1>=0 and y+2<8:
+			if (gameState[0])[y+2][x-1]=='N':
+				attack=True
+				return attack
+		#x+1, y-2
+		if x+1<8 and y-2>=0:
+			if (gameState[0])[y-2][x+1]=='N':
+				attack=True
+				return attack
+		#x-1, y-2
+		if x-1>=0 and y-2>=0:
+			if (gameState[0])[y-2][x-1]=='N':
+				attack=True
+				return attack
+		#x+2, y+1
+		if x+2<8 and y+1<8:
+			if (gameState[0])[y+1][x+2]=='N':
+				attack=True
+				return attack
+		#x+2, y-1
+		if x+2<8 and y-1>=0:
+			if (gameState[0])[y-1][x+2]=='N':
+				attack=True
+				return attack
+		#x-2, y+1
+		if x-2>=0 and y+1<8:
+			if (gameState[0])[y+1][x-2]=='N':
+				attack=True
+				return attack
+		#x-2, y-1
+		if x-2>=0 and y-1>=0:
+			if (gameState[0])[y-1][x-2]=='N':
+				attack=True
+				return attack
+			
+		#Pawn Attacks
+		if y+1<8:
+			if x+1<8:
+				if (gameState[0])[y+1][x+1]=='P':
+					attack=True
+					return attack
+			if x-1>=0:
+				if (gameState[0])[y+1][x-1]=='P':
+					attack=True
+					return attack
+					
+	return attack
         
     """Check if the king is in check"""
     def isCheck(self, gameState, isWhite):  
         #Black King, check if space is attacked by white
         if isWhite==False:
-            for x in range(8):
-                for y in range(8):
+            for y in range(8):
+                for x in range(8):
                     if (gameState[0])[y][x]=='k':
-                        currentY=y
-                        currentX=x
-                        return (gameState[9])[currentY][currentX]
+                        return self.isAttacked(gameState,False,x,y)
             
             
         #White Queen, check if space is attacked by Black
         else:
-            for x in range(8):
-                for y in range(8):
+            for y in range(7,-1,-1):
+                for x in range(8):
                     if (gameState[0])[y][x]=='K':
-                        currentY=y
-                        currentX=x
-                        return (gameState[10])[currentY][currentX]
+                        return self.isAttacked(gameState,True,x,y)
         
         return True
             
@@ -1054,10 +1449,10 @@ class minimax:
                 if i>=0 and i<=7:
                     if j>=0 and j<=7:
                         if isWhite==False:
-                            if (gameState[9][i][j]==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
+                            if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
                                 return False
                         else:
-                            if (gameState[10][i][j]==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
+                            if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
                                 return False
         
         #Check every possible move for White
@@ -1164,7 +1559,7 @@ class minimax:
         temp[6] = (gameState[6])
         temp[7] = (gameState[7])
         temp[8] = (gameState[8])
-        temp[9] = [row[:] for row in (gameState[9])]
-        temp[10] = [row[:] for row in (gameState[10])]
+        #temp[9] = [row[:] for row in (gameState[9])]
+        #temp[10] = [row[:] for row in (gameState[10])]
         
         return temp
