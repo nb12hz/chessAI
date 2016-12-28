@@ -49,7 +49,7 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        #self.updateAttacked(newGameState)
+                                        self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
                                             if score>bestScore:
@@ -84,7 +84,7 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        #self.updateAttacked(newGameState)
+                                        self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
                                             if score>maxScore:
@@ -118,7 +118,7 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='P':
                                                ((newGameState[0])[newY][newX])='Q'
-                                        #self.updateAttacked(newGameState)
+                                        self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,True)==False:
                                             score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
                                             if score<minScore:
@@ -1031,7 +1031,7 @@ class minimax:
         #Is a king actually in check?
         if self.isCheck(gameState, isWhite)==False:
             return False
-        elif self.isCheck(gameState, False)==False:
+        elif self.isCheck(gameState, True)==False:
             return False
                 
         #Find Black King
