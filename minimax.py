@@ -7,7 +7,7 @@ Created on Sat Dec 24 10:41:13 2016
 
 import copy
 import sys
-    
+
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
         self.gameState = [0 for i in range(11)]        
@@ -40,25 +40,16 @@ class minimax:
                     for newX in range(8):
                         for newY in range(8):
                             if self.isLegalMotion(self.gameState,x,y,newX,newY):
-                                #Make the move on the current board, less copying, improve speed
-                                if (self.gameState[0])[y][x]=='b' or (self.gameState[0])[y][x]=='q' or (self.gameState[0])[y][x]=='n':
-                                    if self.isValidMove(self.gameState,x,y,newX,newY):
-                                        pieceCaptured = (self.gameState[0])[newY][newX]
-                                        #makemove
-                                        self.movePiece(self.gameState,x,y,newX,newY)
-                                        if self.isCheck(self.gameState,False)==False:
-                                            score = self.minPlay(1,self.gameState,False,bestScore)
-                                            if score>bestScore:
-                                                bestScore = score
-                                                bestMove = [x,y,newX,newY]
-                                    #Undo the move
-                                    self.movePiece(self.gameState,newX,newY,x,y)
-                                    (self.gameState[0])[newY][newX]=pieceCaptured
-                                else:
-                                    newGameState = copy.deepcopy(self.gameState)
+
+                                    newGameState = self.quickerCopy(self.gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
+                                        #check for pawn promotion
+                                        if newY==0:
+                                            if ((newGameState[0])[newY][newX])[0]=='p':
+                                                ((newGameState[0])[newY][newX])='q'
+                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
                                             if score>bestScore:
@@ -84,25 +75,16 @@ class minimax:
                             if maxScore>currentMin:
                                 return maxScore
                             if self.isLegalMotion(gameState,x,y,newX,newY):
-                                #print(depth, "didn't deep copy")
-                                #Make the move on the current board, less copying, improve speed
-                                if (gameState[0])[y][x]=='b' or (gameState[0])[y][x]=='q' or (gameState[0])[y][x]=='n':
-                                    pieceCaptured = (gameState[0])[newY][newX]                                  
-                                    if self.isValidMove(gameState,x,y,newX,newY):
-                                        #makemove
-                                        self.movePiece(gameState,x,y,newX,newY)
-                                        if self.isCheck(gameState,False)==False:
-                                            score = self.minPlay(depth+1,gameState,False,maxScore)
-                                            if score>maxScore:
-                                                maxScore = score
-                                    #Undo the move
-                                    self.movePiece(gameState,newX,newY,x,y)
-                                    (gameState[0])[newY][newX]=pieceCaptured
-                                else:
-                                    newGameState = copy.deepcopy(gameState)
+
+                                    newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
+                                        #check for pawn promotion
+                                        if newY==0:
+                                            if ((newGameState[0])[newY][newX])[0]=='p':
+                                                ((newGameState[0])[newY][newX])='q'
+                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
                                             if score>maxScore:
@@ -127,24 +109,16 @@ class minimax:
                             if minScore<currentMax:
                                 return minScore
                             if self.isLegalMotion(gameState,x,y,newX,newY):
-                                #Make the move on the current board, less copying, improve speed
-                                if (gameState[0])[y][x]=='B' or (gameState[0])[y][x]=='Q' or (gameState[0])[y][x]=='N':
-                                    pieceCaptured = (gameState[0])[newY][newX]                                     
-                                    if self.isValidMove(gameState,x,y,newX,newY):
-                                        #makemove
-                                        self.movePiece(gameState,x,y,newX,newY)
-                                        if self.isCheck(gameState,True)==False:
-                                            score = self.maxPlay(depth+1,gameState,isWhite,minScore)
-                                            if score<minScore:
-                                                minScore = score
-                                    #Undo the move
-                                    self.movePiece(gameState,newX,newY,x,y)
-                                    (gameState[0])[newY][newX]=pieceCaptured
-                                else:                                
-                                    newGameState = copy.deepcopy(gameState)
+                                
+                                    newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
+                                        #Check for pawn promotion
+                                        if newY==0:
+                                            if ((newGameState[0])[newY][newX])[0]=='P':
+                                               ((newGameState[0])[newY][newX])='Q'
+                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,True)==False:
                                             score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
                                             if score<minScore:
@@ -156,6 +130,7 @@ class minimax:
     def evaluateGame(self, gameState, isWhite):
         materialScore = 0
         centerControl = 0
+        rookPenalty = 0
         for x in range(8):
             for y in range(8):
                 if (gameState[0])[y][x]!='':
@@ -165,13 +140,21 @@ class minimax:
                     elif (gameState[0])[y][x]=='K':
                         materialScore-=200
                     elif (gameState[0])[y][x]=='q':
-                        materialScore+=50
+                        materialScore+=60
                     elif (gameState[0])[y][x]=='Q':
                         materialScore-=50
                     elif (gameState[0])[y][x]=='r':
                         materialScore+=5
+                        if y==0 and x==0 and gameState[6]==False and gameState[8]==False:
+                            rookPenalty -= 0.1
+                        elif y==0 and x==7 and gameState[5]==False and gameState[8]==False:
+                            rookPenalty -= 0.1
                     elif (gameState[0])[y][x]=='R':
                         materialScore-=5
+                        if y==7 and x==0 and gameState[4]==False and gameState[7]==False:
+                            rookPenalty += 0.1
+                        elif y==7 and x==7 and gameState[3]==False and gameState[7]==False:
+                            rookPenalty += 0.1
                     elif (gameState[0])[y][x]=='b':
                         materialScore+=3
                         if (x>=2 or x<=5):
@@ -186,7 +169,7 @@ class minimax:
                             centerControl+=1
                     elif (gameState[0])[y][x]=='N':
                         materialScore-=3
-                        if (x>=2 or x<=5) and y<6:
+                        if (x>=2 or x<=5) and y<7:
                             centerControl-=1
                     elif ((gameState[0])[y][x])[0]=='p':
                         materialScore+=1
@@ -194,10 +177,10 @@ class minimax:
                             centerControl+=0.5
                     elif ((gameState[0])[y][x])[0]=='P':
                         materialScore-=1
-                        if (x>=2 or x<=5) and y<7:
+                        if (x>=2 or x<=5) and y<6:
                             centerControl-=0.5
                             
-        return (materialScore+centerControl)
+        return (materialScore+centerControl+rookPenalty)
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
@@ -254,7 +237,7 @@ class minimax:
                     
             elif abs(endX-startX)==2 and endY==startY and piece=='k':
                 #King has been moved
-                if gameState[8]==True:
+                if gameState[8]==True or self.isAttacked(gameState,False,startX,startY)==True:
                     valid=False
                     return valid
                 #Moving Queen Side and neither has been moved
@@ -275,7 +258,7 @@ class minimax:
                         
             elif abs(endX-startX)==2 and endY==startY and piece=='K':
                 #King has been moved
-                if gameState[7]==True:
+                if gameState[7]==True or self.isAttacked(gameState,True,startX,startY)==True:
                     valid=False
                     return valid
                 #Moving Queen Side and neither has been moved
@@ -614,7 +597,7 @@ class minimax:
                     
             elif abs(endX-startX)==2 and endY==startY and piece=='k':
                 #King has been moved
-                if gameState[8]==True:
+                if gameState[8]==True or self.isAttacked(gameState,False,startX,startY)==True:
                     valid=False
                     return valid
                 #Moving Queen Side and neither has been moved
@@ -645,7 +628,7 @@ class minimax:
                         
             elif abs(endX-startX)==2 and endY==startY and piece=='K':
                 #King has been moved
-                if gameState[7]==True:
+                if gameState[7]==True or self.isAttacked(gameState,True,startX,startY)==True:
                     valid=False
                     return valid
                 #Moving Queen Side and neither has been moved
@@ -975,7 +958,7 @@ class minimax:
         (gameState[9]) = [[False for i in range(8)] for j in range(8)]
         #Clear attacked by Black array
         (gameState[10]) = [[False for i in range(8)] for j in range(8)]
-        
+        #board = (gameState[0])
         for y in range(8):
             for x in range(8):
                 #Update attacked by white
@@ -986,11 +969,11 @@ class minimax:
                             (gameState[9])[y-1][x+1]=True
                         if (x-1)>=0 and (y-1)>=0:
                             (gameState[9])[y-1][x-1]=True
-                            
-                    for newX in range(8):
-                        for newY in range(8):
-                            if len((gameState[0])[y][x])<=1 and self.isLegalMotion(gameState,x,y,newX,newY)==True:
-                                (gameState[9])[newY][newX]=True
+                    else: 
+                        for newX in range(8):
+                            for newY in range(8):
+                                if self.isLegalMotion(gameState,x,y,newX,newY)==True:
+                                    (gameState[9])[newY][newX]=True
                                 
                 #Update attacked by black
                 elif (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower():
@@ -1000,11 +983,14 @@ class minimax:
                             (gameState[10])[y+1][x+1]=True
                         if (x-1)>=0 and (y+1)<8:
                             (gameState[10])[y+1][x-1]=True
-                            
-                    for newX in range(8):
-                        for newY in range(8):
-                            if  len((gameState[0])[y][x])<=1 and self.isLegalMotion(gameState,x,y,newX,newY)==True:
-                                (gameState[10])[newY][newX]=True                
+                    else:
+                        for newX in range(8):
+                            for newY in range(8):
+                                if self.isLegalMotion(gameState,x,y,newX,newY)==True:
+                                    (gameState[10])[newY][newX]=True 
+                                    
+        #(gameState[9]) = tempWhite
+        #(gameState[10]) = tempBlack
                     
     """Check if the current square is under attack"""
     def isAttacked(self, gameState, isWhite, currentX, currentY):
