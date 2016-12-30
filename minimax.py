@@ -56,8 +56,8 @@ class minimax:
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
                       
-        print ((self.gameState[0])[bestMove[1]][bestMove[0]])
-        print (self.isAttacked(self.gameState,True,bestMove[2],bestMove[3]))
+        #print ((self.gameState[0])[bestMove[1]][bestMove[0]])
+        #print (self.isAttacked(self.gameState,True,bestMove[2],bestMove[3]))
         return bestMove
     
     #The evaluation function for the AI's turn
@@ -65,8 +65,8 @@ class minimax:
         #Check if game is over or it's reached max depth
         if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
-        elif self.isCheckmate(gameState, isWhite):
-            return -sys.maxint +1
+        elif self.isCheckmate(gameState, False):
+            return -10000
             
         maxScore = -sys.maxint -1
         
@@ -102,8 +102,8 @@ class minimax:
         #Check if game is over or it's reached max depth
         if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
-        elif self.isCheckmate(gameState, isWhite):
-            return sys.maxint-1
+        elif self.isCheckmate(gameState, True):
+            return 10000
             
         minScore = sys.maxint
         
