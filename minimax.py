@@ -66,7 +66,7 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, isWhite):
-            return -sys.maxint -1
+            return -sys.maxint +1
             
         maxScore = -sys.maxint -1
         
@@ -103,7 +103,7 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, isWhite):
-            return sys.maxint
+            return sys.maxint-1
             
         minScore = sys.maxint
         
