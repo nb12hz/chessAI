@@ -164,7 +164,6 @@ def isValidMove(startX, startY, endX, endY):
                 
             #Moving Queen Side and neither has been moved
             elif startX>endX and whiteQS==False and board[7][0]=='R':
-                print("trying this", piece)
                 #Check if empty between them and not attacked
                 for i in range(1,4):
                     if board[startY][i]!='' or isAttacked(True,i,startY)==True:
@@ -579,7 +578,6 @@ def isLegalMove(startX, startY, endX, endY):
                 
             #Moving Queen Side and neither has been moved
             elif startX>endX and whiteQS==False and board[7][0]=='R':
-                print("trying this", piece)
                 #Check if empty between them and not attacked
                 for i in range(1,4):
                     if board[startY][i]!='' or isAttacked(True,i,startY)==True:
@@ -959,22 +957,19 @@ def makeMove(isWhite, startX, startY, endX, endY):
         movePiece(startX, startY, endX, endY)
         
         #Pawn promotion
-        for i in range(8):
-            if board[0][i]=='P':
+        if endY==0:
+            if board[endY][endX]=='P':
                 newPiece = str(raw_input("Coose a new piece:")).upper()
                 while (validChoice != True):
                     if newPiece in pieces:
-                        board[0][i] = newPiece
+                        board[endY][endX] = newPiece
                         validChoice = True
                         break
-            elif board[7][i]=='p':
-                #newPiece = str(raw_input("Coose a new piece:")).lower()
-                #while (validChoice != True):
-                    #if newPiece in pieces:
-                        #board[7][i] = newPiece
-                        board[7][i] = 'q'
-                        validChoice = True
-                        break
+                    
+        if endY==7:
+            if board[endY][endX]=='p':
+                board[endY][endX] = 'q'
+                validChoice = True
         
         updateAttacked()
                     

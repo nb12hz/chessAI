@@ -5,6 +5,7 @@ Created on Sat Dec 24 10:41:13 2016
 @author: Nick
 """
 
+from __future__ import print_function
 import copy
 import sys
 
@@ -21,10 +22,6 @@ class minimax:
         self.gameState[6] = blackQS
         self.gameState[7] = whiteKing
         self.gameState[8] = blackKing
-        #attackedByWhite
-        #self.gameState[9] = [[False for i in range(8)] for j in range(8)]
-        #attackedByBlack
-        #self.gameState[10] = [[False for i in range(8)] for j in range(8)]
         
     """This is the defintion of out AI functions
     All moves are made using a sepereate set of variables"""
@@ -37,9 +34,13 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower()==True:
-                    for newX in range(8):
-                        for newY in range(8):
-                            if self.isLegalMotion(self.gameState,x,y,newX,newY):
+                    #for newX in range(8):
+                        #for newY in range(8):
+                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    for i in range(len(moves)):
+                        newX=(moves[i])[0]
+                        newY=(moves[i])[1]
+                        if self.isLegalMotion(self.gameState,x,y,newX,newY):
 
                                     newGameState = self.quickerCopy(self.gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
@@ -49,20 +50,23 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
                                             if score>bestScore:
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
-                                        
+                      
+        #print ((self.gameState[0])[bestMove[1]][bestMove[0]])
+        #print (self.isAttacked(self.gameState,True,bestMove[2],bestMove[3]))
         return bestMove
     
     #The evaluation function for the AI's turn
     def maxPlay(self, depth, gameState, isWhite, currentMin):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
+        if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
+        elif self.isCheckmate(gameState, False):
+            return -10000
             
         maxScore = -sys.maxint -1
         
@@ -70,11 +74,13 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower()==True:
-                    for newX in range(8):
-                        for newY in range(8):
-                            if maxScore>currentMin:
-                                return maxScore
-                            if self.isLegalMotion(gameState,x,y,newX,newY):
+                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    for i in range(len(moves)):
+                        newX=(moves[i])[0]
+                        newY=(moves[i])[1]
+                        if maxScore>currentMin:
+                            return maxScore
+                        if self.isLegalMotion(gameState,x,y,newX,newY):
 
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
@@ -84,7 +90,6 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
-                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
                                             if score>maxScore:
@@ -95,8 +100,10 @@ class minimax:
     #The evaluation function for the Opponents turn
     def minPlay(self, depth, gameState, isWhite, currentMax):
         #Check if game is over or it's reached max depth
-        if depth==self.Max_Depth or self.isCheckmate(gameState, isWhite):
+        if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
+        elif self.isCheckmate(gameState, True):
+            return 10000
             
         minScore = sys.maxint
         
@@ -104,11 +111,13 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by Opponents piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper()==True:
-                    for newX in range(8):
-                        for newY in range(8):
-                            if minScore<currentMax:
+                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    for i in range(len(moves)):
+                        newX=(moves[i])[0]
+                        newY=(moves[i])[1]
+                        if minScore<currentMax:
                                 return minScore
-                            if self.isLegalMotion(gameState,x,y,newX,newY):
+                        if self.isLegalMotion(gameState,x,y,newX,newY):
                                 
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
@@ -118,7 +127,6 @@ class minimax:
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='P':
                                                ((newGameState[0])[newY][newX])='Q'
-                                        #self.updateAttacked(newGameState)
                                         if self.isCheck(newGameState,True)==False:
                                             score = self.maxPlay(depth+1,newGameState,isWhite,minScore)
                                             if score<minScore:
@@ -131,6 +139,9 @@ class minimax:
         materialScore = 0
         centerControl = 0
         rookPenalty = 0
+        queenProtected = 0
+        pawnPromoted = 0
+        
         for x in range(8):
             for y in range(8):
                 if (gameState[0])[y][x]!='':
@@ -141,8 +152,12 @@ class minimax:
                         materialScore-=200
                     elif (gameState[0])[y][x]=='q':
                         materialScore+=60
+                        if self.isAttacked(gameState,False,x,y):
+                            queenProtected+=5
                     elif (gameState[0])[y][x]=='Q':
                         materialScore-=50
+                        if self.isAttacked(gameState,True,x,y):
+                            queenProtected-=5
                     elif (gameState[0])[y][x]=='r':
                         materialScore+=5
                         if y==0 and x==0 and gameState[6]==False and gameState[8]==False:
@@ -175,12 +190,20 @@ class minimax:
                         materialScore+=1
                         if (x>=2 or x<=5) and y>1:
                             centerControl+=0.5
+                        if y==5:
+                            pawnPromoted+=1
+                        elif y==6:
+                            pawnPromoted+=2
                     elif ((gameState[0])[y][x])[0]=='P':
                         materialScore-=1
                         if (x>=2 or x<=5) and y<6:
                             centerControl-=0.5
+                        if y==5:
+                            pawnPromoted-=1
+                        elif y==6:
+                            pawnPromoted-=2
                             
-        return (materialScore+centerControl+rookPenalty)
+        return (materialScore+centerControl+rookPenalty+queenProtected+pawnPromoted)
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
@@ -489,7 +512,7 @@ class minimax:
                 #Capturing
                 if abs(startX-endX)==1:
                     #Moving forward one spot
-                    if (endY-startY)==-1:
+                    if (startY-endY)==1:
                         #if the spot is occupied by opponent
                         if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
                             return valid
@@ -577,23 +600,19 @@ class minimax:
         #Move the king
         elif piece=='k'or piece=='K':
             if abs(endX-startX)<=1 and abs(endY-startY)<=1:
-                if (gameState[0])[endY][endX]=='':
-                    if piece=='k':
-                        if self.isAttacked(gameState,False,endX,endY)==False:
-                            gameState[8]=True
-                        else:
-                            valid=False
-                            return valid
+                if piece=='k':
+                    if self.isAttacked(gameState,False,endX,endY)==False:
+                        gameState[8]=True
                     else:
-                        if self.isAttacked(gameState,True,endX,endY)==False:
-                            gameState[7]=True
-                        else:
-                            valid=False
-                            return valid
-                    return valid
+                        valid=False
+                        return valid
                 else:
-                    valid = False
-                    return valid
+                    if self.isAttacked(gameState,True,endX,endY)==False:
+                        gameState[7]=True
+                    else:
+                        valid=False
+                        return valid
+                return valid
                     
             elif abs(endX-startX)==2 and endY==startY and piece=='k':
                 #King has been moved
@@ -893,7 +912,7 @@ class minimax:
                 #Capturing
                 if abs(startX-endX)==1:
                     #Moving forward one spot
-                    if (endY-startY)==-1:
+                    if (startY-endY)==1:
                         #if the spot is occupied by opponent
                         if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
                             (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
@@ -952,55 +971,6 @@ class minimax:
         
         return valid
     
-    """Update the currently under attack arrays"""
-    def updateAttacked(self, gameState):      
-        #Clear attacked by White array
-        (gameState[9]) = [[False for i in range(8)] for j in range(8)]
-        #Clear attacked by Black array
-        (gameState[10]) = [[False for i in range(8)] for j in range(8)]
-        #board = (gameState[0])
-        for y in range(8):
-            for x in range(8):
-                #Update attacked by white
-                if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper():
-                    #Update squares for pawn attacks
-                    if len((gameState[0])[y][x])==2:
-                        if (x+1)<8 and (y-1)>=0:
-                            (gameState[9])[y-1][x+1]=True
-                        if (x-1)>=0 and (y-1)>=0:
-                            (gameState[9])[y-1][x-1]=True
-                    else: 
-                        for newX in range(8):
-                            for newY in range(8):
-                                if self.isLegalMotion(gameState,x,y,newX,newY)==True:
-                                    (gameState[9])[newY][newX]=True
-                                
-                #Update attacked by black
-                elif (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower():
-                    #Update squares for pawn attacks
-                    if len((gameState[0])[y][x])==2:
-                        if (x+1)<8 and (y+1)<8:
-                            (gameState[10])[y+1][x+1]=True
-                        if (x-1)>=0 and (y+1)<8:
-                            (gameState[10])[y+1][x-1]=True
-                    else:
-                        for newX in range(8):
-                            for newY in range(8):
-                                if self.isLegalMotion(gameState,x,y,newX,newY)==True:
-                                    (gameState[10])[newY][newX]=True 
-                                    
-        #(gameState[9]) = tempWhite
-        #(gameState[10]) = tempBlack
-                    
-    """Check if the current square is under attack"""
-    """def isAttacked(self, gameState, isWhite, currentX, currentY):
-        #Test if white is attacking this square
-        if isWhite==False:
-            return (gameState[9])[currentY][currentX]
-            
-        #Test if black is attacking this square
-        else:
-            return (gameState[10])[currentY][currentX]"""
             
     def isAttacked(self, gameState, isWhite,x,y):
 	attack = False
@@ -1012,98 +982,91 @@ class minimax:
 			#left
 			for i in range(x-1,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
+							
 			#right
 			for i in range(x+1,8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif x==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif x==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].isupper():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		
 		if y>0 and y<7:
 			#up
 			for i in range(y-1,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
+							
 			#down
 			for i in range(y+1,8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif y==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		elif y==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].isupper():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='r' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='r' or piece=='q':
-							attack=True
-							return attack
+						break
 		
 		#Diagonals
 		for i in range(1,8):
 			#Down and right
 			if y+i<8 and x+i<8:
 				if (gameState[0])[y+i][x+i]!='':
-					if (gameState[0])[y+i][x+i].isupper():
-						break
+					piece=(gameState[0])[y+i][x+i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x+i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack
+						break
 			else:
 				break
 								
@@ -1111,13 +1074,12 @@ class minimax:
 			#Up and right
 			if y-i>=0 and x+i<8:
 				if (gameState[0])[y-i][x+i]!='':
-					if (gameState[0])[y-i][x+i].isupper():
-						break
+					piece=(gameState[0])[y-i][x+i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x+i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack	
+						break	
 			else:
 				break
 				
@@ -1125,13 +1087,12 @@ class minimax:
 			#Down and left
 			if y+i<8 and x-i>=0:
 				if (gameState[0])[y+i][x-i]!='':
-					if (gameState[0])[y+i][x-i].isupper():
-						break
+					piece=(gameState[0])[y+i][x-i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x-i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack	
+						break
 			else:
 				break
 				
@@ -1139,13 +1100,12 @@ class minimax:
 			#Up and left
 			if y-i>=0 and x-i>=0:
 				if (gameState[0])[y-i][x-i]!='':
-					if (gameState[0])[y-i][x-i].isupper():
-						break
+					piece=(gameState[0])[y-i][x-i]
+					if piece=='b' or piece=='q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x-i]
-						if piece=='b' or piece=='q':
-							attack=True
-							return attack
+						break
 			else:
 				break
 		
@@ -1194,15 +1154,15 @@ class minimax:
 		#Pawn Attacks
 		if y-1>=0:
 			if x+1<8:
-				if (gameState[0])[y-1][x+1]=='p':
+				if (gameState[0])[y-1][x+1] !='' and ((gameState[0])[y-1][x+1])[0]=='p':
 					attack=True
 					return attack
 			if x-1>=0:
-				if (gameState[0])[y-1][x-1]=='p':
+				if (gameState[0])[y-1][x-1] !='' and ((gameState[0])[y-1][x-1])[0]=='p':
 					attack=True
 					return attack
-         
-         	#King attacks
+					
+		#King attacks
 		if y+1<8:
 			if x+1<8:
 				if (gameState[0])[y+1][x+1]=='k':
@@ -1243,98 +1203,90 @@ class minimax:
 			#left
 			for i in range(x-1,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 			#right
 			for i in range(x+1,8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif x==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif x==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[y][i]!='':
-					if (gameState[0])[y][i].islower():
-						break
+					piece=(gameState[0])[y][i]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y][i]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		
 		if y>0 and y<7:
 			#up
 			for i in range(y-1,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
+							
 			#down
 			for i in range(y+1,8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif y==0:
-			for i in range(8):
+			for i in range(1,8):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		elif y==7:
-			for i in range(7,-1,-1):
+			for i in range(6,-1,-1):
 				if (gameState[0])[i][x]!='':
-					if (gameState[0])[i][x].islower():
-						break
+					piece=(gameState[0])[i][x]
+					if piece=='R' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[i][x]
-						if piece=='R' or piece=='Q':
-							attack=True
-							return attack
+						break
 		
 		#Diagonals
 		for i in range(1,8):
 			#Down and right
 			if y+i<8 and x+i<8:
 				if (gameState[0])[y+i][x+i]!='':
-					if (gameState[0])[y+i][x+i].isupper():
-						break
+					piece=(gameState[0])[y+i][x+i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x+i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack
+						break							
 			else:
 				break
 								
@@ -1342,13 +1294,12 @@ class minimax:
 			#Up and right
 			if y-i>=0 and x+i<8:
 				if (gameState[0])[y-i][x+i]!='':
-					if (gameState[0])[y-i][x+i].isupper():
-						break
+					piece=(gameState[0])[y-i][x+i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x+i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack	
+						break	
 			else:
 				break
 				
@@ -1356,13 +1307,12 @@ class minimax:
 			#Down and left
 			if y+i<8 and x-i>=0:
 				if (gameState[0])[y+i][x-i]!='':
-					if (gameState[0])[y+i][x-i].isupper():
-						break
+					piece=(gameState[0])[y+i][x-i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y+i][x-i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack	
+						break
 			else:
 				break
 				
@@ -1370,13 +1320,12 @@ class minimax:
 			#Up and left
 			if y-i>=0 and x-i>=0:
 				if (gameState[0])[y-i][x-i]!='':
-					if (gameState[0])[y-i][x-i].isupper():
-						break
+					piece=(gameState[0])[y-i][x-i]
+					if piece=='B' or piece=='Q':
+						attack=True
+						return attack
 					else:
-						piece=(gameState[0])[y-i][x-i]
-						if piece=='B' or piece=='Q':
-							attack=True
-							return attack
+						break
 			else:
 				break
 		
@@ -1425,15 +1374,14 @@ class minimax:
 		#Pawn Attacks
 		if y+1<8:
 			if x+1<8:
-				if (gameState[0])[y+1][x+1]=='P':
+				if (gameState[0])[y+1][x+1]!='' and ((gameState[0])[y+1][x+1])[0]=='P':
 					attack=True
 					return attack
 			if x-1>=0:
-				if (gameState[0])[y+1][x-1]=='P':
+				if (gameState[0])[y+1][x-1]!='' and ((gameState[0])[y+1][x-1])[0]=='P':
 					attack=True
 					return attack
-					
-         
+     
 		#King attacks
 		if y+1<8:
 			if x+1<8:
@@ -1493,11 +1441,9 @@ class minimax:
     def isCheckmate(self, gameState, isWhite):
 
         #Is a king actually in check?
-        if self.isCheck(gameState, isWhite)==False:
+        if self.isCheck(gameState, False)==False and self.isCheck(gameState, True)==False:
             return False
-        elif self.isCheck(gameState, True)==False:
-            return False
-                
+               
         #Find Black King
         if isWhite==False:
             for x in range(8):
@@ -1531,44 +1477,42 @@ class minimax:
                     if gameState[0][sY][sX].isupper():
                         for eY in range(8):
                             for eX in range(8):
-                                tempBoard = copy.deepcopy(gameState[0])
-                                tempPawns = copy.deepcopy(gameState[1])
-                                tempTwo = copy.deepcopy(gameState[2])
-                                
-                                WkingMoved = gameState[7]
-                                WkingSide = gameState[3]
-                                WqueenSide = gameState[4]
-                                BkingMoved = gameState[8]
-                                BkingSide = gameState[5]
-                                BqueenSide = gameState[6]
-                                
-                                if self.isValidMove(sX,sY,eX,eY):
-                                    self.updateAttacked()
+                                if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
+                                    tempBoard = copy.deepcopy(gameState[0])
+                                    tempPawns = copy.deepcopy(gameState[1])
+                                    tempTwo = copy.deepcopy(gameState[2])
                                     
-                                    if self.isCheck(isWhite)==True:
-                                        gameState[0]=copy.deepcopy(tempBoard)
-                                        gameState[1]=copy.deepcopy(tempPawns)
-                                        gameState[2]=copy.deepcopy(tempTwo)
-                                        self.updateAttacked()
-                                        gameState[7]=WkingMoved
-                                        gameState[3]=WkingSide
-                                        gameState[4]=WqueenSide
-                                        gameState[8]=BkingMoved
-                                        gameState[5]=BkingSide
-                                        gameState[6]=BqueenSide
-                                        return True
-                                    else:
-                                        gameState[0]=copy.deepcopy(tempBoard)
-                                        gameState[1]=copy.deepcopy(tempPawns)
-                                        gameState[2]=copy.deepcopy(tempTwo)
-                                        self.updateAttacked()
-                                        gameState[7]=WkingMoved
-                                        gameState[3]=WkingSide
-                                        gameState[4]=WqueenSide
-                                        gameState[8]=BkingMoved
-                                        gameState[5]=BkingSide
-                                        gameState[6]=BqueenSide
-                                        return False
+                                    WkingMoved = gameState[7]
+                                    WkingSide = gameState[3]
+                                    WqueenSide = gameState[4]
+                                    BkingMoved = gameState[8]
+                                    BkingSide = gameState[5]
+                                    BqueenSide = gameState[6]
+                                    
+                                    if self.isValidMove(gameState,sX,sY,eX,eY):
+                                        
+                                        if self.isCheck(gameState,isWhite)==True:
+                                            gameState[0]=copy.deepcopy(tempBoard)
+                                            gameState[1]=copy.deepcopy(tempPawns)
+                                            gameState[2]=copy.deepcopy(tempTwo)
+                                            gameState[7]=WkingMoved
+                                            gameState[3]=WkingSide
+                                            gameState[4]=WqueenSide
+                                            gameState[8]=BkingMoved
+                                            gameState[5]=BkingSide
+                                            gameState[6]=BqueenSide
+                                            return True
+                                        else:
+                                            gameState[0]=copy.deepcopy(tempBoard)
+                                            gameState[1]=copy.deepcopy(tempPawns)
+                                            gameState[2]=copy.deepcopy(tempTwo)
+                                            gameState[7]=WkingMoved
+                                            gameState[3]=WkingSide
+                                            gameState[4]=WqueenSide
+                                            gameState[8]=BkingMoved
+                                            gameState[5]=BkingSide
+                                            gameState[6]=BqueenSide
+                                            return False
         #Check every possible move for Black
         else:
             for sY in range(8):
@@ -1576,49 +1520,47 @@ class minimax:
                     if gameState[0][sY][sX].islower():
                         for eY in range(8):
                             for eX in range(8):
-                                tempBoard = copy.deepcopy(gameState[0])
-                                tempPawns = copy.deepcopy(gameState[1])
-                                tempTwo = copy.deepcopy(gameState[2])
-                                
-                                WkingMoved = gameState[7]
-                                WkingSide = gameState[3]
-                                WqueenSide = gameState[4]
-                                BkingMoved = gameState[8]
-                                BkingSide = gameState[5]
-                                BqueenSide = gameState[6]
-                                
-                                if self.isValidMove(sX,sY,eX,eY):
-                                    self.updateAttacked()
+                                if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
+                                    tempBoard = copy.deepcopy(gameState[0])
+                                    tempPawns = copy.deepcopy(gameState[1])
+                                    tempTwo = copy.deepcopy(gameState[2])
                                     
-                                    if self.isCheck(isWhite)==True:
-                                        gameState[0]=copy.deepcopy(tempBoard)
-                                        gameState[1]=copy.deepcopy(tempPawns)
-                                        gameState[2]=copy.deepcopy(tempTwo)
-                                        self.updateAttacked()
-                                        gameState[7]=WkingMoved
-                                        gameState[3]=WkingSide
-                                        gameState[4]=WqueenSide
-                                        gameState[8]=BkingMoved
-                                        gameState[5]=BkingSide
-                                        gameState[6]=BqueenSide
-                                        return True
-                                    else:
-                                        gameState[0]=copy.deepcopy(tempBoard)
-                                        gameState[1]=copy.deepcopy(tempPawns)
-                                        gameState[2]=copy.deepcopy(tempTwo)
-                                        self.updateAttacked()
-                                        gameState[7]=WkingMoved
-                                        gameState[3]=WkingSide
-                                        gameState[4]=WqueenSide
-                                        gameState[8]=BkingMoved
-                                        gameState[5]=BkingSide
-                                        gameState[6]=BqueenSide
-                                        return False
+                                    WkingMoved = gameState[7]
+                                    WkingSide = gameState[3]
+                                    WqueenSide = gameState[4]
+                                    BkingMoved = gameState[8]
+                                    BkingSide = gameState[5]
+                                    BqueenSide = gameState[6]
+                                    
+                                    if self.isValidMove(gameState,sX,sY,eX,eY):
+                                        
+                                        if self.isCheck(gameState,isWhite)==True:
+                                            gameState[0]=copy.deepcopy(tempBoard)
+                                            gameState[1]=copy.deepcopy(tempPawns)
+                                            gameState[2]=copy.deepcopy(tempTwo)
+                                            gameState[7]=WkingMoved
+                                            gameState[3]=WkingSide
+                                            gameState[4]=WqueenSide
+                                            gameState[8]=BkingMoved
+                                            gameState[5]=BkingSide
+                                            gameState[6]=BqueenSide
+                                            return True
+                                        else:
+                                            gameState[0]=copy.deepcopy(tempBoard)
+                                            gameState[1]=copy.deepcopy(tempPawns)
+                                            gameState[2]=copy.deepcopy(tempTwo)
+                                            gameState[7]=WkingMoved
+                                            gameState[3]=WkingSide
+                                            gameState[4]=WqueenSide
+                                            gameState[8]=BkingMoved
+                                            gameState[5]=BkingSide
+                                            gameState[6]=BqueenSide
+                                            return False
         
         return False
 
     def quickerCopy(self,gameState):
-        temp = [0 for i in range(11)]
+        temp = [0 for i in range(9)]
         temp[0] = [row[:] for row in (gameState[0])]
         temp[1] = (gameState[1])[:]
         temp[2] = (gameState[2])[:]
@@ -1628,7 +1570,124 @@ class minimax:
         temp[6] = (gameState[6])
         temp[7] = (gameState[7])
         temp[8] = (gameState[8])
-        #temp[9] = [row[:] for row in (gameState[9])]
-        #temp[10] = [row[:] for row in (gameState[10])]
         
         return temp
+        
+    def possibleLegalMoves(self, piece, x, y):
+        moves = []
+        
+        if piece=='':
+            return moves
+        elif piece=='R' or piece=='r':
+            for i in range(x-1,-1,-1):
+                moves.append([i,y]) 
+            for i in range(x+1,8):
+                moves.append([i,y])
+            for i in range(y-1,-1,-1):
+                moves.append([x,i]) 
+            for i in range(x+1,8):
+                moves.append([x,i])
+            return moves
+        elif piece=='B' or piece=='b':
+            for i in range(1,8):
+                #Down and right
+                if y+i<8 and x+i<8:
+                    moves.append([x+i,y+i])
+            for i in range(1,8):
+                #Up and right
+                if y-i>=0 and x+i<8:
+                    moves.append([x+i,y-i])
+            for i in range(1,8):
+                #Down and left
+                if y+i<8 and x-i>=0:
+                    moves.append([x-i,y+i])
+            for i in range(1,8):
+                #Up and left
+                if y-i>=0 and x-i>=0:
+                    moves.append([x-i,y-i])
+            return moves
+        elif piece=='N' or piece=='n':
+            if x+1<8 and y+2<8:
+                moves.append([x+1,y+2])
+            if x-1>=0 and y+2<8:
+                moves.append([x-1,y+2])
+            if x+1<8 and y-2>=0:
+                moves.append([x+1,y-2])
+            if x-1>=0 and y-2>=0:
+                moves.append([x-1,y-2])
+            if x+2<8 and y+1<8:
+                moves.append([x+2,y+1])
+            if x+2<8 and y-1>=0:
+                moves.append([x+2,y-1])
+            if x-2>=0 and y+1<8:
+                moves.append([x-2,y+1])
+            if x-2>=0 and y-1>=0:
+                moves.append([x-2,y-1])
+            return moves
+        elif piece=='Q' or piece=='q':
+            #Horizontal/Vertical Moves
+            for i in range(x-1,-1,-1):
+                moves.append([i,y]) 
+            for i in range(x+1,8):
+                moves.append([i,y])
+            for i in range(y-1,-1,-1):
+                moves.append([x,i]) 
+            for i in range(x+1,8):
+                moves.append([x,i])
+                
+            #Diagonal moves
+            for i in range(1,8):
+                #Down and right
+                if y+i<8 and x+i<8:
+                    moves.append([x+i,y+i])
+            for i in range(1,8):
+                #Up and right
+                if y-i>=0 and x+i<8:
+                    moves.append([x+i,y-i])
+            for i in range(1,8):
+                #Down and left
+                if y+i<8 and x-i>=0:
+                    moves.append([x-i,y+i])
+            for i in range(1,8):
+                #Up and left
+                if y-i>=0 and x-i>=0:
+                    moves.append([x-i,y-i])
+                    
+            return moves
+        elif piece=='K' or piece=='k':
+            if y+1<8:
+                if x+1<8:
+                    moves.append([x+1,y+1])
+                if x-1>=0:
+                    moves.append([x-1,y+1])
+                moves.append([x,y+1])
+            if y-1>=0:
+                if x+1<8:
+                    moves.append([x+1,y-1])
+                if x-1>=0:
+                    moves.append([x-1,y-1])
+                moves.append([x,y-1])
+            if x+1<8:
+                moves.append([x+1,y])
+            if x-1>=0:
+                moves.append([x-1,y])
+        elif piece[0]=='P':
+            if y-1>=0:
+                if x+1<8:
+                    moves.append([x+1,y-1])
+                if x-1>=0:
+                    moves.append([x-1,y-1])
+                moves.append([x,y-1])
+            if y==6:
+                moves.append([x,y-2])
+            return moves
+        elif piece[0]=='p':
+            if y+1<8:
+                if x+1<8:
+                    moves.append([x+1,y+1])
+                if x-1>=0:
+                    moves.append([x-1,y+1])
+                moves.append([x,y+1])
+            if y==1:
+                moves.append([x,y+2])
+        return moves
