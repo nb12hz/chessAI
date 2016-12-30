@@ -600,23 +600,19 @@ class minimax:
         #Move the king
         elif piece=='k'or piece=='K':
             if abs(endX-startX)<=1 and abs(endY-startY)<=1:
-                if (gameState[0])[endY][endX]=='':
-                    if piece=='k':
-                        if self.isAttacked(gameState,False,endX,endY)==False:
-                            gameState[8]=True
-                        else:
-                            valid=False
-                            return valid
+                if piece=='k':
+                    if self.isAttacked(gameState,False,endX,endY)==False:
+                        gameState[8]=True
                     else:
-                        if self.isAttacked(gameState,True,endX,endY)==False:
-                            gameState[7]=True
-                        else:
-                            valid=False
-                            return valid
-                    return valid
+                        valid=False
+                        return valid
                 else:
-                    valid = False
-                    return valid
+                    if self.isAttacked(gameState,True,endX,endY)==False:
+                        gameState[7]=True
+                    else:
+                        valid=False
+                        return valid
+                return valid
                     
             elif abs(endX-startX)==2 and endY==startY and piece=='k':
                 #King has been moved
