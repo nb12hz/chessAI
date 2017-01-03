@@ -437,7 +437,7 @@ def isValidMove(startX, startY, endX, endY):
                         pawnMoved[int((board[startY][startX])[1])+7]=True
                         return valid
                     #En Passant capture
-                    elif board[endY][endX]=='' and board[startY][endX].isupper() and len(board[startY][endX])>=2:
+                    elif board[endY][endX]=='' and board[startY][endX].islower() and len(board[startY][endX])>=2:
                         if movedTwo[int((board[startY][endX])[1])-1]==True:
                             pawnMoved[int((board[startY][startX])[1])+7]=True
                             board[startY][endX] = ''
@@ -812,7 +812,7 @@ def isLegalMove(startX, startY, endX, endY):
                     if board[endY][endX]!='' and board[endY][endX].islower():
                         return valid
                     #En Passant capture
-                    elif board[endY][endX]=='' and board[startY][endX].isupper() and len(board[startY][endX])>=2:
+                    elif board[endY][endX]=='' and board[startY][endX].islower() and len(board[startY][endX])>=2:
                         if movedTwo[int((board[startY][endX])[1])-1]==True:
                             return valid
                         else:

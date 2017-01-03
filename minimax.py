@@ -9,6 +9,10 @@ from __future__ import print_function
 import copy
 import sys
 
+"""To do list:
+Stop rooks from moving back and forth when no obvious move
+Return a move when obvious check mate"""
+
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
         self.gameState = [0 for i in range(11)]        
@@ -66,6 +70,7 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, False):
+            print("AI is in checkmate")
             return -10000
             
         maxScore = -sys.maxint -1
@@ -103,6 +108,7 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, True):
+            print("Human is in check")
             return 10000
             
         minScore = sys.maxint
@@ -517,7 +523,7 @@ class minimax:
                         if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
                             return valid
                         #En Passant capture
-                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].isupper() and len((gameState[0])[startY][endX])>=2:
+                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].islower() and len((gameState[0])[startY][endX])>=2:
                             if (gameState[2])[int(((gameState[0])[startY][endX])[1])-1]==True:
                                 return valid
                             else:
@@ -918,7 +924,7 @@ class minimax:
                             (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
                             return valid
                         #En Passant capture
-                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].isupper() and len((gameState[0])[startY][endX])>=2:
+                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].islower() and len((gameState[0])[startY][endX])>=2:
                             if (gameState[2])[int(((gameState[0])[startY][endX])[1])-1]==True:
                                 (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
                                 (gameState[0])[startY][endX] = ''
