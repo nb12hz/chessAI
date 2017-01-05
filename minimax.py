@@ -10,8 +10,7 @@ import copy
 import sys
 
 """To do list:
-Stop rooks from moving back and forth when no obvious move
-Return a move when obvious check mate"""
+Stop rooks from moving back and forth when no obvious move"""
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
