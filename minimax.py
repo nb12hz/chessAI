@@ -1444,7 +1444,7 @@ class minimax:
         
         return True
             
-    
+    """Check for checkmate"""
     def isCheckmate(self, gameState, isWhite):
 
         #Is a king actually in check?
@@ -1455,33 +1455,41 @@ class minimax:
         if isWhite==False:
             for x in range(8):
                 for y in range(8):
-                    if gameState[0][y][x]=='k':
+                    if (gameState[0])[y][x]=='k':
                         currentY=y
                         currentX=x
         #Find White King
         else:
             for x in range(8):
                 for y in range(8):
-                    if gameState[0][y][x]=='K':
+                    if (gameState[0])[y][x]=='K':
                         currentY=y
                         currentX=x
+                        
         #Check through all 8 possible moves for the King
-        for i in range(currentY - 1, currentY+2):
-            for j in range(currentX - 1, currentX+2):
+        for i in range(currentY-1, currentY+2):
+            for j in range(currentX-1, currentX+2):
                 if i>=0 and i<=7:
                     if j>=0 and j<=7:
                         if isWhite==False:
+<<<<<<< HEAD
+                            if ((gameState[9])[i][j]==False) and ((gameState[0])[i][j] in ['r','n','b','q','p'])==False:
+                                return False
+                        else:
+                            if ((gameState[10])[i][j]==False) and ((gameState[0])[i][j] in ['R','N','B','Q','P'])==False:
+=======
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
                                 return False
                         else:
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
+>>>>>>> refs/remotes/origin/master
                                 return False
         
         #Check every possible move for White
         if(isWhite):
             for sY in range(8):
                 for sX in range(8):
-                    if gameState[0][sY][sX].isupper():
+                    if (gameState[0])[sY][sX].isupper():
                         for eY in range(8):
                             for eX in range(8):
                                 if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
@@ -1524,7 +1532,7 @@ class minimax:
         else:
             for sY in range(8):
                 for sX in range(8):
-                    if gameState[0][sY][sX].islower():
+                    if (gameState[0])[sY][sX].islower():
                         for eY in range(8):
                             for eX in range(8):
                                 if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
