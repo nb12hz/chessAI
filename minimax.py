@@ -9,6 +9,9 @@ from __future__ import print_function
 import copy
 import sys
 
+"""To do list:
+Stop rooks from moving back and forth when no obvious move"""
+
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
         self.gameState = [0 for i in range(11)]        
@@ -52,7 +55,9 @@ class minimax:
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
+                                            print("Move was ",score)
                                             if score>bestScore:
+                                                print("Found a better move")
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
                       
@@ -66,9 +71,10 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, False):
+            print("AI is in checkmate")
             return -10000
             
-        maxScore = -sys.maxint -1
+        maxScore = -10000
         
         for x in range(8):
             for y in range(8):
@@ -103,9 +109,10 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, True):
+            print("Human is in checkmate")
             return 10000
             
-        minScore = sys.maxint
+        minScore = 10000
         
         for x in range(8):
             for y in range(8):
@@ -517,7 +524,7 @@ class minimax:
                         if (gameState[0])[endY][endX]!='' and (gameState[0])[endY][endX].islower():
                             return valid
                         #En Passant capture
-                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].isupper() and len((gameState[0])[startY][endX])>=2:
+                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].islower() and len((gameState[0])[startY][endX])>=2:
                             if (gameState[2])[int(((gameState[0])[startY][endX])[1])-1]==True:
                                 return valid
                             else:
@@ -918,7 +925,7 @@ class minimax:
                             (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
                             return valid
                         #En Passant capture
-                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].isupper() and len((gameState[0])[startY][endX])>=2:
+                        elif (gameState[0])[endY][endX]=='' and (gameState[0])[startY][endX].islower() and len((gameState[0])[startY][endX])>=2:
                             if (gameState[2])[int(((gameState[0])[startY][endX])[1])-1]==True:
                                 (gameState[1])[int(((gameState[0])[startY][startX])[1])+7]=True
                                 (gameState[0])[startY][endX] = ''
@@ -1465,17 +1472,10 @@ class minimax:
                 if i>=0 and i<=7:
                     if j>=0 and j<=7:
                         if isWhite==False:
-<<<<<<< HEAD
-                            if ((gameState[9])[i][j]==False) and ((gameState[0])[i][j] in ['r','n','b','q','p'])==False:
-                                return False
-                        else:
-                            if ((gameState[10])[i][j]==False) and ((gameState[0])[i][j] in ['R','N','B','Q','P'])==False:
-=======
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
                                 return False
                         else:
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
->>>>>>> refs/remotes/origin/master
                                 return False
         
         #Check every possible move for White
