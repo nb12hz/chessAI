@@ -33,7 +33,7 @@ def intializeBoard():
     global attackedByBlack
     
     #board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
-    board = ['r','n','b','q','k','b','n','r'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['R','N','B','Q','K','B','N','R']
+    board = ['','','','','k','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','Q','K','','','R']
     #Black is 0-7, White is 8-15    
     pawnMoved = [False for i in range(16)]
     #Black is 0-7, White is 8-15
@@ -1024,10 +1024,10 @@ def isCheckmate(isWhite):
         for j in range(currentX - 1, currentX+2):
             if i>=0 and i<=7:
                 if j>=0 and j<=7:
-                    if isWhite==False:
+                    if isWhite==False and i != currentY and j != currentX:
                         if (attackedByWhite[i][j]==False) and (board[i][j] in ['r','n','b','q','p'])==False:
                             return False
-                    else:
+                    elif isWhite==True and i != currentY and j != currentX:
                         if (attackedByBlack[i][j]==False) and (board[i][j] in ['R','N','B','Q','P'])==False:
                             return False
                 

@@ -56,6 +56,7 @@ class minimax:
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
+                                            print("Move was ",score)
                                             if score>bestScore:
                                                 print("Found a better move")
                                                 bestScore = score
@@ -74,7 +75,7 @@ class minimax:
             print("AI is in checkmate")
             return -10000
             
-        maxScore = -sys.maxint -1
+        maxScore = -10000
         
         for x in range(8):
             for y in range(8):
@@ -112,7 +113,7 @@ class minimax:
             print("Human is in checkmate")
             return 10000
             
-        minScore = sys.maxint
+        minScore = 10000
         
         for x in range(8):
             for y in range(8):
@@ -1472,17 +1473,10 @@ class minimax:
                 if i>=0 and i<=7:
                     if j>=0 and j<=7:
                         if isWhite==False:
-<<<<<<< HEAD
-                            if ((gameState[9])[i][j]==False) and ((gameState[0])[i][j] in ['r','n','b','q','p'])==False:
-                                return False
-                        else:
-                            if ((gameState[10])[i][j]==False) and ((gameState[0])[i][j] in ['R','N','B','Q','P'])==False:
-=======
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
                                 return False
                         else:
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
->>>>>>> refs/remotes/origin/master
                                 return False
         
         #Check every possible move for White
