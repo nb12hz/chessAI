@@ -57,6 +57,7 @@ class minimax:
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
                                             if score>bestScore:
+                                                print("Found a better move")
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
                       
@@ -108,7 +109,7 @@ class minimax:
         if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
         elif self.isCheckmate(gameState, True):
-            print("Human is in check")
+            print("Human is in checkmate")
             return 10000
             
         minScore = sys.maxint
