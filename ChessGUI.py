@@ -91,19 +91,19 @@ class ChessFrame(wx.Frame):
         self.button.Bind(wx.EVT_BUTTON, self.ButtonPress)
         
     def ButtonPress(self, e):
-        self.moveOutput.SetValue("Move Recorded")
         files = ['A','B','C','D','E','F','G','H']
         ranks = ['8','7','6','5','4','3','2','1']
         
         rawIn = self.moveInput.GetValue()
         nMove = list(rawIn)
         if (nMove[0] and nMove[2] in files) and (nMove[1] and nMove[3] in ranks):
-            self.moveOutput.SetValue(rawIn)
+            self.moveOutput.SetLabel(rawIn)
             #Hand nMove to the main program
-            self.boardGrid.SetCellValue(files[nMove[2]], ranks[nMove[3]], self.boardGrid.GetCellValue(files[nMove[0]], ranks[nMove[1]]))
-            self.boardGrid.SetCellValue(files[nMove[0]], ranks[nMove[1]], "")
+            currentPiece = self.boardGrid.GetCellValue(ranks.index(nMove[1]), files.index(nMove[0]))
+            self.boardGrid.SetCellValue(ranks.index(nMove[3]), files.index(nMove[2]), currentPiece)
+            self.boardGrid.SetCellValue(ranks.index(nMove[1]), files.index(nMove[0]), "")
         else:
-            self.moveOutput.SetValue("Invalid Move")
+            self.moveOutput.SetLabel("Invalid Move")
         
 app = wx.App(False)
 frame = ChessFrame(None)
