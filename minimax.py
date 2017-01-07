@@ -10,7 +10,9 @@ import copy
 import sys
 
 """To do list:
-Stop rooks from moving back and forth when no obvious move"""
+Stop rooks from moving back and forth when no obvious move
+Stalemate
+Giving up queen for check"""
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
@@ -37,8 +39,6 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower()==True:
-                    #for newX in range(8):
-                        #for newY in range(8):
                     moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
