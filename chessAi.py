@@ -35,7 +35,7 @@ def intializeBoard():
     #board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
     
     #Testing Board    
-    board = ['','','','','k','','',''],['','','','','B','','',''],['','','','K','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','','']
+    board = ['','','','','k','','',''],['','','','','','','','P8'],['','','','K','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','','']
     
     #Black is 0-7, White is 8-15    
     pawnMoved = [False for i in range(16)]
@@ -962,7 +962,7 @@ def makeMove(isWhite, startX, startY, endX, endY):
         
         #Pawn promotion
         if endY==0:
-            if board[endY][endX]=='P':
+            if (board[endY][endX])[0]=='P':
                 newPiece = str(raw_input("Coose a new piece:")).upper()
                 while (validChoice != True):
                     if newPiece in pieces:
@@ -971,7 +971,7 @@ def makeMove(isWhite, startX, startY, endX, endY):
                         break
                     
         if endY==7:
-            if board[endY][endX]=='p':
+            if (board[endY][endX])[0]=='p':
                 board[endY][endX] = 'q'
                 validChoice = True
         
@@ -1102,6 +1102,17 @@ def isCheckmate(isWhite):
 def isStalemate(isWhite):
     global board, pawnMoved, movedTwo, attackedByWhite, attackedByBlack, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
     
+    onlyKing = True
+    
+    for i in range(8):
+        for j in range(8):
+            if board[i][j]!='':
+                if board[i][j]!='k' and board[i][j]!='K':
+                    onlyKing=False
+
+    if onlyKing==True:
+        return True
+        
     if(isWhite):
         if isCheck(True):
             return False

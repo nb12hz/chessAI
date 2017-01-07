@@ -10,8 +10,7 @@ import copy
 import sys
 
 """To do list:
-Stop rooks from moving back and forth when no obvious move
-Stalemate
+Stop rooks from moving back and forth when no obvious move - Maybe fixed?
 Giving up queen for check"""
 
 class minimax:
@@ -27,6 +26,10 @@ class minimax:
         self.gameState[6] = blackQS
         self.gameState[7] = whiteKing
         self.gameState[8] = blackKing
+        #White castled
+        self.gameState[9] = False
+        #Black Castled
+        self.gameState[10] = False
         
     """This is the defintion of out AI functions
     All moves are made using a sepereate set of variables"""
@@ -124,6 +127,8 @@ class minimax:
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
+                                        #print("x: ",x," y: ",y," nx: ",newX," ny: ",newY)
+                                        
                                         #Check for pawn promotion
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='P':
@@ -142,6 +147,7 @@ class minimax:
         rookPenalty = 0
         queenProtected = 0
         pawnPromoted = 0
+        castled = 0
         
         for x in range(8):
             for y in range(8):
@@ -149,10 +155,14 @@ class minimax:
                     #catch empty spot
                     if (gameState[0])[y][x]=='k':
                         materialScore+=200
+                        if gameState[10] == True:
+                            castled += 5
                     elif (gameState[0])[y][x]=='K':
                         materialScore-=200
+                        if gameState[9] == True:
+                            castled -= 5
                     elif (gameState[0])[y][x]=='q':
-                        materialScore+=60
+                        materialScore+=50
                         if self.isAttacked(gameState,False,x,y):
                             queenProtected+=5
                     elif (gameState[0])[y][x]=='Q':
@@ -172,39 +182,39 @@ class minimax:
                         elif y==7 and x==7 and gameState[3]==False and gameState[7]==False:
                             rookPenalty += 0.1
                     elif (gameState[0])[y][x]=='b':
-                        materialScore+=3
-                        if (x>=2 or x<=5):
+                        materialScore+=3.3
+                        if (x>=2 and x<=5):
                             centerControl+=0.5
                     elif (gameState[0])[y][x]=='B':
-                        materialScore-=3
-                        if (x>=2 or x<=5) and y<7:
+                        materialScore-=3.3
+                        if (x>=2 and x<=5) and y<7:
                             centerControl-=0.5
                     elif (gameState[0])[y][x]=='n':
-                        materialScore+=3
-                        if (x>=2 or x<=5) and y>0:
+                        materialScore+=3.2
+                        if (x>=2 and x<=5) and y>0:
                             centerControl+=1
                     elif (gameState[0])[y][x]=='N':
-                        materialScore-=3
-                        if (x>=2 or x<=5) and y<7:
+                        materialScore-=3.2
+                        if (x>=2 and x<=5) and y<7:
                             centerControl-=1
                     elif ((gameState[0])[y][x])[0]=='p':
                         materialScore+=1
-                        if (x>=2 or x<=5) and y>1:
+                        if (x>=2 and x<=5) and y>1:
                             centerControl+=0.5
                         if y==5:
-                            pawnPromoted+=1
+                            pawnPromoted+=0.5
                         elif y==6:
-                            pawnPromoted+=2
+                            pawnPromoted+=1
                     elif ((gameState[0])[y][x])[0]=='P':
                         materialScore-=1
-                        if (x>=2 or x<=5) and y<6:
+                        if (x>=2 and x<=5) and y<6:
                             centerControl-=0.5
                         if y==5:
-                            pawnPromoted-=1
+                            pawnPromoted-=0.5
                         elif y==6:
-                            pawnPromoted-=2
+                            pawnPromoted-=1
                             
-        return (materialScore+centerControl+rookPenalty+queenProtected+pawnPromoted)
+        return (materialScore+centerControl+rookPenalty+queenProtected+pawnPromoted+castled)
     
     #Move the piece in the given coordinates to the target coordinates  
     def movePiece(self, gameState, startX, startY, endX, endY):        
@@ -259,7 +269,7 @@ class minimax:
                         return valid
                 return valid
                     
-            elif abs(endX-startX)==2 and endY==startY and piece=='k':
+            elif abs(endX-startX)==2 and endY==startY and endY==0 and piece=='k':
                 #King has been moved
                 if gameState[8]==True or self.isAttacked(gameState,False,startX,startY)==True:
                     valid=False
@@ -280,7 +290,7 @@ class minimax:
                             valid = False 
                             return valid
                         
-            elif abs(endX-startX)==2 and endY==startY and piece=='K':
+            elif abs(endX-startX)==2 and endY==startY and endY==7 and piece=='K':
                 #King has been moved
                 if gameState[7]==True or self.isAttacked(gameState,True,startX,startY)==True:
                     valid=False
@@ -632,6 +642,7 @@ class minimax:
                     if valid==True:
                         (gameState[0])[0][3]='r'
                         (gameState[0])[0][0]=''
+                        gameState[10]=True
                         
                 #Moving King Side and neither has been moved    
                 elif endX>startX and gameState[5]==False and (gameState[0])[0][7]=='r':
@@ -645,6 +656,7 @@ class minimax:
                     if valid==True:
                         (gameState[0])[0][5]='r'
                         (gameState[0])[0][7]=''
+                        gameState[10]=True
                         
             elif abs(endX-startX)==2 and endY==startY and piece=='K':
                 #King has been moved
@@ -663,6 +675,8 @@ class minimax:
                     if valid==True:
                         (gameState[0])[7][3]='R'
                         (gameState[0])[7][0]=''
+                        gameState[9]=True
+                        
                 #Moving King Side and neither has been moved    
                 elif endX>startX and (gameState[3])==False and (gameState[0])[7][7]=='R':
                     #Check if empty between them and not attacked
@@ -675,6 +689,8 @@ class minimax:
                     if valid==True:
                         (gameState[0])[7][5]='R'
                         (gameState[0])[7][7]=''
+                        gameState[9]=True
+                        
             else:
                 valid=False
                 return valid
@@ -1560,7 +1576,7 @@ class minimax:
         return True
 
     def quickerCopy(self,gameState):
-        temp = [0 for i in range(9)]
+        temp = [0 for i in range(11)]
         temp[0] = [row[:] for row in (gameState[0])]
         temp[1] = (gameState[1])[:]
         temp[2] = (gameState[2])[:]
@@ -1570,6 +1586,8 @@ class minimax:
         temp[6] = (gameState[6])
         temp[7] = (gameState[7])
         temp[8] = (gameState[8])
+        temp[9] = (gameState[9])
+        temp[10] = (gameState[10])
         
         return temp
         
@@ -1669,8 +1687,12 @@ class minimax:
                 moves.append([x,y-1])
             if x+1<8:
                 moves.append([x+1,y])
+            if x+2<8:
+                moves.append([x+2,y])                
             if x-1>=0:
                 moves.append([x-1,y])
+            if x-2>=0:
+                moves.append([x-2,y])
         elif piece[0]=='P':
             if y-1>=0:
                 if x+1<8:
