@@ -10,7 +10,9 @@ import copy
 import sys
 
 """To do list:
-Stop rooks from moving back and forth when no obvious move"""
+Stop rooks from moving back and forth when no obvious move
+Stalemate
+Giving up queen for check"""
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
@@ -37,14 +39,12 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower()==True:
-                    #for newX in range(8):
-                        #for newY in range(8):
                     moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
+                        
                         if self.isLegalMotion(self.gameState,x,y,newX,newY):
-
                                     newGameState = self.quickerCopy(self.gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
@@ -55,32 +55,27 @@ class minimax:
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
-                                            print("Move was ",score)
                                             if score>bestScore:
-                                                print("Found a better move")
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
                       
-        #print ((self.gameState[0])[bestMove[1]][bestMove[0]])
-        #print (self.isAttacked(self.gameState,True,bestMove[2],bestMove[3]))
         return bestMove
     
     #The evaluation function for the AI's turn
     def maxPlay(self, depth, gameState, isWhite, currentMin):
         #Check if game is over or it's reached max depth
+        if self.isCheckmate(gameState, False):
+            return -10000
         if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
-        elif self.isCheckmate(gameState, False):
-            print("AI is in checkmate")
-            return -10000
             
-        maxScore = -10000
+        maxScore = -9999
         
         for x in range(8):
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower()==True:
-                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    moves = self.possibleLegalMoves((gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
@@ -106,24 +101,23 @@ class minimax:
     #The evaluation function for the Opponents turn
     def minPlay(self, depth, gameState, isWhite, currentMax):
         #Check if game is over or it's reached max depth
+        if self.isCheckmate(gameState, True):
+            return 10000
         if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
-        elif self.isCheckmate(gameState, True):
-            print("Human is in checkmate")
-            return 10000
             
-        minScore = 10000
+        minScore = 9999
         
         for x in range(8):
             for y in range(8):
                 #spot is currently occupied by Opponents piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper()==True:
-                    moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
+                    moves = self.possibleLegalMoves((gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
                         if minScore<currentMax:
-                                return minScore
+                            return minScore
                         if self.isLegalMotion(gameState,x,y,newX,newY):
                                 
                                     newGameState = self.quickerCopy(gameState)
@@ -1448,7 +1442,7 @@ class minimax:
     def isCheckmate(self, gameState, isWhite):
 
         #Is a king actually in check?
-        if self.isCheck(gameState, False)==False and self.isCheck(gameState, True)==False:
+        if self.isCheck(gameState, False)==False and self.isCheck(gameState, True)==False:            
             return False
                
         #Find Black King
@@ -1471,10 +1465,10 @@ class minimax:
             for j in range(currentX-1, currentX+2):
                 if i>=0 and i<=7:
                     if j>=0 and j<=7:
-                        if isWhite==False:
+                        if isWhite==False and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
                                 return False
-                        else:
+                        elif isWhite ==True and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
                                 return False
         
@@ -1499,18 +1493,7 @@ class minimax:
                                     
                                     if self.isValidMove(gameState,sX,sY,eX,eY):
                                         
-                                        if self.isCheck(gameState,isWhite)==True:
-                                            gameState[0]=copy.deepcopy(tempBoard)
-                                            gameState[1]=copy.deepcopy(tempPawns)
-                                            gameState[2]=copy.deepcopy(tempTwo)
-                                            gameState[7]=WkingMoved
-                                            gameState[3]=WkingSide
-                                            gameState[4]=WqueenSide
-                                            gameState[8]=BkingMoved
-                                            gameState[5]=BkingSide
-                                            gameState[6]=BqueenSide
-                                            return True
-                                        else:
+                                        if self.isCheck(gameState,isWhite)==False:
                                             gameState[0]=copy.deepcopy(tempBoard)
                                             gameState[1]=copy.deepcopy(tempPawns)
                                             gameState[2]=copy.deepcopy(tempTwo)
@@ -1521,6 +1504,16 @@ class minimax:
                                             gameState[5]=BkingSide
                                             gameState[6]=BqueenSide
                                             return False
+                                        else:
+                                            gameState[0]=copy.deepcopy(tempBoard)
+                                            gameState[1]=copy.deepcopy(tempPawns)
+                                            gameState[2]=copy.deepcopy(tempTwo)
+                                            gameState[7]=WkingMoved
+                                            gameState[3]=WkingSide
+                                            gameState[4]=WqueenSide
+                                            gameState[8]=BkingMoved
+                                            gameState[5]=BkingSide
+                                            gameState[6]=BqueenSide
         #Check every possible move for Black
         else:
             for sY in range(8):
@@ -1542,18 +1535,7 @@ class minimax:
                                     
                                     if self.isValidMove(gameState,sX,sY,eX,eY):
                                         
-                                        if self.isCheck(gameState,isWhite)==True:
-                                            gameState[0]=copy.deepcopy(tempBoard)
-                                            gameState[1]=copy.deepcopy(tempPawns)
-                                            gameState[2]=copy.deepcopy(tempTwo)
-                                            gameState[7]=WkingMoved
-                                            gameState[3]=WkingSide
-                                            gameState[4]=WqueenSide
-                                            gameState[8]=BkingMoved
-                                            gameState[5]=BkingSide
-                                            gameState[6]=BqueenSide
-                                            return True
-                                        else:
+                                        if self.isCheck(gameState,isWhite)==False:
                                             gameState[0]=copy.deepcopy(tempBoard)
                                             gameState[1]=copy.deepcopy(tempPawns)
                                             gameState[2]=copy.deepcopy(tempTwo)
@@ -1564,8 +1546,18 @@ class minimax:
                                             gameState[5]=BkingSide
                                             gameState[6]=BqueenSide
                                             return False
+                                        else:
+                                            gameState[0]=copy.deepcopy(tempBoard)
+                                            gameState[1]=copy.deepcopy(tempPawns)
+                                            gameState[2]=copy.deepcopy(tempTwo)
+                                            gameState[7]=WkingMoved
+                                            gameState[3]=WkingSide
+                                            gameState[4]=WqueenSide
+                                            gameState[8]=BkingMoved
+                                            gameState[5]=BkingSide
+                                            gameState[6]=BqueenSide
         
-        return False
+        return True
 
     def quickerCopy(self,gameState):
         temp = [0 for i in range(9)]
