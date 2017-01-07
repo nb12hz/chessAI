@@ -93,6 +93,7 @@ class minimax:
                                         #check for pawn promotion
                                         if newY==0:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
+                                                print("Tried pawn promotion")
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
@@ -127,7 +128,6 @@ class minimax:
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
-                                        #print("x: ",x," y: ",y," nx: ",newX," ny: ",newY)
                                         
                                         #Check for pawn promotion
                                         if newY==0:
