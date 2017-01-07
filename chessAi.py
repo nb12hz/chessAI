@@ -549,7 +549,7 @@ def isLegalMove(startX, startY, endX, endY):
                     return valid
             return valid
                 
-        elif abs(endX-startX)==2 and endY==startY and piece=='k':
+        elif abs(endX-startX)==2 and endY==startY and endY==0 and piece=='k':
             #King has been moved
             if blackKing==True or isAttacked(False,startX,startY)==True:
                 valid=False
@@ -574,7 +574,7 @@ def isLegalMove(startX, startY, endX, endY):
                 valid=False
                 return valid
                 
-        elif abs(endX-startX)==2 and endY==startY and piece=='K':
+        elif abs(endX-startX)==2 and endY==startY and endY==7 and piece=='K':
             #King has been moved
             if whiteKing==True or isAttacked(True,startX,startY)==True:
                 valid=False
