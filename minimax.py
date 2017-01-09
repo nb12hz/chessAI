@@ -1661,7 +1661,7 @@ class minimax:
                 moves.append([i,y])
             for i in range(y-1,-1,-1):
                 moves.append([x,i]) 
-            for i in range(x+1,8):
+            for i in range(y+1,8):
                 moves.append([x,i])
                 
             #Diagonal moves
