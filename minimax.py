@@ -10,7 +10,6 @@ import copy
 import sys
 
 """To do list:
-Stop rooks from moving back and forth when no obvious move - Maybe fixed?
 Giving up queen for check"""
 
 class minimax:
@@ -58,8 +57,8 @@ class minimax:
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
-                                            #print((newGameState[0])[newY][newX]," ",newX," ",newY," ",score)
                                             if score>bestScore:
+                                                print(score)
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
                       
@@ -126,8 +125,9 @@ class minimax:
                         newY=(moves[i])[1]
                         if minScore<currentMax:
                             return minScore
+                        #if (gameState[0])[y][x]=='R' and depth==1:
+                            #print("x, y ",newX," ",newY," ")
                         if self.isLegalMotion(gameState,x,y,newX,newY):
-                                
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
@@ -176,18 +176,18 @@ class minimax:
                     elif (gameState[0])[y][x]=='r':
                         materialScore+=5
                         if y==0 and x==0 and gameState[6]==False and gameState[8]==False:
-                            rookPenalty -= 0.1
+                            rookPenalty += 0.1
                         elif y==0 and x==7 and gameState[5]==False and gameState[8]==False:
-                            rookPenalty -= 0.1
+                            rookPenalty += 0.1
                     elif (gameState[0])[y][x]=='R':
                         materialScore-=5
                         if y==7 and x==0 and gameState[4]==False and gameState[7]==False:
-                            rookPenalty += 0.1
+                            rookPenalty -= 0.1
                         elif y==7 and x==7 and gameState[3]==False and gameState[7]==False:
-                            rookPenalty += 0.1
+                            rookPenalty -= 0.1
                     elif (gameState[0])[y][x]=='b':
                         materialScore+=3.3
-                        if (x>=2 and x<=5):
+                        if (x>=2 and x<=5) and y>0:
                             centerControl+=0.5
                     elif (gameState[0])[y][x]=='B':
                         materialScore-=3.3
@@ -213,12 +213,11 @@ class minimax:
                         materialScore-=1
                         if (x>=2 and x<=5) and y<6:
                             centerControl-=0.5
-                        if y==5:
+                        if y==2:
                             pawnPromoted-=0.5
-                        elif y==6:
+                        elif y==1:
                             pawnPromoted-=1
-        
-        print(materialScore)                    
+                            
         return (materialScore+centerControl+rookPenalty+queenProtected+pawnPromoted+castled)
     
     #Move the piece in the given coordinates to the target coordinates  
@@ -1480,17 +1479,17 @@ class minimax:
                     if (gameState[0])[y][x]=='K':
                         currentY=y
                         currentX=x
-                        
+             
         #Check through all 8 possible moves for the King
         for i in range(currentY-1, currentY+2):
             for j in range(currentX-1, currentX+2):
                 if i>=0 and i<=7:
                     if j>=0 and j<=7:
                         if isWhite==False and (i != currentY or j != currentX):
-                            if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0][i][j] in ['r','n','b','q','p'])==False:
+                            if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0])[i][j].islower()==False:
                                 return False
                         elif isWhite ==True and (i != currentY or j != currentX):
-                            if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0][i][j] in ['R','N','B','Q','P'])==False:
+                            if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0])[i][j].isupper()==False:
                                 return False
         
         #Check every possible move for White
@@ -1498,9 +1497,12 @@ class minimax:
             for sY in range(8):
                 for sX in range(8):
                     if (gameState[0])[sY][sX].isupper():
-                        for eY in range(8):
-                            for eX in range(8):
-                                if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
+                        moves = self.possibleLegalMoves((gameState[0])[sY][sX],sX,sY)
+                        for i in range(len(moves)):
+                            eX=(moves[i])[0]
+                            eY=(moves[i])[1]
+                            if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
+                                    
                                     tempBoard = copy.deepcopy(gameState[0])
                                     tempPawns = copy.deepcopy(gameState[1])
                                     tempTwo = copy.deepcopy(gameState[2])
@@ -1513,7 +1515,7 @@ class minimax:
                                     BqueenSide = gameState[6]
                                     
                                     if self.isValidMove(gameState,sX,sY,eX,eY):
-                                        
+                                        self.movePiece(gameState,sX,sY,eX,eY)
                                         if self.isCheck(gameState,isWhite)==False:
                                             gameState[0]=copy.deepcopy(tempBoard)
                                             gameState[1]=copy.deepcopy(tempPawns)
@@ -1540,9 +1542,13 @@ class minimax:
             for sY in range(8):
                 for sX in range(8):
                     if (gameState[0])[sY][sX].islower():
-                        for eY in range(8):
-                            for eX in range(8):
-                                if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
+                        moves = self.possibleLegalMoves((gameState[0])[sY][sX],sX,sY)
+                        for i in range(len(moves)):
+                            eX=(moves[i])[0]
+                            eY=(moves[i])[1]
+                            
+                            if self.isLegalMotion(gameState,sX, sY, eX, eY)==True:
+                                    
                                     tempBoard = copy.deepcopy(gameState[0])
                                     tempPawns = copy.deepcopy(gameState[1])
                                     tempTwo = copy.deepcopy(gameState[2])
@@ -1555,7 +1561,7 @@ class minimax:
                                     BqueenSide = gameState[6]
                                     
                                     if self.isValidMove(gameState,sX,sY,eX,eY):
-                                        
+                                        self.movePiece(gameState,sX,sY,eX,eY)
                                         if self.isCheck(gameState,isWhite)==False:
                                             gameState[0]=copy.deepcopy(tempBoard)
                                             gameState[1]=copy.deepcopy(tempPawns)
@@ -1608,7 +1614,7 @@ class minimax:
                 moves.append([i,y])
             for i in range(y-1,-1,-1):
                 moves.append([x,i]) 
-            for i in range(x+1,8):
+            for i in range(y+1,8):
                 moves.append([x,i])
             return moves
         elif piece=='B' or piece=='b':
@@ -1655,7 +1661,7 @@ class minimax:
                 moves.append([i,y])
             for i in range(y-1,-1,-1):
                 moves.append([x,i]) 
-            for i in range(x+1,8):
+            for i in range(y+1,8):
                 moves.append([x,i])
                 
             #Diagonal moves
