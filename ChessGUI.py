@@ -7,6 +7,7 @@ Created on Wed Dec 28 12:20:43 2016
 
 import wx
 import wx.grid
+import chessAI
 
 class ChessFrame(wx.Frame):
     def __init__(self, parent):
@@ -58,13 +59,21 @@ class ChessFrame(wx.Frame):
         self.boardGrid.SetCellValue(7, 3, u'\u2655')
         self.boardGrid.SetCellValue(7, 4, u'\u2654')
                     
-        #Setup the control panel, which has an input box, last move output, and button
+        #Setup the control panel, which has various status displays and a button
         self.controls = wx.Panel(self)
+        self.currentPlayer = wx.StaticText(self.controls, label="White's Move")
+        moveFont = self.currentPlayer.GetFont()
+        moveFont.SetPointSize(12)
+        moveFont.SetWeight(wx.FONTWEIGHT_BOLD)
+        self.currentPlayer.SetFont(moveFont)
         self.button = wx.Button(self.controls, label="Move piece")
         self.nextMove = wx.StaticText(self.controls, label="Your move:")
         self.moveInput = wx.TextCtrl(self.controls, size=(100, -1))
         self.lastMove = wx.StaticText(self.controls, label="Last move made:")
         self.moveOutput = wx.StaticText(self.controls, label="")
+        self.moveTime = wx.StaticText(self.controls, label="Time elapsed:")
+        self.aiTime = wx.StaticText(self.controls, label="")
+        self.check = wx.StaticText(self.controls, lable = "")
         
         #Frame sizer
         self.frameSizer = wx.BoxSizer()
@@ -73,11 +82,15 @@ class ChessFrame(wx.Frame):
         #Content holding/arranging sizer
         self.contentSizer = wx.GridBagSizer(5, 5)
         self.contentSizer.Add(self.boardGrid, (0, 0))
-        self.contentSizer.Add(self.nextMove, (1, 1))
-        self.contentSizer.Add(self.moveInput, (1, 2))
-        self.contentSizer.Add(self.button, (2, 1), (2, 2), flag=wx.EXPAND)
-        self.contentSizer.Add(self.lastMove, (4, 1))
-        self.contentSizer.Add(self.moveOutput, (4, 2))
+        self.contentSizer.Add(self.currentPlayer, (1, 1), (1,2), flag=wx.EXPAND)
+        self.contentSizer.Add(self.nextMove, (2, 1))
+        self.contentSizer.Add(self.moveInput, (2, 2))
+        self.contentSizer.Add(self.button, (3, 1), (2, 2), flag=wx.EXPAND)
+        self.contentSizer.Add(self.lastMove, (5, 1))
+        self.contentSizer.Add(self.moveOutput, (5, 2))
+        self.contentSizer.Add(self.moveTime, (6, 1))
+        self.contentSizer.Add(self.aiTime, (6, 2))
+        self.contentSizer.Add(self.check, (7, 1))
         
         # Set simple sizer for a nice border
         self.border = wx.BoxSizer()
@@ -91,20 +104,41 @@ class ChessFrame(wx.Frame):
         self.button.Bind(wx.EVT_BUTTON, self.ButtonPress)
         
     def ButtonPress(self, e):
-        self.moveOutput.SetValue("Move Recorded")
         files = ['A','B','C','D','E','F','G','H']
         ranks = ['8','7','6','5','4','3','2','1']
         
         rawIn = self.moveInput.GetValue()
         nMove = list(rawIn)
-        if (nMove[0] and nMove[2] in files) and (nMove[1] and nMove[3] in ranks):
-            self.moveOutput.SetValue(rawIn)
+        if (nMove[0].upper() and nMove[2].upper() in files) and (nMove[1].upper() and nMove[3].upper() in ranks):
             #Hand nMove to the main program
-            self.boardGrid.SetCellValue(files[nMove[2]], ranks[nMove[3]], self.boardGrid.GetCellValue(files[nMove[0]], ranks[nMove[1]]))
-            self.boardGrid.SetCellValue(files[nMove[0]], ranks[nMove[1]], "")
+            status = chessAI.doMove(True, nMove)
+            if (status[1] == True):
+                self.moveOutput.SetLabel(rawIn)
+                currentPiece = self.boardGrid.GetCellValue(ranks.index(nMove[1]), files.index(nMove[0]))
+                self.boardGrid.SetCellValue(ranks.index(nMove[3]), files.index(nMove[2]), currentPiece)
+                self.boardGrid.SetCellValue(ranks.index(nMove[1]), files.index(nMove[0]), "")
+                if (status[3] == True):
+                    if (status[4]):
+                        self.check.SetLabel("Checkmate, Black wins!")
+                    else:
+                        self.check.SetLabel("Checkmate, White wins!")
+                elif (status[5] == True):
+                    self.check.SetLabel("Stalemate")
+                else:
+                    self.currentPlayer.SetLabel("Black's Move")
+                    status = chessAI.doMove(False, None)
+                    self.aiTime.SetLabel(status[0])
+                    currentPiece = self.boardGrid.GetCellValue(ranks.index(status[6][0]), files.index(status[6][1]))
+                    self.boardGrid.SetCellValue(ranks.index(status[6][3]), files.index(status[6][2]), currentPiece)
+                    self.boardGrid.SetCellValue(ranks.index(status[6][1]), files.index(status[6][0]), "")
+            else:
+                self.moveOutput.SetLabel("Friendly Target")
+                
         else:
-            self.moveOutput.SetValue("Invalid Move")
+            self.moveOutput.SetLabel("Invalid Move")
         
+    
+            
 app = wx.App(False)
 frame = ChessFrame(None)
 frame.Show()
