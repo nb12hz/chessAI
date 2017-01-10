@@ -53,11 +53,12 @@ class minimax:
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
                                         #check for pawn promotion
-                                        if newY==0:
+                                        if newY==7:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(1,newGameState,False,bestScore)
+                                            #print((newGameState[0])[newY][newX]," ",newX," ",newY," ",score)
                                             if score>bestScore:
                                                 bestScore = score
                                                 bestMove = [x,y,newX,newY]
@@ -69,7 +70,9 @@ class minimax:
         #Check if game is over or it's reached max depth
         if self.isCheckmate(gameState, False):
             return -10000
-        if depth>=self.Max_Depth and self.isCheck(gameState,False)==False and depth<(self.Max_Depth+10):
+        if depth>=self.Max_Depth and self.isCheck(gameState,False)==False:
+            return self.evaluateGame(gameState, isWhite)
+        if depth==(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
             
         maxScore = -9999
@@ -91,9 +94,8 @@ class minimax:
                                         #makemove
                                         self.movePiece(newGameState,x,y,newX,newY)
                                         #check for pawn promotion
-                                        if newY==0:
+                                        if newY==7:
                                             if ((newGameState[0])[newY][newX])[0]=='p':
-                                                print("Tried pawn promotion")
                                                 ((newGameState[0])[newY][newX])='q'
                                         if self.isCheck(newGameState,False)==False:
                                             score = self.minPlay(depth+1,newGameState,isWhite, maxScore)
@@ -107,7 +109,9 @@ class minimax:
         #Check if game is over or it's reached max depth
         if self.isCheckmate(gameState, True):
             return 10000
-        if depth>=self.Max_Depth and self.isCheck(gameState,True)==False and depth<(self.Max_Depth+10):
+        if depth>=self.Max_Depth and self.isCheck(gameState,True)==False:
+            return self.evaluateGame(gameState, isWhite)
+        if depth==(self.Max_Depth+10):
             return self.evaluateGame(gameState, isWhite)
             
         minScore = 9999
@@ -213,7 +217,8 @@ class minimax:
                             pawnPromoted-=0.5
                         elif y==6:
                             pawnPromoted-=1
-                            
+        
+        print(materialScore)                    
         return (materialScore+centerControl+rookPenalty+queenProtected+pawnPromoted+castled)
     
     #Move the piece in the given coordinates to the target coordinates  
