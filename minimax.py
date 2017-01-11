@@ -9,8 +9,7 @@ from __future__ import print_function
 import copy
 import sys
 
-"""To do list:
-Giving up queen for check"""
+"""To do list:"""
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
@@ -41,12 +40,14 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (self.gameState[0])[y][x]!='' and (self.gameState[0])[y][x].islower()==True:
+                    #Get all psuedo legal moves for the current piece
                     moves = self.possibleLegalMoves((self.gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
-                        
+                        #If the move is valid (ie. No piece in the way)
                         if self.isLegalMotion(self.gameState,x,y,newX,newY):
+                                    #Copy the game state and send it to the next function 
                                     newGameState = self.quickerCopy(self.gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
