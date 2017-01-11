@@ -9,7 +9,8 @@ from __future__ import print_function
 import copy
 import sys
 
-"""To do list:"""
+"""To do list:
+Fix UI move checking"""
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
@@ -81,14 +82,16 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by AI's piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].islower()==True:
+                    #Get all psuedo legal moves for the current piece
                     moves = self.possibleLegalMoves((gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
                         if maxScore>currentMin:
                             return maxScore
+                        #If the move is valid (ie. No piece in the way)
                         if self.isLegalMotion(gameState,x,y,newX,newY):
-
+                                    #Copy the game state and send it to the next function
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
@@ -120,15 +123,16 @@ class minimax:
             for y in range(8):
                 #spot is currently occupied by Opponents piece
                 if (gameState[0])[y][x]!='' and (gameState[0])[y][x].isupper()==True:
+                    #Get all psuedo legal moves for the current piece
                     moves = self.possibleLegalMoves((gameState[0])[y][x],x,y)
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
                         if minScore<currentMax:
                             return minScore
-                        #if (gameState[0])[y][x]=='R' and depth==1:
-                            #print("x, y ",newX," ",newY," ")
+                        #If the move is valid (ie. No piece in the way)
                         if self.isLegalMotion(gameState,x,y,newX,newY):
+                                    #Copy the game state and send it to the next function 
                                     newGameState = self.quickerCopy(gameState)
                                     if self.isValidMove(newGameState,x,y,newX,newY):
                                         #makemove
@@ -145,8 +149,9 @@ class minimax:
         
         return minScore
         
-        
+    #The evaluation function called when the search tree reaches maximum depth
     def evaluateGame(self, gameState, isWhite):
+        #Variables storing various evaluation statistics
         materialScore = 0
         centerControl = 0
         rookPenalty = 0
@@ -253,12 +258,14 @@ class minimax:
             valid=False
             return valid
 
+        #Trying to move the piece to it's current location
         elif (startX==endX) and (startY==endY):
             valid=False
             return valid
             
         #Move the king
         elif piece=='k'or piece=='K':
+            #Moving one space
             if abs(endX-startX)<=1 and abs(endY-startY)<=1:
                 if piece=='k':
                     if self.isAttacked(gameState,False,endX,endY)==False:
@@ -273,7 +280,7 @@ class minimax:
                         valid=False
                         return valid
                 return valid
-                    
+            #Castling Black       
             elif abs(endX-startX)==2 and endY==startY and endY==0 and piece=='k':
                 #King has been moved
                 if gameState[8]==True or self.isAttacked(gameState,False,startX,startY)==True:
@@ -294,7 +301,7 @@ class minimax:
                         if (gameState[0])[startY][i]!='' or self.isAttacked(gameState, False,i,startY)==True:
                             valid = False 
                             return valid
-                        
+            #Castling White            
             elif abs(endX-startX)==2 and endY==startY and endY==7 and piece=='K':
                 #King has been moved
                 if gameState[7]==True or self.isAttacked(gameState,True,startX,startY)==True:
@@ -315,7 +322,7 @@ class minimax:
                         if (gameState[0])[startY][i]!='' or self.isAttacked(gameState,True,i,startY)==True:
                             valid = False 
                             return valid
-
+            #Not in the category above, invalid move
             else:
                 valid=False
                 return valid
@@ -349,7 +356,7 @@ class minimax:
                             valid = False
                             return valid
                     return valid
-                    
+            #Catch all, invalid move        
             else:
                 valid=False
                 return valid
@@ -358,6 +365,7 @@ class minimax:
         elif piece=='n'or piece=='N':
             if (abs(startX-endX)==2 and abs(startY-endY)==1) or (abs(startY-endY)==2 and abs(startX-endX)==1):
                 return valid
+            #Doesn't follow the pattern
             else:
                 valid = False
                 return valid
@@ -397,6 +405,7 @@ class minimax:
                             return valid
                             
                 return valid
+            #Catch all, invalid move
             else:
                 valid = False
                 return valid
@@ -466,6 +475,7 @@ class minimax:
                                 valid = False
                                 return valid
                         return valid
+            #Catch all, invalid move
             else:
                 valid = False
                 return valid  
@@ -615,6 +625,7 @@ class minimax:
             
         #Move the king
         elif piece=='k'or piece=='K':
+            #Moving one space
             if abs(endX-startX)<=1 and abs(endY-startY)<=1:
                 if piece=='k':
                     if self.isAttacked(gameState,False,endX,endY)==False:
@@ -629,7 +640,7 @@ class minimax:
                         valid=False
                         return valid
                 return valid
-                    
+            #Castling Black
             elif abs(endX-startX)==2 and endY==startY and piece=='k':
                 #King has been moved
                 if gameState[8]==True or self.isAttacked(gameState,False,startX,startY)==True:
@@ -662,7 +673,7 @@ class minimax:
                         (gameState[0])[0][5]='r'
                         (gameState[0])[0][7]=''
                         gameState[10]=True
-                        
+            #Castling White            
             elif abs(endX-startX)==2 and endY==startY and piece=='K':
                 #King has been moved
                 if gameState[7]==True or self.isAttacked(gameState,True,startX,startY)==True:
@@ -993,7 +1004,7 @@ class minimax:
         
         return valid
     
-            
+    #Return whether or not a space is attacked by the opposite colour given to the function        
     def isAttacked(self, gameState, isWhite,x,y):
 	attack = False
 	
@@ -1020,6 +1031,7 @@ class minimax:
 						return attack
 					else:
 						break
+          #Check row to the right
 		elif x==0:
 			for i in range(1,8):
 				if (gameState[0])[y][i]!='':
@@ -1029,6 +1041,7 @@ class minimax:
 						return attack
 					else:
 						break
+          #Check row to the left
 		elif x==7:
 			for i in range(6,-1,-1):
 				if (gameState[0])[y][i]!='':
@@ -1059,6 +1072,7 @@ class minimax:
 						return attack
 					else:
 						break
+          #Check column down
 		elif y==0:
 			for i in range(1,8):
 				if (gameState[0])[i][x]!='':
@@ -1068,6 +1082,7 @@ class minimax:
 						return attack
 					else:
 						break
+          #Check column up
 		elif y==7:
 			for i in range(6,-1,-1):
 				if (gameState[0])[i][x]!='':
@@ -1587,6 +1602,7 @@ class minimax:
         
         return True
 
+    #Used to produce a copy of the current game sate, much faster than deepcopy
     def quickerCopy(self,gameState):
         temp = [0 for i in range(11)]
         temp[0] = [row[:] for row in (gameState[0])]
@@ -1602,22 +1618,29 @@ class minimax:
         temp[10] = (gameState[10])
         
         return temp
-        
+    
+    #Produce a list of all possible psuedo legal moves for a given piece    
     def possibleLegalMoves(self, piece, x, y):
         moves = []
         
         if piece=='':
             return moves
+        #Straight lines
         elif piece=='R' or piece=='r':
+            ##Left
             for i in range(x-1,-1,-1):
                 moves.append([i,y]) 
+            #Right
             for i in range(x+1,8):
                 moves.append([i,y])
+            #Up
             for i in range(y-1,-1,-1):
-                moves.append([x,i]) 
+                moves.append([x,i])
+            #Down
             for i in range(y+1,8):
                 moves.append([x,i])
             return moves
+        #Diagonals
         elif piece=='B' or piece=='b':
             for i in range(1,8):
                 #Down and right
@@ -1699,10 +1722,12 @@ class minimax:
                 moves.append([x,y-1])
             if x+1<8:
                 moves.append([x+1,y])
+            #Castling
             if x+2<8:
                 moves.append([x+2,y])                
             if x-1>=0:
                 moves.append([x-1,y])
+            #Castling
             if x-2>=0:
                 moves.append([x-2,y])
         elif piece[0]=='P':
