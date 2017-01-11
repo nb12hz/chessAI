@@ -7,7 +7,6 @@ Created on Thu Dec 22 13:37:05 2016
 """
 
 from __future__ import print_function
-import math
 import time
 from minimax import minimax
 import copy
@@ -33,10 +32,10 @@ def intializeBoard():
     global attackedByWhite
     global attackedByBlack
     
-    #board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
+    board = ['r','n','b','q','k','b','n','r'],['p1','p2','p3','p4','p5','p6','p7','p8'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P1','P2','P3','P4','P5','P6','P7','P8'],['R','N','B','Q','K','B','N','R']
     
     #Testing Board    
-    board = ['r', '', '', '', '', '', '', ''], ['', '', '', '', '', 'k', 'p7', ''], ['p1', '', 'p2', '', '', '', 'q', ''], ['', '', '', '', '', 'P7', '', ''], ['', '', '', '', '', '', '', 'K'], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', 'P8'], ['', '', '', '', '', '', '', '']
+    #board = ['r', '', '', '', '', '', '', ''], ['', '', '', '', '', 'k', 'p7', ''], ['p1', '', 'p2', '', '', '', 'q', ''], ['', '', '', '', '', 'P7', '', ''], ['', '', '', '', '', '', '', 'K'], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', 'P8'], ['', '', '', '', '', '', '', '']
     
     #Black is 0-7, White is 8-15    
     pawnMoved = [False for i in range(16)]
@@ -1210,48 +1209,40 @@ def isStalemate(isWhite):
                                     
     return True
 """Our main function calls"""
-def initialize():
-    
-    intializeBoard()
-    updateAttacked()
     
 def doMoves(whiteMove, guiMove):
+    global elapsedTime, resigned, friendlyTarget, whiteCheck, checkmate, stalemate, blackWin, moveAI
     files = ['A','B','C','D','E','F','G','H']
     ranks = ['8','7','6','5','4','3','2','1']
-    
-    statusList = [None, None, None, None, None, None, None]
-    
-    whiteMove = True
+
     resigned = False
     
-    while(isCheckmate(whiteMove)!=True and isStalemate(whiteMove)!=True):
+    if(isCheckmate(whiteMove)!=True and isStalemate(whiteMove)!=True):
         AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
-        #displayBoard()
         
         if(whiteMove):
             if (guiMove[0] == "Resign"):
                 resigned = True
             else:
-                startY = ranks.index(guiMove[0])
-                startX = files.index(guiMove[1])
-                endY = ranks.index(guiMove[2])
-                endX = ranks.index(guiMove[3])
+                startX = files.index(guiMove[0].upper())
+                startY = ranks.index(guiMove[1])
+                endX = files.index(guiMove[2].upper())
+                endY = ranks.index(guiMove[3])
                 
         else:
             time1 = time.clock()
-            #print("Black's move")
             
             moveArray = AI.minimaxFunction()
             
             if len(moveArray)>0:
-                #print("AI returned move")
                 startX = moveArray[0]
                 startY = moveArray[1]
                 endX = moveArray[2]
                 endY = moveArray[3]
                 time2 = time.clock()
-                statusList[0] = str(time2-time1) #Time elapsed in Ai move
-                statusList[6] = [startX, startY, endX, endY]
+                elapsedTime = str(time2-time1) #Time elapsed in Ai move
+                print(elapsedTime)
+                moveAI = [startX, startY, endX, endY]
     
                 #Make the move and check if makes check or not
                 if makeMove(whiteMove,startX,startY,endX,endY)==True:
@@ -1263,15 +1254,13 @@ def doMoves(whiteMove, guiMove):
                     for i in range(8,16):
                         movedTwo[i]=False
     
-        #Stop execution if player resigned        
-        if (resigned):
-            break
-    
         #If the current peice is the correct one for the turn we are on
         if whiteMove==True and board[startY][startX]!='' and board[startY][startX].isupper():
             #Make sure the target square is not occupied by an ally
             if board[endY][endX].isupper():
-                statusList[1] = False #Targeting friendly piece
+                friendlyTarget = True #Targeting friendly piece
+            else:
+                friendlyTarget = False
             #Make the move and check if makes check or not
             if makeMove(whiteMove,startX,startY,endX,endY)==True:
                 #Now blacks turn
@@ -1286,31 +1275,37 @@ def doMoves(whiteMove, guiMove):
         elif whiteMove==False and board[startY][startX]!='' and board[startY][startX].islower():
             #Make sure the target square is not occupied by an ally
             if board[endY][endX].islower():
-                statusList[1] = False #Targeting friendly piece
+                friendlyTarget = True #Targeting friendly piece
             
             
         if isCheck(whiteMove)==True:
-            statusList[2] = True #White is in check
-
+            whiteCheck = True #White is in check
+            print(whiteCheck)
+        else:
+            whiteCheck = False
 
         #displayBoard()
         if isCheckmate(whiteMove):
-            statusList[3] = True
+            checkmate = True
             if(whiteMove):
-                statusList[4] = True #Black wins
+                blackWin = True #Black wins
             else:
-                statusList[4] = False #White wins
+                blackWin = False #White wins
         elif isStalemate(whiteMove):
-            statusList[5] = True #Stalemate
+            stalemate = True #Stalemate
+        else:
+            checkmate = False
+            stalemate = False
             
-        return statusList
         
 class ChessFrame(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent)
         
+        self.masterPanel = wx.Panel(self)
+        
         #Setup board font, readonly, colours, alignment and labels
-        self.boardGrid = wx.grid.Grid(self, -1)
+        self.boardGrid = wx.grid.Grid(self.masterPanel, -1)
         self.boardGrid.CreateGrid(8,8)
         self.boardGrid.SetDefaultColSize(50, True)
         self.boardGrid.SetDefaultRowSize(50, True)
@@ -1356,24 +1351,23 @@ class ChessFrame(wx.Frame):
         self.boardGrid.SetCellValue(7, 4, u'\u2654')
                     
         #Setup the control panel, which has various status displays and a button
-        self.controls = wx.Panel(self)
-        self.currentPlayer = wx.StaticText(self.controls, label="White's Move")
+        self.currentPlayer = wx.StaticText(self.masterPanel, label="White's Move")
         moveFont = self.currentPlayer.GetFont()
         moveFont.SetPointSize(12)
         moveFont.SetWeight(wx.FONTWEIGHT_BOLD)
         self.currentPlayer.SetFont(moveFont)
-        self.button = wx.Button(self.controls, label="Move piece")
-        self.nextMove = wx.StaticText(self.controls, label="Your move:")
-        self.moveInput = wx.TextCtrl(self.controls, size=(100, -1))
-        self.lastMove = wx.StaticText(self.controls, label="Last move made:")
-        self.moveOutput = wx.StaticText(self.controls, label="")
-        self.moveTime = wx.StaticText(self.controls, label="Time elapsed:")
-        self.aiTime = wx.StaticText(self.controls, label="")
-        self.check = wx.StaticText(self.controls, label = "")
+        self.button = wx.Button(self.masterPanel, label="Move piece")
+        self.nextMove = wx.StaticText(self.masterPanel, label="Your move:")
+        self.moveInput = wx.TextCtrl(self.masterPanel, size=(100, -1))
+        self.lastMove = wx.StaticText(self.masterPanel, label="Last move made:")
+        self.moveOutput = wx.StaticText(self.masterPanel, label="")
+        self.moveTime = wx.StaticText(self.masterPanel, label="Time elapsed:")
+        self.aiTime = wx.StaticText(self.masterPanel, label="")
+        self.check = wx.StaticText(self.masterPanel, label = "")
         
         #Frame sizer
         self.frameSizer = wx.BoxSizer()
-        self.frameSizer.Add(self.controls, 1, wx.ALL | wx.EXPAND)
+        self.frameSizer.Add(self.masterPanel, 1, wx.ALL | wx.EXPAND)
         
         #Content holding/arranging sizer
         self.contentSizer = wx.GridBagSizer(5, 5)
@@ -1386,14 +1380,14 @@ class ChessFrame(wx.Frame):
         self.contentSizer.Add(self.moveOutput, (5, 2))
         self.contentSizer.Add(self.moveTime, (6, 1))
         self.contentSizer.Add(self.aiTime, (6, 2))
-        self.contentSizer.Add(self.check, (7, 1))
+        self.contentSizer.Add(self.check, (7, 1), (2,2))
         
         # Set simple sizer for a nice border
         self.border = wx.BoxSizer()
         self.border.Add(self.contentSizer, 1, wx.ALL | wx.EXPAND, 5)
         
         #Implement the sizers
-        self.controls.SetSizerAndFit(self.border)
+        self.masterPanel.SetSizerAndFit(self.border)
         self.SetSizerAndFit(self.frameSizer)
         
         #Event handler
@@ -1402,39 +1396,45 @@ class ChessFrame(wx.Frame):
     def ButtonPress(self, e):
         files = ['A','B','C','D','E','F','G','H']
         ranks = ['8','7','6','5','4','3','2','1']
-        
-        rawIn = self.moveInput.GetValue()
+
+        rawIn = str(self.moveInput.GetValue())
         nMove = list(rawIn)
         if (nMove[0].upper() and nMove[2].upper() in files) and (nMove[1].upper() and nMove[3].upper() in ranks):
             #Hand nMove to the main program
-            status = doMoves(True, nMove)
-            if (status[1] == True):
+            doMoves(True, nMove)
+            if (friendlyTarget == False):
                 self.moveOutput.SetLabel(rawIn)
                 currentPiece = self.boardGrid.GetCellValue(ranks.index(nMove[1]), files.index(nMove[0]))
                 self.boardGrid.SetCellValue(ranks.index(nMove[3]), files.index(nMove[2]), currentPiece)
                 self.boardGrid.SetCellValue(ranks.index(nMove[1]), files.index(nMove[0]), "")
-                if (status[3] == True):
-                    if (status[4]):
+                self.masterPanel.Update()
+                if (whiteCheck == True):
+                    self.check.SetLabel("White is in Check")
+                if (checkmate):
+                    if (blackWin):
                         self.check.SetLabel("Checkmate, Black wins!")
                     else:
                         self.check.SetLabel("Checkmate, White wins!")
-                elif (status[5] == True):
+                elif (stalemate):
                     self.check.SetLabel("Stalemate")
                 else:
                     self.currentPlayer.SetLabel("Black's Move")
-                    status = doMoves(False, None)
-                    self.aiTime.SetLabel(status[0])
-                    currentPiece = self.boardGrid.GetCellValue(ranks.index(status[6][0]), files.index(status[6][1]))
-                    self.boardGrid.SetCellValue(ranks.index(status[6][3]), files.index(status[6][2]), currentPiece)
-                    self.boardGrid.SetCellValue(ranks.index(status[6][1]), files.index(status[6][0]), "")
+                    doMoves(False, None)
+                    self.aiTime.SetLabel(elapsedTime)
+                    rawMoveAI = files[moveAI[0]] + ranks[moveAI[1]] + files[moveAI[2]] + ranks[moveAI[3]]
+                    self.moveOutput.SetLabel(rawMoveAI)
+                    currentPiece = self.boardGrid.GetCellValue(moveAI[1], moveAI[0])
+                    self.boardGrid.SetCellValue(moveAI[3], moveAI[2], currentPiece)
+                    self.boardGrid.SetCellValue(moveAI[1], moveAI[0], "")
+                    self.currentPlayer.SetLabel("White's Move")
+                    self.masterPanel.Update()
             else:
                 self.moveOutput.SetLabel("Friendly Target")
-                
         else:
             self.moveOutput.SetLabel("Invalid Move")
-        
-    
             
+intializeBoard()
+updateAttacked()
 app = wx.App(False)
 frame = ChessFrame(None)
 frame.Show()
