@@ -156,6 +156,8 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[0][3]='r'
                     board[0][0]=''
+                    blackKing=True
+                    blackQS=True
                     return valid
                     
             #Moving King Side and neither has been moved    
@@ -170,6 +172,8 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[0][5]='r'
                     board[0][7]=''
+                    blackKing=True
+                    blackKS=True
                     return valid
                    
             else:
@@ -194,6 +198,8 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[7][3]='R'
                     board[7][0]=''
+                    whiteKing=True
+                    whiteQS=True
                     return valid
                     
             #Moving King Side and neither has been moved    
@@ -208,6 +214,8 @@ def isValidMove(startX, startY, endX, endY):
                 if valid==True:
                     board[7][5]='R'
                     board[7][7]=''
+                    whiteKing=True
+                    whiteKS=True
                     return valid
                     
             else:
