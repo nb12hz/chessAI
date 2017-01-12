@@ -1005,6 +1005,16 @@ def makeMove(isWhite, startX, startY, endX, endY):
     
     else:
         print("Not a valid move")
+        board=copy.deepcopy(tempBoard)
+        pawnMoved=copy.deepcopy(tempPawns)
+        movedTwo=copy.deepcopy(tempTwo)
+        updateAttacked()
+        whiteKing=WkingMoved
+        whiteKS=WkingSide
+        whiteQS=WqueenSide
+        blackKing=BkingMoved
+        blackKS=BkingSide
+        blackQS=BqueenSide
         return False
     
     
