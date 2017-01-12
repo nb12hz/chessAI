@@ -9,8 +9,7 @@ from __future__ import print_function
 import copy
 import sys
 
-"""To do list:
-Fix UI move checking"""
+"""To do list:"""
 
 class minimax:
     def __init__(self, Max_Depth, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing):
@@ -658,6 +657,8 @@ class minimax:
                     if valid==True:
                         (gameState[0])[0][3]='r'
                         (gameState[0])[0][0]=''
+                        gameState[6]=True
+                        gameState[8]=True
                         gameState[10]=True
                         
                 #Moving King Side and neither has been moved    
@@ -672,6 +673,8 @@ class minimax:
                     if valid==True:
                         (gameState[0])[0][5]='r'
                         (gameState[0])[0][7]=''
+                        gameState[5]=True
+                        gameState[8]=True
                         gameState[10]=True
             #Castling White            
             elif abs(endX-startX)==2 and endY==startY and piece=='K':
@@ -691,6 +694,8 @@ class minimax:
                     if valid==True:
                         (gameState[0])[7][3]='R'
                         (gameState[0])[7][0]=''
+                        gameState[7]=True
+                        gameState[4]=True
                         gameState[9]=True
                         
                 #Moving King Side and neither has been moved    
@@ -705,6 +710,8 @@ class minimax:
                     if valid==True:
                         (gameState[0])[7][5]='R'
                         (gameState[0])[7][7]=''
+                        gameState[7]=True
+                        gameState[5]=True
                         gameState[9]=True
                         
             else:
