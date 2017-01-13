@@ -45,6 +45,7 @@ class minimax:
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
+                        print(x," ",y," ",newX," ",newY)
                         #If the move is valid (ie. No piece in the way)
                         if self.isLegalMotion(self.gameState,x,y,newX,newY):
                                     #Copy the game state and send it to the next function 
@@ -1487,7 +1488,7 @@ class minimax:
         #Is a king actually in check?
         if self.isCheck(gameState, False)==False and self.isCheck(gameState, True)==False:            
             return False
-               
+       
         #Find Black King
         if isWhite==False:
             for x in range(8):
@@ -1510,10 +1511,23 @@ class minimax:
                     if j>=0 and j<=7:
                         if isWhite==False and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0])[i][j].islower()==False:
-                                return False
+                                tempBoard = copy.deepcopy(gameState[0])
+                                self.movePiece(gameState,currentX,currentY,j,i)
+                                if self.isAttacked(gameState, False,j,i)==False:
+                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    return False
+                                else:
+                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    
                         elif isWhite ==True and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0])[i][j].isupper()==False:
-                                return False
+                                tempBoard = copy.deepcopy(gameState[0])
+                                self.movePiece(gameState,currentX,currentY,j,i)
+                                if self.isAttacked(gameState, True,j,i)==False:
+                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    return False
+                                else:
+                                    gameState[0]=copy.deepcopy(tempBoard)
         
         #Check every possible move for White
         if(isWhite):
