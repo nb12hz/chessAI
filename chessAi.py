@@ -1426,7 +1426,6 @@ class ChessFrame(wx.Frame):
             self.button.Disable()
             self.moveInput.Disable()
         elif (nMove[0].upper() and nMove[2].upper() in files) and (nMove[1] and nMove[3] in ranks) and (isLegalMove(files.index(nMove[0].upper()), ranks.index(nMove[1]), files.index(nMove[2].upper()), ranks.index(nMove[3]))):
-            print("Here")
             #Hand nMove to the main program
             doMoves(True, nMove)
             if (friendlyTarget == False):
@@ -1435,15 +1434,6 @@ class ChessFrame(wx.Frame):
                     self.updateGridBoard()
                     self.checkCheck()
                     self.masterPanel.Update()
-                    if (checkmate):
-                        if (blackWin):
-                            self.check.SetLabel("Checkmate, Black wins!")
-                            self.button.Disable()
-                            self.moveInput.Disable()
-                        else:
-                            self.check.SetLabel("Checkmate, White wins!")
-                            self.button.Disable()
-                            self.moveInput.Disable()
                     elif (stalemate):
                         self.check.SetLabel("Stalemate")
                         self.button.Disable()
@@ -1513,6 +1503,15 @@ class ChessFrame(wx.Frame):
             self.check.SetLabel("White is in Check")
         else:
             self.check.SetLabel("")
+        if (checkmate):
+            if (blackWin):
+                self.check.SetLabel("Checkmate, Black wins!")
+                self.button.Disable()
+                self.moveInput.Disable()
+            else:
+                self.check.SetLabel("Checkmate, White wins!")
+                self.button.Disable()
+                self.moveInput.Disable()
             
 app = wx.App(False)
 frame = ChessFrame(None)
