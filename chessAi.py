@@ -964,6 +964,8 @@ def isCheck(isWhite):
 """Check if the moves puts the player in check"""
 def makeMove(isWhite, startX, startY, endX, endY):
     global board, pawnMoved, movedTwo, blackKS, blackQS, whiteKS, whiteQS, blackKing, whiteKing
+    global nextCheck
+    nextCheck = False
     
     whitePieces = ['R','N','B','Q']
     
@@ -1006,6 +1008,7 @@ def makeMove(isWhite, startX, startY, endX, endY):
             blackKing=BkingMoved
             blackKS=BkingSide
             blackQS=BqueenSide
+            nextCheck = True
             print("You will be in check")
             return False
         else:
@@ -1329,7 +1332,9 @@ def doMoves(whiteMove, guiMove):
 class ChessFrame(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent)
+        self.SetTitle("Chess")
         
+        #Initalizes the board, using custom or default board layout
         if(self.customBoard()):
             intializeBoard(True, self.inputCustom())
         else:
@@ -1420,37 +1425,42 @@ class ChessFrame(wx.Frame):
             self.check.SetLabel("You resigned, black wins!")
             self.button.Disable()
             self.moveInput.Disable()
-        elif (nMove[0].upper() and nMove[2].upper() in files) and (nMove[1] and nMove[3] in ranks):
+        elif (nMove[0].upper() and nMove[2].upper() in files) and (nMove[1] and nMove[3] in ranks) and (isLegalMove(files.index(nMove[0].upper()), ranks.index(nMove[1]), files.index(nMove[2].upper()), ranks.index(nMove[3]))):
+            print("Here")
             #Hand nMove to the main program
             doMoves(True, nMove)
             if (friendlyTarget == False):
-                self.moveOutput.SetLabel(rawIn)
-                self.updateGridBoard()
-                self.checkCheck()
-                self.masterPanel.Update()
-                if (checkmate):
-                    if (blackWin):
-                        self.check.SetLabel("Checkmate, Black wins!")
+                if(nextCheck == False):
+                    self.moveOutput.SetLabel(rawIn)
+                    self.updateGridBoard()
+                    self.checkCheck()
+                    self.masterPanel.Update()
+                    if (checkmate):
+                        if (blackWin):
+                            self.check.SetLabel("Checkmate, Black wins!")
+                            self.button.Disable()
+                            self.moveInput.Disable()
+                        else:
+                            self.check.SetLabel("Checkmate, White wins!")
+                            self.button.Disable()
+                            self.moveInput.Disable()
+                    elif (stalemate):
+                        self.check.SetLabel("Stalemate")
                         self.button.Disable()
                         self.moveInput.Disable()
                     else:
-                        self.check.SetLabel("Checkmate, White wins!")
-                        self.button.Disable()
-                        self.moveInput.Disable()
-                elif (stalemate):
-                    self.check.SetLabel("Stalemate")
-                    self.button.Disable()
-                    self.moveInput.Disable()
+                        self.currentPlayer.SetLabel("Black's Move")
+                        doMoves(False, None)
+                        self.aiTime.SetLabel(elapsedTime)
+                        rawMoveAI = files[moveAI[0]] + ranks[moveAI[1]] + files[moveAI[2]] + ranks[moveAI[3]]
+                        self.moveOutput.SetLabel(rawMoveAI)
+                        self.updateGridBoard()
+                        self.currentPlayer.SetLabel("White's Move")
+                        self.moveInput.SetValue("")
+                        self.checkCheck()
+                        self.masterPanel.Update()
                 else:
-                    self.currentPlayer.SetLabel("Black's Move")
-                    doMoves(False, None)
-                    self.aiTime.SetLabel(elapsedTime)
-                    rawMoveAI = files[moveAI[0]] + ranks[moveAI[1]] + files[moveAI[2]] + ranks[moveAI[3]]
-                    self.moveOutput.SetLabel(rawMoveAI)
-                    self.updateGridBoard()
-                    self.currentPlayer.SetLabel("White's Move")
-                    self.checkCheck()
-                    self.masterPanel.Update()
+                    self.moveOutput.SetLabel("You will be in check")
             else:
                 self.moveOutput.SetLabel("Friendly Target")
         else:
