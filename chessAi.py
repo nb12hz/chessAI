@@ -1434,21 +1434,16 @@ class ChessFrame(wx.Frame):
                     self.updateGridBoard()
                     self.checkCheck()
                     self.masterPanel.Update()
-                    elif (stalemate):
-                        self.check.SetLabel("Stalemate")
-                        self.button.Disable()
-                        self.moveInput.Disable()
-                    else:
-                        self.currentPlayer.SetLabel("Black's Move")
-                        doMoves(False, None)
-                        self.aiTime.SetLabel(elapsedTime)
-                        rawMoveAI = files[moveAI[0]] + ranks[moveAI[1]] + files[moveAI[2]] + ranks[moveAI[3]]
-                        self.moveOutput.SetLabel(rawMoveAI)
-                        self.updateGridBoard()
-                        self.currentPlayer.SetLabel("White's Move")
-                        self.moveInput.SetValue("")
-                        self.checkCheck()
-                        self.masterPanel.Update()
+                    self.currentPlayer.SetLabel("Black's Move")
+                    doMoves(False, None)
+                    self.aiTime.SetLabel(elapsedTime)
+                    rawMoveAI = files[moveAI[0]] + ranks[moveAI[1]] + files[moveAI[2]] + ranks[moveAI[3]]
+                    self.moveOutput.SetLabel(rawMoveAI)
+                    self.updateGridBoard()
+                    self.currentPlayer.SetLabel("White's Move")
+                    self.moveInput.SetValue("")
+                    self.checkCheck()
+                    self.masterPanel.Update()
                 else:
                     self.moveOutput.SetLabel("You will be in check")
             else:
@@ -1512,6 +1507,10 @@ class ChessFrame(wx.Frame):
                 self.check.SetLabel("Checkmate, White wins!")
                 self.button.Disable()
                 self.moveInput.Disable()
+        elif (stalemate):
+            self.check.SetLabel("Stalemate")
+            self.button.Disable()
+            self.moveInput.Disable()
             
 app = wx.App(False)
 frame = ChessFrame(None)
