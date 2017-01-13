@@ -45,7 +45,6 @@ class minimax:
                     for i in range(len(moves)):
                         newX=(moves[i])[0]
                         newY=(moves[i])[1]
-                        print(x," ",y," ",newX," ",newY)
                         #If the move is valid (ie. No piece in the way)
                         if self.isLegalMotion(self.gameState,x,y,newX,newY):
                                     #Copy the game state and send it to the next function 
@@ -1511,23 +1510,27 @@ class minimax:
                     if j>=0 and j<=7:
                         if isWhite==False and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0])[i][j].islower()==False:
-                                tempBoard = copy.deepcopy(gameState[0])
+                                tempPiece = (gameState[0])[currentY][currentX]
                                 self.movePiece(gameState,currentX,currentY,j,i)
                                 if self.isAttacked(gameState, False,j,i)==False:
-                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
                                     return False
                                 else:
-                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
                                     
                         elif isWhite ==True and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0])[i][j].isupper()==False:
-                                tempBoard = copy.deepcopy(gameState[0])
+                                tempPiece = (gameState[0])[currentY][currentX]
                                 self.movePiece(gameState,currentX,currentY,j,i)
                                 if self.isAttacked(gameState, True,j,i)==False:
-                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
                                     return False
                                 else:
-                                    gameState[0]=copy.deepcopy(tempBoard)
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
         
         #Check every possible move for White
         if(isWhite):
