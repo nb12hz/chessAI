@@ -1487,7 +1487,7 @@ class minimax:
         #Is a king actually in check?
         if self.isCheck(gameState, False)==False and self.isCheck(gameState, True)==False:            
             return False
-               
+       
         #Find Black King
         if isWhite==False:
             for x in range(8):
@@ -1510,10 +1510,27 @@ class minimax:
                     if j>=0 and j<=7:
                         if isWhite==False and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, False,j,i)==False) and (gameState[0])[i][j].islower()==False:
-                                return False
+                                tempPiece = (gameState[0])[currentY][currentX]
+                                self.movePiece(gameState,currentX,currentY,j,i)
+                                if self.isAttacked(gameState, False,j,i)==False:
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
+                                    return False
+                                else:
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
+                                    
                         elif isWhite ==True and (i != currentY or j != currentX):
                             if (self.isAttacked(gameState, True,j,i)==False) and (gameState[0])[i][j].isupper()==False:
-                                return False
+                                tempPiece = (gameState[0])[currentY][currentX]
+                                self.movePiece(gameState,currentX,currentY,j,i)
+                                if self.isAttacked(gameState, True,j,i)==False:
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
+                                    return False
+                                else:
+                                    self.movePiece(gameState,j,i,currentX,currentY)
+                                    (gameState[0])[currentY][currentX]=tempPiece
         
         #Check every possible move for White
         if(isWhite):
