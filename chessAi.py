@@ -1249,7 +1249,7 @@ def doMoves(whiteMove, guiMove):
     resigned = False
     
     if(isCheckmate(whiteMove)!=True and isStalemate(whiteMove)!=True):
-        AI = minimax(4,board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
+        AI = minimax(numPlys, board, pawnMoved, movedTwo, whiteKS, whiteQS, blackKS, blackQS, whiteKing, blackKing)
         
         if(whiteMove):
             startX = files.index(guiMove[0].upper())
@@ -1335,6 +1335,7 @@ class ChessFrame(wx.Frame):
         self.SetTitle("Chess")
         
         #Initalizes the board, using custom or default board layout
+        self.plySelection()
         if(self.customBoard()):
             intializeBoard(True, self.inputCustom())
         else:
@@ -1418,7 +1419,7 @@ class ChessFrame(wx.Frame):
     def ButtonPress(self, e):
         files = ['A','B','C','D','E','F','G','H']
         ranks = ['8','7','6','5','4','3','2','1']
-
+    
         rawIn = str(self.moveInput.GetValue())
         nMove = list(rawIn)
         if(rawIn=="Resign"):
@@ -1490,6 +1491,14 @@ class ChessFrame(wx.Frame):
         choice.ShowModal()
         newPiece = choice.GetSelection()
         return newPiece
+        
+    def plySelection(self):
+        global numPlys
+        numPlys = 4
+        plySel = wx.TextEntryDialog(self, "How many plys should the AI use?", "Ply Selection", str(numPlys), wx.OK)
+        #plySel.SetMaxLength(1)
+        plySel.ShowModal()
+        numPlys = int(plySel.GetValue())
         
     def checkCheck(self):
         if (blackCheck):
