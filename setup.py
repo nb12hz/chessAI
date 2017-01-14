@@ -18,7 +18,7 @@ manifestVersion="1.0">
     name="Controls"
     type="win32"
 />
-<description>Your Application</description>
+<description>Chess</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity
